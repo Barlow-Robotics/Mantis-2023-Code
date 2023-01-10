@@ -46,6 +46,9 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
+
+		public static final int ID_CameraLight = 0;
+        
     }
 
     public static final class PathConstants {
