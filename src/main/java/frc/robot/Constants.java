@@ -18,23 +18,25 @@ package frc.robot;
  */
 public final class Constants {
 
+    public static final double inchesToMeters = 0.0254;
+
+
     public static final class DriveConstants {
         
         //EP confirm variables with kinahan; move any outside of class if universal
         public static final double kMaxSpeed = 3.0; // meters per second
         public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
-        public static final double driveSpeed = 0.5;
+        public static final double driveSpeed = 0.5; //EP percentOutput?
 
         public static final double kTrackWidth = 0.381 * 2; // meters
         public static final double kWheelRadius = 0.0508; // meters
         public static final int kEncoderResolution = 4096;
         
         public static final double driveGearRatio = 10.71;
-        public static final double Counts_Per_Revolution = 2048.0 * driveGearRatio;
-        public static final double InchesToMeters = 0.0254;
-        public static final double Wheel_Diameter = 6.0 * InchesToMeters;
-        public static final double Meters_Per_Revolution = Wheel_Diameter * Math.PI ;
-        public static final double Meters_Per_Count = Meters_Per_Revolution / Counts_Per_Revolution;
+        public static final double countsPerRevolution = 2048.0 * driveGearRatio;
+        public static final double wheelDiameter = 6.0 * inchesToMeters;
+        public static final double metersPerRevolution = wheelDiameter * Math.PI ;
+        public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
 
         public static int driveMotorLeftLeaderID = 4;
         public static int driveMotorLeftFollowerID = 5;
@@ -47,8 +49,7 @@ public final class Constants {
 
     public static final class VisionConstants {
 
-		public static final int ID_CameraLight = 0;
-        
+		public static final int cameraLightID = 0;
     }
 
     public static final class PathConstants {
@@ -74,27 +75,26 @@ public final class Constants {
         public static final int leftJoystick = 11;
         public static final int rightJoystick = 12;
 
-        public static final double Forward_Axis_Attenuation = -0.5 ;
-        public static final double Lateral_Axis_Attenuation = 0.5 ;
-        public static final double Yaw_Axis_Attenuation = 0.5 ;
+        public static final double forwardAxisAttenuation = -0.5 ;
+        public static final double lateralAxisAttenuation = 0.5 ;
+        public static final double yawAxisAttenuation = 0.5 ;
     }
     
     public final class RadioMasterConstants {
 
         //EP need to confirm that these are correct for RadioMasterTX12
-        public static final int Left_Gimbal_X = 3;
-        public static final int Right_Gimbal_X = 0;
-        public static final int Right_Gimbal_Y = 1;
+        public static final int leftGimbalX = 3;
+        public static final int rightGimbalX = 0;
+        public static final int rightGimbalY = 1;
 
-        public static final int SB3_Axis = 6 ;
-        public static final int SF_Axis = 4 ;
-        public static final int SE_Axis = 5 ;
-        public static final int SH_Momentary = 4 ;
-        public static final int SC_Button = 1 ;
+        public static final int SB3Axis = 6 ;
+        public static final int SFAxis = 4 ;
+        public static final int SEAxis = 5 ;
+        public static final int SHMomentary = 4 ;
+        public static final int SCButton = 1 ;
 
-        public static final double Forward_Axis_Attenuation = 1.0 ;
-        public static final double Lateral_Axis_Attenuation = 1.0 ;
-        public static final double Yaw_Axis_Attenuation = 0.6 ;
-
+        public static final double forwardAxisAttenuation = 1.0 ;
+        public static final double lateralAxisAttenuation = 1.0 ;
+        public static final double yawAxisAttenuation = 0.6 ;
     }
 }

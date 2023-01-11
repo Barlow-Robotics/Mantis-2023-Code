@@ -109,30 +109,30 @@ public class Drive extends SubsystemBase {
      *
      * @param speeds The desired wheel speeds.
      */
-    public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+    public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {      //EP i never see this used anywhere, do we need it?
         driveMotorLeftLeader.set(Constants.DriveConstants.driveSpeed);
         driveMotorRightLeader.set(Constants.DriveConstants.driveSpeed);
     }
 
-    private double getLeftSpeed() {
-        double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.Meters_Per_Count;
+    private double getLeftSpeed() {     //EP i never see this used anywhere, do we need it?
+        double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.metersPerCount;
         return (s);
     }
 
-    private double getRightSpeed() {
-        double s = -driveMotorRightLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.Meters_Per_Count;
+    private double getRightSpeed() {    //EP i never see this used anywhere, do we need it?
+        double s = -driveMotorRightLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.metersPerCount;
         return (s);
     }
 
     private double getLeftDistance() {
-        double d = (driveMotorLeftLeader.getSelectedSensorPosition() / Constants.DriveConstants.Counts_Per_Revolution)
-                * Constants.DriveConstants.Meters_Per_Revolution;
+        double d = (driveMotorLeftLeader.getSelectedSensorPosition() / Constants.DriveConstants.countsPerRevolution)
+                * Constants.DriveConstants.metersPerRevolution;
         return (d);
     }
 
     private double getRightDistance() {
-        double d = (-driveMotorRightLeader.getSelectedSensorPosition() / Constants.DriveConstants.Counts_Per_Revolution)
-                * Constants.DriveConstants.Meters_Per_Revolution;
+        double d = (-driveMotorRightLeader.getSelectedSensorPosition() / Constants.DriveConstants.countsPerRevolution)
+                * Constants.DriveConstants.metersPerRevolution;
         return (d);
     }
 

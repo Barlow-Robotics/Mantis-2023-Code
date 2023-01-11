@@ -15,7 +15,7 @@ public class Vision extends SubsystemBase {
   DigitalOutput cameraLight;
 
   public Vision() {
-    cameraLight = new DigitalOutput(Constants.VisionConstants.ID_CameraLight);
+    cameraLight = new DigitalOutput(Constants.VisionConstants.cameraLightID);
   }
 
   @Override
@@ -26,13 +26,14 @@ public class Vision extends SubsystemBase {
    public void turnOnVisionLight() {
     //turn the green LEDs on and off.
     //The LEDs will be controlled by a digital output from the RoboRio.
+    //true = on
     cameraLight.set(true);
   }
 
   public void turnOffVisionLight() {
     //turn the green LEDs on and off.
     //The LEDs will be controlled by a digital output from the RoboRio.
-    //true = on, false = off
+    //false = off
     cameraLight.set(false);
   
   }
@@ -48,6 +49,7 @@ public class Vision extends SubsystemBase {
     return NetworkTableInstance.getDefault().getEntry("vision/vision_target_distance_from_center").getDouble(0.0);
   }
 
+
   public boolean coneIsVisible() {
     //The data for this will come from the Jetson Nano via network tables.
     return NetworkTableInstance.getDefault().getEntry("vision/cone_detected").getBoolean(false);
@@ -58,6 +60,7 @@ public class Vision extends SubsystemBase {
     //The data for this will come from the Jetson Nano via network tables.
     return NetworkTableInstance.getDefault().getEntry("vision/cone_distance_from_center").getDouble(0.0);
   }
+
 
   public boolean cubeIsVisible() {
     //The data for this will come from the Jetson Nano via network tables.
@@ -70,6 +73,7 @@ public class Vision extends SubsystemBase {
     return NetworkTableInstance.getDefault().getEntry("vision/cube_distance_from_center").getDouble(0.0);
   }
 
+
   public double bbHeight() {
     return NetworkTableInstance.getDefault().getEntry("vision/target_bb_height").getDouble(0.0);
   }
@@ -79,5 +83,4 @@ public class Vision extends SubsystemBase {
   }
 
   // Need some way to distinctify between cones and cubes
-
 }
