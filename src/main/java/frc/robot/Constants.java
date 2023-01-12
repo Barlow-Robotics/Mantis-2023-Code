@@ -44,6 +44,19 @@ public final class Constants {
         public static int driveMotorRightFollowerID = 7;
     }
 
+    public static final class ArmConstants {
+		
+        public static final int armTelescopeMotorID = 0;  //EP change
+        public static final int armRotateMotorID = 0;     //EP change 
+
+        public static final int armRestAngleTolerance = 2; //Need to change this
+    }
+
+    public static final class ClawConstants {
+
+        public static final int clawMotorID = 0;  //EP change
+    }
+
     public static final class UnderGlowConstants {
     }
 
