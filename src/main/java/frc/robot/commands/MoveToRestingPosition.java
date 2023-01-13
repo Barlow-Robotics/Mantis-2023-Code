@@ -14,16 +14,21 @@ public class MoveToRestingPosition extends CommandBase {
 
   Arm armSub;
   Claw clawSub;
-  double position;
+
+  double armLength;
+  double armAngle;
+  double clawAngle;
   
-  public MoveToRestingPosition(Arm a, Claw c, double p) {
+  public MoveToRestingPosition(Arm a, Claw c, double armL, double armA, double clawA) {
     // Use addRequirements() here to declare subsystem dependencies.
     
       armSub = a;
       clawSub = c;
-      position = p;
-      addRequirements(armSub, clawSub);
+      armLength = armL;
+      armAngle = armA;
+      clawAngle = clawA;
 
+      addRequirements(armSub, clawSub);
     }
   
 

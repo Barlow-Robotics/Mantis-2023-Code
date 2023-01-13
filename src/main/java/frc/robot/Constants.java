@@ -23,6 +23,11 @@ public final class Constants {
 
     public static final class DriveConstants {
         
+        public static int driveMotorLeftLeaderID = 4;
+        public static int driveMotorLeftFollowerID = 5;
+        public static int driveMotorRightLeaderID = 6;
+        public static int driveMotorRightFollowerID = 7;
+        
         //EP confirm variables with kinahan; move any outside of class if universal
         public static final double kMaxSpeed = 3.0; // meters per second
         public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
@@ -37,11 +42,6 @@ public final class Constants {
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI ;
         public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
-
-        public static int driveMotorLeftLeaderID = 4;
-        public static int driveMotorLeftFollowerID = 5;
-        public static int driveMotorRightLeaderID = 6;
-        public static int driveMotorRightFollowerID = 7;
     }
 
     public static final class ArmConstants {
