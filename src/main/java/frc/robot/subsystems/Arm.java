@@ -31,17 +31,20 @@ public class Arm extends SubsystemBase {      // Extend, move to a certain place
   }
 
   public void setArmAngle(double desiredAngle) {
-    armTelescopeMotor.set(TalonFXControlMode.MotionMagic, desiredAngle);
+    //angle in degrees
+    //EP need to determine what 0.0 degrees entails 
   }
 
   public double getArmAngle(){
     return 0.0;
   }
 
-  public void setArmInches(double desiredInches){
+  public void setArmLength(double desiredLength){
+    //length in inches 
+    //0.0in is when arm is fully retracted
   }
 
-  public double getArmInches(){
+  public double getArmLength(){
     return 0.0;
   } 
 } 

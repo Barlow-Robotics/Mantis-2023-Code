@@ -27,7 +27,8 @@ public class Claw extends SubsystemBase {
     }
 
     public void setClawAngle(double angle) {
-      clawMotor.set(TalonFXControlMode.MotionMagic, angle);
+      //angle in degrees 
+      //EP need to determine what 0.0 degrees entails
     }
 
     public double getClawAngle() {

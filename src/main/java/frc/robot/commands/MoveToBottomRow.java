@@ -9,23 +9,18 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class MoveToRestingPosition extends CommandBase {
-  /** Creates a new MoveToRestingPosition. */
+public class MoveToBottomRow extends CommandBase {
+  /** Creates a new MoveToBottomRow. */
 
   Arm armSub;
   Claw clawSub;
 
-  double armLength;
-  double armAngle;
-  double clawAngle;
-  
-  public MoveToRestingPosition(Arm a, Claw c) {
-      armSub = a;
-      clawSub = c;
-
-      addRequirements(armSub, clawSub);
-    }
-  
+  public MoveToBottomRow(Arm a, Claw c) {
+    armSub = a;
+    clawSub = c;
+    
+    addRequirements(armSub, clawSub);
+  }
 
   // Called when the command is initially scheduled.
   @Override
@@ -34,10 +29,9 @@ public class MoveToRestingPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    clawSub.openClaw();
-    armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.restingArmLength);
-    clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
+    armSub.setArmAngle(Constants.ArmConstants.bottomRowArmAngle);
+    armSub.setArmLength(Constants.ArmConstants.bottomRowArmLength);
+    clawSub.setClawAngle(Constants.ClawConstants.bottomRowClawAngle);
   }
 
   // Called once the command ends or is interrupted.
@@ -47,7 +41,6 @@ public class MoveToRestingPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance;
-}
-
+    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.bottomRowArmAngle) < Constants.ArmConstants.armAngleTolerance;
+  }
 }

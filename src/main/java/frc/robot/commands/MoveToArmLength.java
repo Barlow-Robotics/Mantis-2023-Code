@@ -9,19 +9,19 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class MoveToRestingPosition extends CommandBase {
+public class MoveToArmLength extends CommandBase {
   /** Creates a new MoveToRestingPosition. */
 
   Arm armSub;
   Claw clawSub;
 
   double armLength;
-  double armAngle;
-  double clawAngle;
   
-  public MoveToRestingPosition(Arm a, Claw c) {
+  public MoveToArmLength(Arm a, Claw c, double armL) {
+    
       armSub = a;
       clawSub = c;
+      armLength = armL;
 
       addRequirements(armSub, clawSub);
     }
@@ -34,10 +34,7 @@ public class MoveToRestingPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    clawSub.openClaw();
-    armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.restingArmLength);
-    clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
+    armSub.setArmLength(armLength);
   }
 
   // Called once the command ends or is interrupted.
@@ -47,7 +44,7 @@ public class MoveToRestingPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance;
+    return Math.abs(armSub.getArmLength() - armLength) < Constants.ArmConstants.armLengthTolerance;
 }
 
 }
