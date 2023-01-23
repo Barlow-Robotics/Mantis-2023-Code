@@ -63,6 +63,7 @@ public final class Constants {
         public static final double middleRowArmLength = 0;
         public static final double bottomRowArmLength = 0;
         public static final double restingArmLength = 0;
+        public static final double UnitsPerArmDegree = 0;
 
     }
 
@@ -75,6 +76,12 @@ public final class Constants {
         public static final double middleRowClawAngle = 0;
         public static final double bottomRowClawAngle = 0;
         public static final double restingClawAngle = 0;
+
+        public static final double UnitsPerClawDegree = 0; //Need to change
+
+        public static final int AngleTolerance = 0;
+
+        public static double clawSpeed;
     }
 
     public static final class UnderGlowConstants {

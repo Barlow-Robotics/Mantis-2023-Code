@@ -30,13 +30,14 @@ public class Arm extends SubsystemBase {      // Extend, move to a certain place
   
   }
 
+  public double getArmAngle(){
+    double result = armRotateMotor.getSelectedSensorPosition() / Constants.ArmConstants.UnitsPerArmDegree ;
+        return result;
+  }
+
   public void setArmAngle(double desiredAngle) {
     //angle in degrees
     //EP need to determine what 0.0 degrees entails 
-  }
-
-  public double getArmAngle(){
-    return 0.0;
   }
 
   public void setArmLength(double desiredLength){

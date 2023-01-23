@@ -5,37 +5,47 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Constants.ClawConstants;
 
 
 public class Claw extends SubsystemBase {
     /** Creates a new Claw. */
-    WPI_TalonFX clawMotor;
+    WPI_TalonFX clawMotor; // For adjusting angle
+    // Need to add piston to open claw
 
-    public Claw() {
+    Arm armSub;
+
+    public Claw(Arm a) {
       clawMotor = new WPI_TalonFX(Constants.ClawConstants.clawMotorID);
+      armSub = a;
     }
     
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-    }
 
-    public void setClawAngle(double angle) {
-      //angle in degrees 
-      //EP need to determine what 0.0 degrees entails
+        setClawAngle(-armSub.getArmAngle());  // Probably doesnt work (?)
     }
 
     public double getClawAngle() {
-        return 0.0;
+        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.UnitsPerClawDegree ;
+        return result;
+    }
+    
+    public void setClawAngle(double desiredAngle) {
+      if (Math.abs(getClawAngle() - desiredAngle) > ClawConstants.AngleTolerance) { 
+        clawMotor.set(Constants.ClawConstants.clawSpeed);
+      }
     }
 
-    public boolean openClaw() {
-      return true;
+    public void openClaw() {
+      // Need to make this
+    }
+
+    public boolean clawIsOpen() {
+      return true; // Need to make this
     }
 }

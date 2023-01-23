@@ -35,9 +35,9 @@ public class MoveToRestingPosition extends CommandBase {
   @Override
   public void execute() {
     clawSub.openClaw();
-    armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
+    // armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
     armSub.setArmLength(Constants.ArmConstants.restingArmLength);
-    clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
+    // clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
   }
 
   // Called once the command ends or is interrupted.
@@ -47,7 +47,7 @@ public class MoveToRestingPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance;
+    return (Math.abs(armSub.getArmAngle() - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance);
 }
 
 }
