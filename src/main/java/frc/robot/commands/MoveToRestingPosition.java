@@ -10,44 +10,46 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
 public class MoveToRestingPosition extends CommandBase {
-  /** Creates a new MoveToRestingPosition. */
+    /** Creates a new MoveToRestingPosition. */
 
-  Arm armSub;
-  Claw clawSub;
+    Arm armSub;
+    Claw clawSub;
 
-  double armLength;
-  double armAngle;
-  double clawAngle;
-  
-  public MoveToRestingPosition(Arm a, Claw c) {
-      armSub = a;
-      clawSub = c;
+    double armLength;
+    double armAngle;
+    double clawAngle;
 
-      addRequirements(armSub, clawSub);
+    public MoveToRestingPosition(Arm a, Claw c) {
+        armSub = a;
+        clawSub = c;
+
+        addRequirements(armSub, clawSub);
     }
-  
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    clawSub.openClaw();
-    // armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.restingArmLength);
-    // clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        clawSub.openClaw();
+        // armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
+        armSub.setArmLength(Constants.ArmConstants.restingArmLength);
+        // clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return (Math.abs(armSub.getArmAngle() - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance);
-}
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return (Math.abs(armSub.getArmAngle()
+                - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance);
+    }
 
 }
