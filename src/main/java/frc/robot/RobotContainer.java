@@ -6,8 +6,13 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.Constants.*;
 
 import java.util.HashMap;
+
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -40,7 +45,7 @@ public class RobotContainer {
 
     // buttons
 
-    //HashMap<String, PathPlannerTrajectory> trajectories;
+    HashMap<String, PathPlannerTrajectory> trajectories;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -83,43 +88,24 @@ public class RobotContainer {
                         driveSub));
     }
 
-    // private void loadTrajectory(String name, double maxVel, double maxAccel) {
-    //     PathPlannerTrajectory theTrajectory = PathPlanner.loadPath(name, maxVel, maxAccel);
+    private void loadTrajectory(String name, double maxVel, double maxAccel) {
+        PathPlannerTrajectory theTrajectory = PathPlanner.loadPath(name, maxVel, maxAccel);
 
-    //     for (var s : theTrajectory.getStates()) {
-    //         PathPlannerState pps = (PathPlannerState) s;
-    //     }
+        for (var s : theTrajectory.getStates()) {
+            PathPlannerState pps = (PathPlannerState) s;
+        }
 
-    //     trajectories.put(name, theTrajectory);
-    // }
+        trajectories.put(name, theTrajectory);
+    }
 
-    // private void loadTrajectories() {
-    //     trajectories = new HashMap<String, PathPlannerTrajectory>();
-    //     double maxVel = AutoConstants.kMaxSpeedMetersPerSecond;
-    //     double maxAccel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
+    private void loadTrajectories() {
+        trajectories = new HashMap<String, PathPlannerTrajectory>();
+        double maxVel = AutoConstants.kMaxSpeedMetersPerSecond;
+        double maxAccel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
 
-    //     loadTrajectory(name, maxVel, maxAccel);
+        loadTrajectory("Charging_Station_Only", maxVel, maxAccel);
 
-    //     // // wpk delete this code block after testing complete
-    //     // PathPlannerTrajectory temp = PathPlanner.loadPath("Two_Ball_Low_Goal",
-    //     // maxVel, maxAccel) ;
-    //     // try {
-    //     // String fileName = Filesystem.getDeployDirectory().getPath() +
-    //     // "\\path_samples.csv" ;
-    //     // FileWriter myWriter = new FileWriter(fileName);
-    //     // myWriter.write("Sample#,Rotation\n") ;
-    //     // for ( int i = 0; i < temp.getStates().size(); i++) {
-    //     // PathPlannerState pps = (PathPlannerState) temp.getStates().get(i) ;
-    //     // String s = String.format("%d, %7.4f%n", i,
-    //     // pps.holonomicRotation.getDegrees()) ;
-    //     // myWriter.write(s);
-    //     // }
-    //     // myWriter.close();
-    //     // } catch ( Exception ex) {
-    //     // System.out.println("failed to load path") ;
-    //     // }
-
-    // }
+    }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be
