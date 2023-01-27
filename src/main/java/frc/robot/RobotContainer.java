@@ -9,15 +9,19 @@ import frc.robot.subsystems.*;
 import frc.robot.Constants.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -45,7 +49,14 @@ public class RobotContainer {
 
     // buttons
 
+    private class AutonomousCommandHolder {
+        public Pose2d initialPose ;
+        public Command autonomousCommand ;
+    }
+
     HashMap<String, PathPlannerTrajectory> trajectories;
+    private Map<String, AutonomousCommandHolder> autonomousCommands;
+
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -135,22 +146,22 @@ public class RobotContainer {
         // button.whenPressed/whileHeld(command);
     }
 
-    // public Command getAutonomousCommand() {
-    //     String autoCommandName = NetworkTableInstance.getDefault().getEntry("autonomous/auto_command_name")
-    //             .getString("Simple Shoot and Back Up");
-    //     System.out.println("Using autonomous commad " + autoCommandName);
-    //     AutonomousCommandHolder commandHolder = autonomousCommands.get(autoCommandName);
-    //     if (commandHolder != null) {
-    //         m_robotDrive.resetOdometry(commandHolder.initialPose);
-    //         return commandHolder.autonomousCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    //     } else {
-    //         return new PrintCommand("Invalid autonomous command name")
-    //                 .andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    //     }
-    // }
+    public Command getAutonomousCommand() {
+        String autoCommandName = NetworkTableInstance.getDefault().getEntry("autonomous/auto_command_name")
+                .getString("Simple Shoot and Back Up");
+        System.out.println("Using autonomous commad " + autoCommandName);
+        AutonomousCommandHolder commandHolder = autonomousCommands.get(autoCommandName);
+        if (commandHolder != null) {
+            driveSub.resetOdometry(commandHolder.initialPose);
+            return commandHolder.autonomousCommand.andThen(() -> driveSub.drive(0, 0, false));
+        } else {
+            return new PrintCommand("Invalid autonomous command name")
+                    .andThen(() -> driveSub.drive(0, 0, false));
+        }
+    }
 
-    // private void createAutonomousCommands() {
-    // }
+    private void createAutonomousCommands() {
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
