@@ -49,6 +49,13 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         // 0.0in is when arm is fully retracted
     }
 
+    // public double[] polarCoordiantes(double x, double y) {   // Convert from rectangular to polar coordinates
+    //     double[] coordinates = new double[2];
+    //     coordinates[0] = Math.sqrt((x*x)+(y*y));
+    //     coordinates[1] = Math.atan(y/x);
+    //     return coordinates;
+    // }
+
     public double getArmLength() {
         return 0.0;
     }
