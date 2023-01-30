@@ -61,7 +61,6 @@ public class Vision extends SubsystemBase {
     return NetworkTableInstance.getDefault().getEntry("vision/cone_distance_from_center").getDouble(0.0);
   }
 
-
   public boolean cubeIsVisible() {
     //The data for this will come from the Jetson Nano via network tables.
     return NetworkTableInstance.getDefault().getEntry("vision/cube_detected").getBoolean(false);
@@ -73,15 +72,21 @@ public class Vision extends SubsystemBase {
     return NetworkTableInstance.getDefault().getEntry("vision/cube_distance_from_center").getDouble(0.0);
   }
 
-
-  public double bbHeight() {
-    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_height").getDouble(0.0);
+  public double bbConeHeight() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_cone_height").getDouble(0.0);
   }
 
-  public double bbWidth() {
-    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_width").getDouble(0.0);
+  public double bbConeWidth() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_cone_width").getDouble(0.0);
   }
 
-  // Need some way to distinctify between cones and cubes
+  public double bbCubeHeight() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_cube_height").getDouble(0.0);
+  }
+
+  public double bbCubeWidth() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_cube_width").getDouble(0.0);
+  }
+
 }
 

@@ -9,16 +9,18 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class MoveToMiddleRow extends CommandBase {
-  /** Creates a new MoveToMiddleRow. */
+public class MoveToPlayerStationPosition extends CommandBase {
+
+  /***** MIGHT NEED TO MAKE ANOTHER SIMILAR COMMAND (might be another position for the ) *****/
 
   Arm armSub;
   Claw clawSub;
 
-  public MoveToMiddleRow(Arm a, Claw c) {
+  public MoveToPlayerStationPosition(Arm a, Claw c) {
+    
     armSub = a;
     clawSub = c;
-    
+
     addRequirements(armSub, clawSub);
   }
 
@@ -29,8 +31,9 @@ public class MoveToMiddleRow extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSub.setArmAngle(Constants.ArmConstants.middleRowArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.middleRowArmLength);
+    armSub.setArmAngle(Constants.ArmConstants.playerStationArmAngle);
+    armSub.setArmLength(Constants.ArmConstants.playerStationArmLength);
+    clawSub.openClaw();
   }
 
   // Called once the command ends or is interrupted.
@@ -40,6 +43,6 @@ public class MoveToMiddleRow extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.middleRowArmAngle) < Constants.ArmConstants.armAngleTolerance;
+    return false;
   }
 }
