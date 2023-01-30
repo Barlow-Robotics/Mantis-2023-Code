@@ -6,13 +6,22 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.Constants.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -40,7 +49,14 @@ public class RobotContainer {
 
     // buttons
 
-    //HashMap<String, PathPlannerTrajectory> trajectories;
+    private class AutonomousCommandHolder {
+        public Pose2d initialPose ;
+        public Command autonomousCommand ;
+    }
+
+    HashMap<String, PathPlannerTrajectory> trajectories;
+    private Map<String, AutonomousCommandHolder> autonomousCommands;
+
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -83,43 +99,24 @@ public class RobotContainer {
                         driveSub));
     }
 
-    // private void loadTrajectory(String name, double maxVel, double maxAccel) {
-    //     PathPlannerTrajectory theTrajectory = PathPlanner.loadPath(name, maxVel, maxAccel);
+    private void loadTrajectory(String name, double maxVel, double maxAccel) {
+        PathPlannerTrajectory theTrajectory = PathPlanner.loadPath(name, maxVel, maxAccel);
 
-    //     for (var s : theTrajectory.getStates()) {
-    //         PathPlannerState pps = (PathPlannerState) s;
-    //     }
+        for (var s : theTrajectory.getStates()) {
+            PathPlannerState pps = (PathPlannerState) s;
+        }
 
-    //     trajectories.put(name, theTrajectory);
-    // }
+        trajectories.put(name, theTrajectory);
+    }
 
-    // private void loadTrajectories() {
-    //     trajectories = new HashMap<String, PathPlannerTrajectory>();
-    //     double maxVel = AutoConstants.kMaxSpeedMetersPerSecond;
-    //     double maxAccel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
+    private void loadTrajectories() {
+        trajectories = new HashMap<String, PathPlannerTrajectory>();
+        double maxVel = AutoConstants.kMaxSpeedMetersPerSecond;
+        double maxAccel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
 
-    //     loadTrajectory(name, maxVel, maxAccel);
+        loadTrajectory("Charging_Station_Only", maxVel, maxAccel);
 
-    //     // // wpk delete this code block after testing complete
-    //     // PathPlannerTrajectory temp = PathPlanner.loadPath("Two_Ball_Low_Goal",
-    //     // maxVel, maxAccel) ;
-    //     // try {
-    //     // String fileName = Filesystem.getDeployDirectory().getPath() +
-    //     // "\\path_samples.csv" ;
-    //     // FileWriter myWriter = new FileWriter(fileName);
-    //     // myWriter.write("Sample#,Rotation\n") ;
-    //     // for ( int i = 0; i < temp.getStates().size(); i++) {
-    //     // PathPlannerState pps = (PathPlannerState) temp.getStates().get(i) ;
-    //     // String s = String.format("%d, %7.4f%n", i,
-    //     // pps.holonomicRotation.getDegrees()) ;
-    //     // myWriter.write(s);
-    //     // }
-    //     // myWriter.close();
-    //     // } catch ( Exception ex) {
-    //     // System.out.println("failed to load path") ;
-    //     // }
-
-    // }
+    }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be
@@ -149,22 +146,22 @@ public class RobotContainer {
         // button.whenPressed/whileHeld(command);
     }
 
-    // public Command getAutonomousCommand() {
-    //     String autoCommandName = NetworkTableInstance.getDefault().getEntry("autonomous/auto_command_name")
-    //             .getString("Simple Shoot and Back Up");
-    //     System.out.println("Using autonomous commad " + autoCommandName);
-    //     AutonomousCommandHolder commandHolder = autonomousCommands.get(autoCommandName);
-    //     if (commandHolder != null) {
-    //         m_robotDrive.resetOdometry(commandHolder.initialPose);
-    //         return commandHolder.autonomousCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    //     } else {
-    //         return new PrintCommand("Invalid autonomous command name")
-    //                 .andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    //     }
-    // }
+    public Command getAutonomousCommand() {
+        String autoCommandName = NetworkTableInstance.getDefault().getEntry("autonomous/auto_command_name")
+                .getString("Simple Shoot and Back Up");
+        System.out.println("Using autonomous commad " + autoCommandName);
+        AutonomousCommandHolder commandHolder = autonomousCommands.get(autoCommandName);
+        if (commandHolder != null) {
+            driveSub.resetOdometry(commandHolder.initialPose);
+            return commandHolder.autonomousCommand.andThen(() -> driveSub.drive(0, 0, false));
+        } else {
+            return new PrintCommand("Invalid autonomous command name")
+                    .andThen(() -> driveSub.drive(0, 0, false));
+        }
+    }
 
-    // private void createAutonomousCommands() {
-    // }
+    private void createAutonomousCommands() {
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

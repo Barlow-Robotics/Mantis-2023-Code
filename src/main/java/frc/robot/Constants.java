@@ -93,7 +93,11 @@ public final class Constants {
         public static final int cameraLightID = 0;
     }
 
-    public static final class PathConstants {
+    public static final class AutoConstants {
+        public static final double kMaxSpeedMetersPerSecond = 2.25; 
+        public static final double kMaxAccelerationMetersPerSecondSquared = kMaxSpeedMetersPerSecond / 2.0;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 10*Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = kMaxAngularSpeedRadiansPerSecond / 0.5;
     }
 
     public final class LogitechDualActionConstants {
