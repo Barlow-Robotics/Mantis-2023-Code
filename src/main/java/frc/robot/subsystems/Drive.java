@@ -69,8 +69,9 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.setSensorPhase(true);
 
         diffDrive = new DifferentialDrive(driveMotorLeftLeader, driveMotorRightLeader);
+        diffDrive.setSafetyEnabled(false);
 
-        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), getPose());
+        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance());
 
         setDefaultNeutralMode();
         gyro.reset();
@@ -78,21 +79,22 @@ public class Drive extends SubsystemBase {
     }
 
     public void periodic() {
-        // NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(getLeftDistance());
-        // NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(getRightDistance());
-        // NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(getLeftSpeed());
-        // NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(getRightSpeed());
-        // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
-        // NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(m_odometry.getPoseMeters().getX());
-        // NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(m_odometry.getPoseMeters().getY());
-        // NetworkTableInstance.getDefault().getEntry("drive/odometry/theta")
-        //         .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
-
         // Update the odometry in the periodic block
         odometry.update(
                 gyro.getRotation2d(),
                 getLeftDistance(),
                 getRightDistance());
+
+        NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(getLeftDistance());
+        NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(getRightDistance());
+        // NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(getLeftSpeed());
+        // NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(getRightSpeed());
+        // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
+        NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(odometry.getPoseMeters().getX());
+        NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(odometry.getPoseMeters().getY());
+        // NetworkTableInstance.getDefault().getEntry("drive/odometry/theta")
+        //         .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
+
     }
 
     public void setDefaultNeutralMode() {
@@ -102,15 +104,36 @@ public class Drive extends SubsystemBase {
         // m_rightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
+
+
+    private double MetersPerSecondToCountsPerSecond( double mps) {
+        return mps * Constants.DriveConstants.CountsPerMeterPerSecond / 10.0 ;
+
+
+    }
+
+
+    private double CountsPerSecondToMetersPerSecond ( double counts) {
+        return counts * 10.0 * Constants.DriveConstants.metersPerCount ;
+    }
+
     /**
      * Sets the desired wheel speeds.
      *
      * @param speeds The desired wheel speeds.
      */
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {      //EP i never see this used anywhere, do we need it?
-        driveMotorLeftLeader.set(Constants.DriveConstants.driveSpeed);
-        driveMotorRightLeader.set(Constants.DriveConstants.driveSpeed);
+        driveMotorLeftLeader.set( MetersPerSecondToCountsPerSecond(speeds.leftMetersPerSecond));
+        driveMotorRightLeader.set(MetersPerSecondToCountsPerSecond(speeds.rightMetersPerSecond) );
     }
+
+
+    public void setSpeeds(double leftSpeed, double rightSpeed) { 
+        driveMotorLeftLeader.set(leftSpeed);
+        driveMotorRightLeader.set(rightSpeed);
+    }
+
+
 
     private double getLeftSpeed() {     //EP i never see this used anywhere, do we need it?
         double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.metersPerCount;

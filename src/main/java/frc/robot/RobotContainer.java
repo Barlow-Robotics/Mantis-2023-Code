@@ -11,18 +11,26 @@ import frc.robot.Constants.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.commands.PPRamseteCommand;
+import edu.wpi.first.math.controller.RamseteController ;
+
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -49,14 +57,6 @@ public class RobotContainer {
 
     // buttons
 
-    private class AutonomousCommandHolder {
-        public Pose2d initialPose ;
-        public Command autonomousCommand ;
-    }
-
-    HashMap<String, PathPlannerTrajectory> trajectories;
-    private Map<String, AutonomousCommandHolder> autonomousCommands;
-
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -73,7 +73,7 @@ public class RobotContainer {
                 new RunCommand( // new instance
                         () -> {
                             double x = -driverController.getRawAxis(Constants.LogitechDualActionConstants.leftJoystickY);
-                            double yaw = driverController.getRawAxis(Constants.LogitechDualActionConstants.rightJoystickX);
+                            double yaw = -driverController.getRawAxis(Constants.LogitechDualActionConstants.rightJoystickX);
                             // fancy exponential formulas to shape the controller inputs to be flat when
                             // only
                             // pressed a little, and ramp up as stick pushed more.
@@ -97,25 +97,6 @@ public class RobotContainer {
                             driveSub.drive(-speed, -turn * 0.4, false);
                         },
                         driveSub));
-    }
-
-    private void loadTrajectory(String name, double maxVel, double maxAccel) {
-        PathPlannerTrajectory theTrajectory = PathPlanner.loadPath(name, maxVel, maxAccel);
-
-        for (var s : theTrajectory.getStates()) {
-            PathPlannerState pps = (PathPlannerState) s;
-        }
-
-        trajectories.put(name, theTrajectory);
-    }
-
-    private void loadTrajectories() {
-        trajectories = new HashMap<String, PathPlannerTrajectory>();
-        double maxVel = AutoConstants.kMaxSpeedMetersPerSecond;
-        double maxAccel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
-
-        loadTrajectory("Charging_Station_Only", maxVel, maxAccel);
-
     }
 
     /**
@@ -144,33 +125,43 @@ public class RobotContainer {
         // button = new JoystickButton(controller, constant);
 
         // button.whenPressed/whileHeld(command);
-    }
-
-    public Command getAutonomousCommand() {
-        String autoCommandName = NetworkTableInstance.getDefault().getEntry("autonomous/auto_command_name")
-                .getString("Simple Shoot and Back Up");
-        System.out.println("Using autonomous commad " + autoCommandName);
-        AutonomousCommandHolder commandHolder = autonomousCommands.get(autoCommandName);
-        if (commandHolder != null) {
-            driveSub.resetOdometry(commandHolder.initialPose);
-            return commandHolder.autonomousCommand.andThen(() -> driveSub.drive(0, 0, false));
-        } else {
-            return new PrintCommand("Invalid autonomous command name")
-                    .andThen(() -> driveSub.drive(0, 0, false));
-        }
-    }
-
-    private void createAutonomousCommands() {
-    }
+    }   
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    // public Command getAutonomousCommand() {
-    // // An ExampleCommand will run in autonomous
+   
+        public Command getAutonomousCommand() {
+        // This is just an example event map. It would be better to have a constant, global event map in your code that will be used by all path following commands.
+        HashMap<String, Command> eventMap = new HashMap<>();
+        // eventMap.put("FirstBase", new PrintCommand("Passed first leg"));
+        // eventMap.put("half way", new PrintCommand("half way there"));
+        // eventMap.put("done", new PrintCommand("arrived at detination"));
 
-    // return autonomousCommand;
-    // }
+        // This will load the file "Example Path.path" and generate it with a max velocity of 1 m/s and a max acceleration of 1 m/s^2
+        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(1, 1));        
+
+        Command ic = new InstantCommand(() -> {
+            // Reset odometry for the first path you run during auto
+            driveSub.resetEncoders();
+            driveSub.resetOdometry(traj.getInitialPose());
+        });
+
+        RamseteController controller = new RamseteController();
+
+
+        Command pathFollowingCommand = new PPRamseteCommand(
+            traj, 
+            driveSub::getPose, 
+            controller, 
+            new DifferentialDriveKinematics(0.75),
+            driveSub::setSpeeds, 
+            true, 
+            driveSub
+            ) ; 
+        
+        return new SequentialCommandGroup(ic, pathFollowingCommand);
+    }
 }
