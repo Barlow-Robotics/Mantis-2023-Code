@@ -36,7 +36,7 @@ public class MoveToRestingPosition extends CommandBase {
     public void execute() {
         clawSub.openClaw();
         // armSub.setArmAngle(Constants.ArmConstants.restingArmAngle);
-        armSub.setArmLength(Constants.ArmConstants.restingArmLength);
+        // armSub.setArmLength(Constants.ArmConstants.restingArmLength);
         // clawSub.setClawAngle(Constants.ClawConstants.restingClawAngle);
     }
 
@@ -49,7 +49,7 @@ public class MoveToRestingPosition extends CommandBase {
     @Override
     public boolean isFinished() {
         return (Math.abs(armSub.getArmAngle()
-                - Constants.ArmConstants.restingArmAngle) < Constants.ArmConstants.armAngleTolerance);
+               /* - Constants.ArmConstants.restingArmAngle */ ) < Constants.ArmConstants.armAngleTolerance);
     }
 
 }
