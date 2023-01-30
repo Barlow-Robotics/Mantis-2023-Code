@@ -29,14 +29,13 @@ public final class Constants {
         // EP confirm variables with kinahan; move any outside of class if universal
         public static final double kMaxSpeed = 3.0; // meters per second
         public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
-        public static final double driveSpeed = 0.5; // EP percentOutput?
 
         public static final double kTrackWidth = 0.381 * 2; // meters
         public static final double kWheelRadius = 0.0508; // meters
         public static final int kEncoderResolution = 4096;
-//        public static final double driveGearRatio = 10.71;
         public static final double driveGearRatio = 1.0;
         public static final double countsPerRevolution = 4096.0 * driveGearRatio;
+        
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
         public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
