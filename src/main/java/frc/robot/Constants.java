@@ -45,7 +45,7 @@ public final class Constants {
 
     public static final class ArmConstants {
         
-        public static double armRotateSpeed;
+        public static final double armRotateSpeed = 0; // Need to change this
 
         public static final int armTelescopeMotorID = 0; // EP change
         public static final int armRotateMotorID = 0; // EP change
@@ -58,6 +58,7 @@ public final class Constants {
         public static final double middleRowArmAngle = 0;
         public static final double bottomRowArmAngle = 0;
         public static final double restingArmAngle = 90;
+        public static final double playerStationArmAngle = 0;
 
         // add values when we figure out lengths
         public static final double topRowArmLength = 0;
@@ -65,6 +66,7 @@ public final class Constants {
         public static final double bottomRowArmLength = 0;
         public static final double restingArmLength = 0;
         public static final double UnitsPerArmDegree = 0;
+        public static final double playerStationArmLength = 0;
 
     }
 
@@ -72,17 +74,12 @@ public final class Constants {
 
         public static final int clawMotorID = 0; // EP change
 
-        // add values when we figure out angles
-        public static final double topRowClawAngle = 0;
-        public static final double middleRowClawAngle = 0;
-        public static final double bottomRowClawAngle = 0;
-        public static final double restingClawAngle = 0;
-
         public static final double UnitsPerClawDegree = 0; // Need to change
 
-        public static final int ClawAngleTolerance = 0;
+        public static final int ClawAngleTolerance = 0; // Need to change
 
-        public static double clawSpeed;
+        public static final double clawSpeed = 0; // Need to change
+
     }
 
     public static final class UnderGlowConstants {

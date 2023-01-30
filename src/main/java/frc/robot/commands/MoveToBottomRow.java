@@ -31,7 +31,6 @@ public class MoveToBottomRow extends CommandBase {
   public void execute() {
     armSub.setArmAngle(Constants.ArmConstants.bottomRowArmAngle);
     armSub.setArmLength(Constants.ArmConstants.bottomRowArmLength);
-    clawSub.setClawAngle(Constants.ClawConstants.bottomRowClawAngle);
   }
 
   // Called once the command ends or is interrupted.

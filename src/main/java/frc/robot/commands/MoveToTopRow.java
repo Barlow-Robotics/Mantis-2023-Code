@@ -32,7 +32,6 @@ public class MoveToTopRow extends CommandBase {
   public void execute() {
     armSub.setArmAngle(Constants.ArmConstants.topRowArmAngle);
     armSub.setArmLength(Constants.ArmConstants.topRowArmLength);
-    clawSub.setClawAngle(Constants.ClawConstants.topRowClawAngle);
   }
 
   // Called once the command ends or is interrupted.

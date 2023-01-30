@@ -45,6 +45,10 @@ public class Claw extends SubsystemBase {
         // Need to make this
     }
 
+    public void closeClaw() {
+        // Need to make this
+    }
+
     public boolean clawIsOpen() {
         return true; // Need to make this
     }
