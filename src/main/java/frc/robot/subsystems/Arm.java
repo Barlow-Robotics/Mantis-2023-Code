@@ -18,6 +18,9 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     WPI_TalonFX armTelescopeMotor;
     WPI_TalonFX armRotateMotor;
+    public WPI_TalonFX leaderMotor;
+    public WPI_TalonFX followMotor;
+
 
     public Arm() {
         armTelescopeMotor = new WPI_TalonFX(Constants.ArmConstants.armTelescopeMotorID);
@@ -41,8 +44,12 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
         if (Math.abs(getArmAngle() - desiredAngle) > ArmConstants.armAngleTolerance) {
             armRotateMotor.set(Constants.ArmConstants.armRotateSpeed);
+            leaderMotor.set(TalonFXControlMode.MotionMagic,desiredAngle);
+            followMotor.set(TalonFXControlMode.MotionMagic, desiredAngle);
         }
     }
+
+    
 
     public void setArmLength(double desiredLength) {
         // length in inches
