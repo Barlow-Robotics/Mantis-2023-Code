@@ -10,6 +10,9 @@ import frc.robot.sim.PhysicsSim;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -23,18 +26,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Represents a differential drive style drivetrain. */
 public class Drive extends SubsystemBase {
-    WPI_TalonFX driveMotorLeftLeader;
-    WPI_TalonFX driveMotorLeftFollower;
-    WPI_TalonFX driveMotorRightLeader;
-    WPI_TalonFX driveMotorRightFollower;
+    WPI_TalonSRX driveMotorLeftLeader;
+    WPI_VictorSPX driveMotorLeftFollower;
+    WPI_TalonSRX driveMotorRightLeader;
+    WPI_VictorSPX driveMotorRightFollower;
 
     DifferentialDrive diffDrive;
 
-    private final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+    public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
     private final ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
-    private final DifferentialDriveOdometry odometry;
+    public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
 
@@ -49,10 +52,10 @@ public class Drive extends SubsystemBase {
      */
     public Drive() {
 
-        driveMotorLeftLeader = new WPI_TalonFX(Constants.DriveConstants.driveMotorLeftLeaderID);
-        driveMotorLeftFollower = new WPI_TalonFX(Constants.DriveConstants.driveMotorLeftFollowerID);
-        driveMotorRightLeader = new WPI_TalonFX(Constants.DriveConstants.driveMotorRightLeaderID);
-        driveMotorRightFollower = new WPI_TalonFX(Constants.DriveConstants.driveMotorRightFollowerID);
+        driveMotorLeftLeader = new WPI_TalonSRX(Constants.DriveConstants.driveMotorLeftLeaderID);
+        driveMotorLeftFollower = new WPI_VictorSPX(Constants.DriveConstants.driveMotorLeftFollowerID);
+        driveMotorRightLeader = new WPI_TalonSRX(Constants.DriveConstants.driveMotorRightLeaderID);
+        driveMotorRightFollower = new WPI_VictorSPX(Constants.DriveConstants.driveMotorRightFollowerID);
 
         // Config Motors
         driveMotorLeftLeader.configFactoryDefault();
@@ -87,6 +90,8 @@ public class Drive extends SubsystemBase {
 
         NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(getLeftDistance());
         NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(getRightDistance());
+        NetworkTableInstance.getDefault().getEntry("drive/left_encoder_count").setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
+        NetworkTableInstance.getDefault().getEntry("drive/right_encoder_count").setDouble(driveMotorRightLeader.getSelectedSensorPosition());
         // NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(getLeftSpeed());
         // NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(getRightSpeed());
         // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
@@ -98,13 +103,11 @@ public class Drive extends SubsystemBase {
     }
 
     public void setDefaultNeutralMode() {
-        driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
-        driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
-        // m_leftLeader.setNeutralMode(NeutralMode.Coast);
-        // m_rightLeader.setNeutralMode(NeutralMode.Coast);
+       // driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
+       // driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
+        driveMotorLeftLeader.setNeutralMode(NeutralMode.Coast);
+        driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
-
-
 
     private double MetersPerSecondToCountsPerSecond( double mps) {
         return mps * Constants.DriveConstants.CountsPerMeterPerSecond / 10.0 ;
@@ -178,7 +181,7 @@ public class Drive extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), getPose());
+        odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose); 
     }
 
     public void resetEncoders() {
@@ -217,16 +220,16 @@ public class Drive extends SubsystemBase {
         NetworkTableInstance.getDefault().getEntry("drive/leftVolts").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
 
-        NetworkTableInstance.getDefault().getEntry("drive/pose/x").setDouble(0.0);
-        NetworkTableInstance.getDefault().getEntry("drive/pose/y").setDouble(0.0);
-        NetworkTableInstance.getDefault().getEntry("drive/pose/rotation").setDouble(0.0);
+        // NetworkTableInstance.getDefault().getEntry("drive/pose/x").setDouble(0.0);
+        // NetworkTableInstance.getDefault().getEntry("drive/pose/y").setDouble(0.0);
+        // NetworkTableInstance.getDefault().getEntry("drive/pose/rotation").setDouble(0.0);
     }
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.75, 6800, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.75, 6800, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.75, 6800, false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.75, 6800, false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.75, 6800, false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.75, 6800, false);
     }
 
     @Override

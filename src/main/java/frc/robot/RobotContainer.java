@@ -21,6 +21,7 @@ import edu.wpi.first.math.controller.RamseteController ;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -140,8 +141,8 @@ public class RobotContainer {
         // eventMap.put("half way", new PrintCommand("half way there"));
         // eventMap.put("done", new PrintCommand("arrived at detination"));
 
-        // This will load the file "Example Path.path" and generate it with a max velocity of 1 m/s and a max acceleration of 1 m/s^2
-        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(1, 1));        
+        // This will load the file "Example Path.path" and generate it with a max velocity of 2 m/s and a max acceleration of 4 m/s^2
+        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(2, 4));        
 
         Command ic = new InstantCommand(() -> {
             // Reset odometry for the first path you run during auto
@@ -151,7 +152,6 @@ public class RobotContainer {
 
         RamseteController controller = new RamseteController();
 
-
         Command pathFollowingCommand = new PPRamseteCommand(
             traj, 
             driveSub::getPose, 
@@ -160,7 +160,7 @@ public class RobotContainer {
             driveSub::setSpeeds, 
             true, 
             driveSub
-            ) ; 
+            ); 
         
         return new SequentialCommandGroup(ic, pathFollowingCommand);
     }
