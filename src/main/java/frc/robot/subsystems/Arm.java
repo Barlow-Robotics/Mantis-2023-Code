@@ -4,14 +4,12 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Arm extends SubsystemBase { // Extend, move to a certain place,
     /** Creates a new Arm. */
@@ -25,6 +23,8 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     public Arm() {
         armTelescopeMotor = new WPI_TalonFX(Constants.ArmConstants.armTelescopeMotorID);
         armRotateMotor = new WPI_TalonFX(Constants.ArmConstants.armRotateMotorID);
+        leaderMotor = new WPI_TalonFX(Constants.ArmConstants.leaderMotorID);
+        followMotor = new WPI_TalonFX(Constants.ArmConstants.followMotorID);
     }
 
     @Override
