@@ -116,7 +116,7 @@ public class Drive extends SubsystemBase {
     }
 
 
-    private double CountsPerSecondToMetersPerSecond ( double counts) {
+    private double CountsPerSecondToMetersPerSecond (double counts) {
         return counts * 10.0 * Constants.DriveConstants.metersPerCount ;
     }
 
@@ -135,8 +135,6 @@ public class Drive extends SubsystemBase {
         driveMotorLeftLeader.set(leftSpeed);
         driveMotorRightLeader.set(rightSpeed);
     }
-
-
 
     private double getLeftSpeed() {     //EP i never see this used anywhere, do we need it?
         double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.metersPerCount;

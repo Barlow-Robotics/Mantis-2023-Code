@@ -9,54 +9,48 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase { // Extend, move to a certain place,
     /** Creates a new Arm. */
 
-    WPI_TalonFX armTelescopeMotor;
-    WPI_TalonFX armRotateMotor;
-    public WPI_TalonFX leaderMotor;
-    public WPI_TalonFX followMotor;
-
+    WPI_TalonFX extendMotor;
+    WPI_TalonFX rotateMotorLeader;
+    WPI_TalonFX rotateMotorFollower;
 
     public Arm() {
-        armTelescopeMotor = new WPI_TalonFX(Constants.ArmConstants.armTelescopeMotorID);
-        armRotateMotor = new WPI_TalonFX(Constants.ArmConstants.armRotateMotorID);
-        leaderMotor = new WPI_TalonFX(Constants.ArmConstants.leaderMotorID);
-        followMotor = new WPI_TalonFX(Constants.ArmConstants.followMotorID);
+        extendMotor = new WPI_TalonFX(Constants.ArmConstants.armTelescopeMotorID);
+        rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.leaderMotorID);
+        rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.followMotorID);
+
+        rotateMotorFollower.follow(rotateMotorLeader);
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
-    }
-
-    public double getArmAngle() {
-        double result = armRotateMotor.getSelectedSensorPosition() / Constants.ArmConstants.UnitsPerArmDegree;
-        return result;
     }
 
     public void setArmAngle(double desiredAngle) {
         // angle in degrees
         // EP need to determine what 0.0 degrees entails
 
-        if (Math.abs(getArmAngle() - desiredAngle) > ArmConstants.armAngleTolerance) {
-            armRotateMotor.set(Constants.ArmConstants.armRotateSpeed);
-            leaderMotor.set(TalonFXControlMode.MotionMagic,desiredAngle);
-            followMotor.set(TalonFXControlMode.MotionMagic, desiredAngle);
+        if (Math.abs(getArmAngle() - desiredAngle) > Constants.ArmConstants.armAngleTolerance) {
+            rotateMotorLeader.set(TalonFXControlMode.MotionMagic, desiredAngle);
+            rotateMotorFollower.set(TalonFXControlMode.MotionMagic, desiredAngle);
         }
     }
 
-    
+    public double getArmAngle() {
+        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.UnitsPerArmDegree;
+        return result;
+    }
 
     public void setArmLength(double desiredLength) {
         // length in inches
         // 0.0in is when arm is fully retracted
 
-        if (Math.abs(getArmAngle() - desiredLength) > ArmConstants.armAngleTolerance) {
-            armRotateMotor.set(Constants.ArmConstants.armRotateSpeed);
+        if (Math.abs(getArmAngle() - desiredLength) > Constants.ArmConstants.armAngleTolerance) {
+            rotateMotorLeader.set(Constants.ArmConstants.armRotateSpeed);
         }
     }
 
