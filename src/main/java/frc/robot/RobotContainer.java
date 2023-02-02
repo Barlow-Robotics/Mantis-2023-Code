@@ -110,14 +110,16 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
 
-        // Add code to reverse axes 2 and 3 
-
         driverController = new Joystick(1);
         operatorController = new Joystick(2);
 
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
+        // Add code to reverse axes 2 and 3 if driverController is the radiomaster
+
+
+        
         // button = new JoystickButton(controller, constant);
 
         // button.whenPressed/whileHeld(command);
