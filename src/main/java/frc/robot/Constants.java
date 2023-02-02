@@ -53,6 +53,10 @@ public final class Constants {
 
         // add values when we figure out lengths
         public static final double UnitsPerArmDegree = 0;
+
+        public static final int leaderMotorID = 0;
+
+        public static final int followMotorID = 0;
     }
 
     public static final class ClawConstants {
