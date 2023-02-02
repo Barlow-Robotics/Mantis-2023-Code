@@ -110,9 +110,10 @@ public final class Constants {
     public final class RadioMasterConstants {
 
         // EP need to confirm that these are correct for RadioMasterTX12
-        public static final int leftGimbalX = 3;
-        public static final int rightGimbalX = 0;
-        public static final int rightGimbalY = 1;
+        public static final int leftGimbalX = 0;
+        public static final int leftGimbalY = 1;
+        public static final int rightGimbalX = 3;
+        public static final int rightGimbalY = 2;
 
         public static final int SB3Axis = 6;
         public static final int SFAxis = 4;

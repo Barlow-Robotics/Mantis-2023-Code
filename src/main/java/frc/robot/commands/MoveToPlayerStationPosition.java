@@ -31,8 +31,8 @@ public class MoveToPlayerStationPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSub.setArmAngle(Constants.ArmConstants.playerStationArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.playerStationArmLength);
+    // armSub.setArmAngle(Constants.ArmConstants.playerStationArmAngle);
+    // armSub.setArmLength(Constants.ArmConstants.playerStationArmLength);
     clawSub.openClaw();
   }
 

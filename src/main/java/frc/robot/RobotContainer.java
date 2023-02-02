@@ -19,7 +19,6 @@ import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.RamseteController ;
 
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -56,6 +54,9 @@ public class RobotContainer {
     Joystick driverController; // Joystick 1
     Joystick operatorController; // Joystick 2
 
+    private int X_Axis;
+    private int Yaw_Axis;
+
     // buttons
 
 
@@ -73,8 +74,8 @@ public class RobotContainer {
                 // hand, and turning controlled by the right.
                 new RunCommand( // new instance
                         () -> {
-                            double x = -driverController.getRawAxis(Constants.LogitechDualActionConstants.leftJoystickY);
-                            double yaw = -driverController.getRawAxis(Constants.LogitechDualActionConstants.rightJoystickX);
+                            double x = -driverController.getRawAxis(X_Axis);
+                            double yaw = -driverController.getRawAxis(Yaw_Axis);
                             // fancy exponential formulas to shape the controller inputs to be flat when
                             // only
                             // pressed a little, and ramp up as stick pushed more.
@@ -116,10 +117,15 @@ public class RobotContainer {
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
-        // Add code to reverse axes 2 and 3 if driverController is the radiomaster
+        if (controllerType == "RM TX16S Joystick") {
+          X_Axis = Constants.RadioMasterConstants.leftGimbalY;
+          Yaw_Axis = Constants.RadioMasterConstants.rightGimbalX;
 
+        } else if (controllerType == "Logitech Dual Action") {
+            X_Axis = Constants.LogitechDualActionConstants.leftJoystickY;
+            Yaw_Axis = Constants.LogitechDualActionConstants.rightJoystickX;
+        }
 
-        
         // button = new JoystickButton(controller, constant);
 
         // button.whenPressed/whileHeld(command);
