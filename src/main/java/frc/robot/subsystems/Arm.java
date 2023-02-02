@@ -47,6 +47,10 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     public void setArmLength(double desiredLength) {
         // length in inches
         // 0.0in is when arm is fully retracted
+
+        if (Math.abs(getArmAngle() - desiredLength) > ArmConstants.armAngleTolerance) {
+            armRotateMotor.set(Constants.ArmConstants.armRotateSpeed);
+        }
     }
 
     public double[] toPolarCoordiantes(double x, double y) {   // Convert from rectangular to polar coordinates
@@ -54,6 +58,18 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         coordinates[0] = Math.sqrt((x*x)+(y*y));
         coordinates[1] = Math.atan(y/x);
         return coordinates;
+    }
+
+    public void toBottomRow() {
+        // add polar coordinate path
+    }
+
+    public void toMiddleRow() {
+        // add polar coordinate path
+    }
+
+    public void toTopRow() {
+        // add polar coordinate path
     }
 
     public double getArmLength() {

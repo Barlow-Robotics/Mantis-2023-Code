@@ -29,8 +29,7 @@ public class MoveToBottomRow extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSub.setArmAngle(Constants.ArmConstants.bottomRowArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.bottomRowArmLength);
+    armSub.toBottomRow();
   }
 
   // Called once the command ends or is interrupted.
@@ -40,6 +39,6 @@ public class MoveToBottomRow extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.bottomRowArmAngle) < Constants.ArmConstants.armAngleTolerance;
+    return Math.abs(armSub.getArmAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
   }
 }

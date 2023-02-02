@@ -30,8 +30,7 @@ public class MoveToTopRow extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSub.setArmAngle(Constants.ArmConstants.topRowArmAngle);
-    armSub.setArmLength(Constants.ArmConstants.topRowArmLength);
+    armSub.toTopRow();
   }
 
   // Called once the command ends or is interrupted.
@@ -41,6 +40,6 @@ public class MoveToTopRow extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() - Constants.ArmConstants.topRowArmAngle) < Constants.ArmConstants.armAngleTolerance;
+    return Math.abs(armSub.getArmAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
   }
 }
