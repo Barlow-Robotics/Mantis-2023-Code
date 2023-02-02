@@ -63,7 +63,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        // Configure the button bindings
+        // Configure the button bindings'
         configureButtonBindings();
         // loadTrajectories();
         // createAutonomousCommands();
@@ -109,19 +109,14 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        if (driverController == null) {
-            System.out.println("Null driver controller, using joystick 1");
-            driverController = new Joystick(1);
-        }
 
-        if (operatorController == null) {
-            System.out.println("Null operator controller, using joystick 2");
-            operatorController = new Joystick(2);
-        }
+        // Add code to reverse axes 2 and 3 
+
+        driverController = new Joystick(1);
+        operatorController = new Joystick(2);
 
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
-        // boolean controllerFound = false;
 
         // button = new JoystickButton(controller, constant);
 
