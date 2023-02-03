@@ -125,4 +125,13 @@ public final class Constants {
         public static final double lateralAxisAttenuation = 1.0;
         public static final double yawAxisAttenuation = 0.6;
     }
+
+    public final static double kNeutralDeadband = 0.001;
+	
+	/**
+	 * PID Gains may have to be adjusted based on the responsiveness of control loop
+	 * 	                                    			  kP   kI    kD     kF             Iz    PeakOut */
+	public final static Gains kGains_MotProf = new Gains( 1.0, 0.0,  0.0, 1023.0/6800.0,  400,  1.00 ); /* measured 6800 velocity units at full motor output */
+	
+	public final static int kPrimaryPIDSlot = 0; // any slot [0,3]
 }

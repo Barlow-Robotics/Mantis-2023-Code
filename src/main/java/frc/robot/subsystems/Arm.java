@@ -4,11 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.MotionProfile;
 
 public class Arm extends SubsystemBase { // Extend, move to a certain place,
     /** Creates a new Arm. */
@@ -16,6 +19,16 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     WPI_TalonFX extendMotor;
     WPI_TalonFX rotateMotorLeader;
     WPI_TalonFX rotateMotorFollower;
+
+    TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
+
+    Joystick opp = new Joystick(0);
+
+    int state = 0;
+
+    WPI_TalonFX master = new WPI_TalonFX(1, "rio");
+
+    BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
 
     public Arm() {
         extendMotor = new WPI_TalonFX(Constants.ArmConstants.armTelescopeMotorID);
@@ -27,17 +40,6 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-    }
-
-    public void setArmAngle(double desiredAngle) {
-        // angle in degrees
-        // EP need to determine what 0.0 degrees entails
-
-        if (Math.abs(getArmAngle() - desiredAngle) > Constants.ArmConstants.armAngleTolerance) {
-            rotateMotorLeader.set(TalonFXControlMode.MotionMagic, desiredAngle);
-            rotateMotorFollower.set(TalonFXControlMode.MotionMagic, desiredAngle);
-        }
     }
 
     public double getArmAngle() {
@@ -54,10 +56,10 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         }
     }
 
-    public double[] toPolarCoordiantes(double x, double y) {   // Convert from rectangular to polar coordinates
+    public double[] toPolarCoordiantes(double x, double y) { // Convert from rectangular to polar coordinates
         double[] coordinates = new double[2];
-        coordinates[0] = Math.sqrt((x*x)+(y*y));
-        coordinates[1] = Math.atan(y/x);
+        coordinates[0] = Math.sqrt((x * x) + (y * y));
+        coordinates[1] = Math.atan(y / x);
         return coordinates;
     }
 
@@ -76,4 +78,16 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     public double getArmLength() {
         return 0.0;
     }
+
+    public void startProflies() {
+        // Rotate profile
+        rotateMotorLeader.startMotionProfile(null, 0, null);
+        // Extend profile
+        extendMotor.startMotionProfile(null, 0, null);
+    }
+
+    public boolean isProfileComplete() {
+        return false;
+    }
+
 }
