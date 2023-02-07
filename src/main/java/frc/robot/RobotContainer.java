@@ -87,7 +87,7 @@ public class RobotContainer {
           xAxis = Constants.RadioMasterConstants.leftGimbalY;
           yawAxis = Constants.RadioMasterConstants.rightGimbalX;
 
-        } else if (controllerType == "Logitech Dual Action") {
+        } else /*if (controllerType == "Logitech Dual Action")*/ { 
             xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
             yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
         }

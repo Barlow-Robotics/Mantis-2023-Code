@@ -21,8 +21,10 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
     WPI_TalonFX extendMotor;
-    WPI_TalonFX rotateMotorLeader;
+    WPI_TalonFX rotateMotorLeader; // 40:1 gearbox
     WPI_TalonFX rotateMotorFollower;
+
+    double x = Constants.ArmConstants.rotateGearRatio;
 
     private RobotContainer robotContainer;
     private Robot robot;
@@ -33,24 +35,14 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     public Arm() {
         extendMotor = new WPI_TalonFX(Constants.ArmConstants.armExtendMotorID);
-        rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.leaderMotorID);
-        rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.followMotorID);
+        rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.armLeaderMotorID);
+        rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.armFollowMotorID);
 
         rotateMotorFollower.follow(rotateMotorLeader);
     }
 
     @Override
     public void periodic() {
-        /* get joystick button and stick */
-        // boolean fireMotionProfile = _joy.getRawButton(2);
-        // double axis = _joy.getRawAxis(2);
-
-        // boolean moveToBottomRowProfile = robotContainer.operatorController.getRawButton(1);
-        // boolean moveToMiddleRowProfile = robotContainer.operatorController.getRawButton(2);
-        // boolean moveToTopRowProfile = robotContainer.operatorController.getRawButton(3);
-        // boolean moveToRestProfile = robotContainer.operatorController.getRawButton(4);
-        // boolean moveToPlayerStationProfile = robotContainer.operatorController.getRawButton(5);
-        // boolean pickUpFromGroundProfile = robotContainer.operatorController.getRawButton(6);
 
         /* if button is up, just drive the motor in PercentOutput */
         if (robot.currentProfileButton == false) {

@@ -48,7 +48,11 @@ public final class Constants {
         public static final double armExtendSpeed = 0; // Need to change this
 
         public static final int armExtendMotorID = 0; // EP change
-        public static final int armRotateMotorID = 0; // EP change
+        public static final int armLeaderMotorID = 0;
+        public static final int armFollowMotorID = 0;
+        
+		public static final double rotateGearRatio = 40;
+        public static final double extendGearRatio = 0;
 
         public static final int armAngleTolerance = 2; // Need to change this
         public static final int armLengthTolerance = 2; // Need to change this
@@ -57,9 +61,6 @@ public final class Constants {
         public static final double UnitsPerArmDegree = 0;
         public static final double UnitsPerArmInch = 0;
 
-        public static final int leaderMotorID = 0;
-
-        public static final int followMotorID = 0;
     }
 
     public static final class ClawConstants {
