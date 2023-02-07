@@ -4,43 +4,33 @@
 
 package frc.robot;
 
-import frc.robot.commands.*;
+// import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.Constants.*;
 
-import java.util.HashMap;
-import java.util.Map;
+// import java.util.HashMap;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.RamseteController ;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 public class RobotContainer {
 
     private final Drive driveSub = new Drive();
-    private final Underglow underglowSub = new Underglow();
-    private final Vision visionSub = new Vision();
+    // private final Underglow underglowSub = new Underglow();
+    // private final Vision visionSub = new Vision();
 
-    private final TurnOffUnderglow turnOffUnderGlowCom = new TurnOffUnderglow(underglowSub);
-    private final TurnOnUnderglow turnOnUnderGlowCom = new TurnOnUnderglow(underglowSub);
+    // private final TurnOffUnderglow turnOffUnderGlowCom = new TurnOffUnderglow(underglowSub);
+    // private final TurnOnUnderglow turnOnUnderGlowCom = new TurnOnUnderglow(underglowSub);
 
     Joystick driverController; // Joystick 1
     Joystick operatorController; // Joystick 2
@@ -108,7 +98,7 @@ public class RobotContainer {
     }   
    
         public Command getAutonomousCommand() {
-        HashMap<String, Command> eventMap = new HashMap<>();
+        // HashMap<String, Command> eventMap = new HashMap<>();
         // eventMap.put("FirstBase", new PrintCommand("Passed first leg"));
         // eventMap.put("half way", new PrintCommand("half way there"));
         // eventMap.put("done", new PrintCommand("arrived at detination"));

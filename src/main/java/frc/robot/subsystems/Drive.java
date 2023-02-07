@@ -9,7 +9,6 @@ import frc.robot.sim.PhysicsSim;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -36,7 +35,8 @@ public class Drive extends SubsystemBase {
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
     private final ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
-    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
+    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
+            Constants.DriveConstants.kTrackWidth);
     public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
@@ -90,34 +90,32 @@ public class Drive extends SubsystemBase {
 
         NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(getLeftDistance());
         NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(getRightDistance());
-        NetworkTableInstance.getDefault().getEntry("drive/left_encoder_count").setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
-        NetworkTableInstance.getDefault().getEntry("drive/right_encoder_count").setDouble(driveMotorRightLeader.getSelectedSensorPosition());
+        NetworkTableInstance.getDefault().getEntry("drive/left_encoder_count")
+                .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
+        NetworkTableInstance.getDefault().getEntry("drive/right_encoder_count")
+                .setDouble(driveMotorRightLeader.getSelectedSensorPosition());
         // NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(getLeftSpeed());
         // NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(getRightSpeed());
         // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(odometry.getPoseMeters().getX());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(odometry.getPoseMeters().getY());
         // NetworkTableInstance.getDefault().getEntry("drive/odometry/theta")
-        //         .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
-
+        // .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
     }
 
     public void setDefaultNeutralMode() {
-       // driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
-       // driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
+        // driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
+        // driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
         driveMotorLeftLeader.setNeutralMode(NeutralMode.Coast);
         driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
-    private double MetersPerSecondToCountsPerSecond( double mps) {
-        return mps * Constants.DriveConstants.CountsPerMeterPerSecond / 10.0 ;
-
-
+    private double MetersPerSecondToCountsPerSecond(double mps) {
+        return mps * Constants.DriveConstants.CountsPerMeterPerSecond / 10.0;
     }
 
-
-    private double CountsPerSecondToMetersPerSecond (double counts) {
-        return counts * 10.0 * Constants.DriveConstants.metersPerCount ;
+    private double CountsPerSecondToMetersPerSecond(double counts) {
+        return counts * 10.0 * Constants.DriveConstants.metersPerCount;
     }
 
     /**
@@ -125,23 +123,22 @@ public class Drive extends SubsystemBase {
      *
      * @param speeds The desired wheel speeds.
      */
-    public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {      //EP i never see this used anywhere, do we need it?
-        driveMotorLeftLeader.set( MetersPerSecondToCountsPerSecond(speeds.leftMetersPerSecond));
-        driveMotorRightLeader.set(MetersPerSecondToCountsPerSecond(speeds.rightMetersPerSecond) );
+    public void setSpeeds(DifferentialDriveWheelSpeeds speeds) { // EP i never see this used anywhere, do we need it?
+        driveMotorLeftLeader.set(MetersPerSecondToCountsPerSecond(speeds.leftMetersPerSecond));
+        driveMotorRightLeader.set(MetersPerSecondToCountsPerSecond(speeds.rightMetersPerSecond));
     }
 
-
-    public void setSpeeds(double leftSpeed, double rightSpeed) { 
+    public void setSpeeds(double leftSpeed, double rightSpeed) {
         driveMotorLeftLeader.set(leftSpeed);
         driveMotorRightLeader.set(rightSpeed);
     }
 
-    private double getLeftSpeed() {     //EP i never see this used anywhere, do we need it?
+    private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
         double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.metersPerCount;
         return (s);
     }
 
-    private double getRightSpeed() {    //EP i never see this used anywhere, do we need it?
+    private double getRightSpeed() { // EP i never see this used anywhere, do we need it?
         double s = -driveMotorRightLeader.getSelectedSensorVelocity() * 10.0 * Constants.DriveConstants.metersPerCount;
         return (s);
     }
@@ -167,11 +164,13 @@ public class Drive extends SubsystemBase {
      */
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
-        NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
-        NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
+        NetworkTableInstance.getDefault().getEntry("drive/xSpeed")
+                .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
+        NetworkTableInstance.getDefault().getEntry("drive/rot")
+                .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
         NetworkTableInstance.getDefault().getEntry("drive/arcadeDrive").setDouble(100.0);
         diffDrive.arcadeDrive(xSpeed, rot, squareInputs);
-//        diffDrive.curvatureDrive(xSpeed, rot, true);
+        // diffDrive.curvatureDrive(xSpeed, rot, true);
     }
 
     public Pose2d getPose() {
@@ -179,7 +178,7 @@ public class Drive extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose); 
+        odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
     }
 
     public void resetEncoders() {
@@ -225,9 +224,12 @@ public class Drive extends SubsystemBase {
 
     public void simulationInit() {
         // PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.75, 6800, false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.75, 6800, false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.75, 6800, false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.75, 6800,
+        // false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.75, 6800,
+        // false);
+        // PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.75, 6800,
+        // false);
     }
 
     @Override
@@ -238,7 +240,7 @@ public class Drive extends SubsystemBase {
         }
         PhysicsSim.getInstance().run();
 
-        double headingNoise = 0.0; // (Math.random() - 0.5) * 4.0 ;
+        // double headingNoise = 0.0; // (Math.random() - 0.5) * 4.0 ;
         // gyroSim.setAngle(this.m_odometry.getPoseMeters().getRotation().getDegrees() +
         // headingNoise);
         gyroSim.setAngle(5.0);

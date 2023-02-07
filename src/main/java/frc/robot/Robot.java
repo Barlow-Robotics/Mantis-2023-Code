@@ -6,11 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.TrajectoryPoint;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -31,15 +27,15 @@ public class Robot extends TimedRobot {
 
     private RobotContainer robotContainer;
 
-    TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
+    TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings // O
 
     Joystick opp = new Joystick(0);
 
-    int state = 0;
+    int state = 0; // O
 
-    WPI_TalonFX master = new WPI_TalonFX(1, "rio");
+    BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream(); // O
 
-    BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
+    public boolean currentProfileButton;
 
     /*
      * This function is run when the robot is first started up and should be used
@@ -134,36 +130,10 @@ public class Robot extends TimedRobot {
         /* fill our buffer object with the excel points */
         initBuffer(MotionProfile.Points, MotionProfile.kNumPoints);
 
-        /* _config the master specific settings */
-        config.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-        config.neutralDeadband = Constants.kNeutralDeadband; /* 0.1 % super small for best low-speed control */
-        config.slot0.kF = Constants.kGains_MotProf.kF;
-        config.slot0.kP = Constants.kGains_MotProf.kP;
-        config.slot0.kI = Constants.kGains_MotProf.kI;
-        config.slot0.kD = Constants.kGains_MotProf.kD;
-        config.slot0.integralZone = (int) Constants.kGains_MotProf.kIzone;
-        config.slot0.closedLoopPeakOutput = Constants.kGains_MotProf.kPeakOutput;
-
-        // _config.slot0.allowableClosedloopError // left default for this example
-        // _config.slot0.maxIntegralAccumulator; // left default for this example
-        // _config.slot0.closedLoopPeriod; // left default for this example
-        master.configAllSettings(config);
-
-        /* pick the sensor phase and desired direction */
-        master.setInverted(TalonFXInvertType.CounterClockwise);
-        /*
-         * Talon FX does not need sensor phase set for its integrated sensor
-         * This is because it will always be correct if the selected feedback device is
-         * integrated sensor (default value)
-         * and the user calls getSelectedSensor* to get the sensor's position/velocity.
-         * 
-         * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#
-         * sensor-phase
-         */
-        // _master.setSensorPhase(true);
+        
     }
 
-    public void robotPeriodic() {
+    public void robotPeriodic(int current) {
 
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled
@@ -173,50 +143,77 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+        
+        // /* get joystick button and stick */
+        // // boolean fireMotionProfile = _joy.getRawButton(2);
+        // // double axis = _joy.getRawAxis(2);
+       
+        boolean moveToBottomRowProfile = robotContainer.operatorController.getRawButton(1); 
+        boolean moveToMiddleRowProfile = robotContainer.operatorController.getRawButton(2);
+        boolean moveToTopRowProfile = robotContainer.operatorController.getRawButton(3);
+        boolean moveToRestProfile = robotContainer.operatorController.getRawButton(4);
+        boolean moveToPlayerStationProfile = robotContainer.operatorController.getRawButton(5);
+        boolean pickUpFromGroundProfile = robotContainer.operatorController.getRawButton(6);
 
-        /* get joystick button and stick */
-        // boolean bPrintValues = _joy.getRawButton(2);
-        boolean fireMotionProfile = opp.getRawButton(1);
-        double axis = opp.getRawAxis(1);
+        if (current == 1) { currentProfileButton = moveToBottomRowProfile; }
+        else if (current == 2) { currentProfileButton = moveToMiddleRowProfile; }
+        else if (current == 3) { currentProfileButton = moveToTopRowProfile; }
+        else if (current == 4) { currentProfileButton = moveToRestProfile; }
+        else if (current == 5) { currentProfileButton = moveToPlayerStationProfile; }
+        else if (current == 6) { currentProfileButton = pickUpFromGroundProfile; }
+        
+        // /* if button is up, just drive the motor in PercentOutput */
+        // if (moveToBottomRowProfile == false) {
+        //     state = 0;
+        // }
 
-        /* if button is up, just drive the motor in PercentOutput */
-        if (fireMotionProfile == false) {
-            state = 0;
-        }
+        // switch (state) {
+        //     /* drive master talon normally */
+        //     case 0:
+        //         master.set(TalonFXControlMode.Velocity, ArmConstants.armRotateSpeed);
+        //         if (moveToBottomRowProfile == true) {
+        //             /* go to MP logic */
+        //             state = 1;
+        //         } 
+        //         break;
 
-        switch (state) {
-            /* drive master talon normally */
-            case 0:
-                master.set(TalonFXControlMode.PercentOutput, axis);
-                if (fireMotionProfile == true) {
-                    /* go to MP logic */
-                    state = 1;
-                }
-                break;
+        //     /* fire the MP, and stop calling set() since that will cancel the MP */
+        //     case 1:
+        //         /* wait for 10 points to buffer in firmware, then transition to MP */
+        //         master.startMotionProfile(_bufferedStream, 10, TalonFXControlMode.MotionProfile.toControlMode());
+        //         state = 2;
+        //         // Instrum.printLine("MP started");
+        //         break;
 
-            /* fire the MP, and stop calling set() since that will cancel the MP */
-            case 1:
-                /* wait for 10 points to buffer in firmware, then transition to MP */
-                master.startMotionProfile(_bufferedStream, 10, TalonFXControlMode.MotionProfile.toControlMode());
-                state = 2;
-                // Instrum.printLine("MP started");
-                break;
+        //     /* wait for MP to finish */
+        //     case 2:
+        //         if (master.isMotionProfileFinished()) {
+        //             // Instrum.printLine("MP finished");
+        //             state = 3;
+        //         }
+        //         break;
+        //     case 3:
+        //         if (true) {
 
-            /* wait for MP to finish */
-            case 2:
-                if (master.isMotionProfileFinished()) {
-                    // Instrum.printLine("MP finished");
-                    state = 3;
-                }
-                break;
+        //         }
+        //         break;
+        //     case 4:
+        //         if() {
 
-            /* MP is finished, nothing to do */
-            case 3:
-                break;
-        }
+        //         }
+        //         break;
+        //     case 5:
+        //         if() {
 
-        /* print MP values */
-        // Instrum.loop(bPrintValues, _master);
+        //         }
+        //         break;
+        //     /* MP is finished, nothing to do */
+        //     case 6:
+        //         break;
+        // }
+
+        // /* print MP values */
+        // // Instrum.loop(bPrintValues, _master);
     }
 
     /**
@@ -234,7 +231,7 @@ public class Robot extends TimedRobot {
                                                        // automatically, you can alloc just one
 
         /* clear the buffer, in case it was used elsewhere */
-        _bufferedStream.Clear();
+        bufferedStream.Clear();
 
         /* Insert every point into buffer, no limit on size */
         for (int i = 0; i < totalCnt; ++i) {
@@ -260,7 +257,7 @@ public class Robot extends TimedRobot {
             point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
             point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
 
-            _bufferedStream.Write(point);
+            bufferedStream.Write(point);
         }
     }
 

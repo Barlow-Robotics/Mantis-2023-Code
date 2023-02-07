@@ -30,7 +30,7 @@ public class MoveToTopRow extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSub.toTopRow();
+    armSub.startProfiles();
   }
 
   // Called once the command ends or is interrupted.

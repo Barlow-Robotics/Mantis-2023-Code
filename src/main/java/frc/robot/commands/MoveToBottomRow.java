@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
@@ -29,7 +28,7 @@ public class MoveToBottomRow extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSub.toBottomRow();
+    armSub.startProfiles();;
   }
 
   // Called once the command ends or is interrupted.
@@ -39,6 +38,6 @@ public class MoveToBottomRow extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
+    return armSub.isProfileComplete();
   }
 }

@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
@@ -34,7 +33,7 @@ public class MoveToArmAngle extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // armSub.setArmAngle(armAngle);
+        armSub.startProfiles();
     }
 
     // Called once the command ends or is interrupted.
@@ -45,7 +44,7 @@ public class MoveToArmAngle extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(armSub.getArmAngle() - armAngle) < Constants.ArmConstants.armAngleTolerance;
+        return armSub.isProfileComplete();
     }
 
 }

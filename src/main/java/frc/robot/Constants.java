@@ -40,12 +40,14 @@ public final class Constants {
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
         public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
         public static final double CountsPerMeterPerSecond = 1 / metersPerCount ;
+        public static final double CorrectionRotationSpeed = 0;
     }
 
     public static final class ArmConstants {
         public static final double armRotateSpeed = 0; // Need to change this
+        public static final double armExtendSpeed = 0; // Need to change this
 
-        public static final int armTelescopeMotorID = 0; // EP change
+        public static final int armExtendMotorID = 0; // EP change
         public static final int armRotateMotorID = 0; // EP change
 
         public static final int armAngleTolerance = 2; // Need to change this
@@ -53,6 +55,7 @@ public final class Constants {
 
         // add values when we figure out lengths
         public static final double UnitsPerArmDegree = 0;
+        public static final double UnitsPerArmInch = 0;
 
         public static final int leaderMotorID = 0;
 

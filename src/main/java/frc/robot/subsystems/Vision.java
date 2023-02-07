@@ -72,6 +72,17 @@ public class Vision extends SubsystemBase {
     return NetworkTableInstance.getDefault().getEntry("vision/cube_distance_from_center").getDouble(0.0);
   }
 
+  public boolean poleIsVisible() {
+    //The data for this will come from the Jetson Nano via network tables.
+    return NetworkTableInstance.getDefault().getEntry("vision/pole_detected").getBoolean(false);
+  }
+
+  public double poleDistanceFromCenter() {
+    //tell how many pixels the piece of cargo is from the center of the screen.
+    //The data for this will come from the Jetson Nano via network tables.
+    return NetworkTableInstance.getDefault().getEntry("vision/pole_distance_from_center").getDouble(0.0);
+  }
+
   public double bbConeHeight() {
     return NetworkTableInstance.getDefault().getEntry("vision/target_bb_cone_height").getDouble(0.0);
   }
@@ -86,6 +97,14 @@ public class Vision extends SubsystemBase {
 
   public double bbCubeWidth() {
     return NetworkTableInstance.getDefault().getEntry("vision/target_bb_cube_width").getDouble(0.0);
+  }
+
+  public double bbPoleHeight() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_pole_height").getDouble(0.0);
+  }
+
+  public double bbPoleWidth() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_pole_width").getDouble(0.0);
   }
 
 }

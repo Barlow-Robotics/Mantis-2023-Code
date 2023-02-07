@@ -6,32 +6,33 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.MotionProfile;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class Arm extends SubsystemBase { // Extend, move to a certain place,
     /** Creates a new Arm. */
 
+    TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
     WPI_TalonFX extendMotor;
     WPI_TalonFX rotateMotorLeader;
     WPI_TalonFX rotateMotorFollower;
 
-    TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
-
-    Joystick opp = new Joystick(0);
+    private RobotContainer robotContainer;
+    private Robot robot;
 
     int state = 0;
 
-    WPI_TalonFX master = new WPI_TalonFX(1, "rio");
-
-    BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
+    BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream();
 
     public Arm() {
-        extendMotor = new WPI_TalonFX(Constants.ArmConstants.armTelescopeMotorID);
+        extendMotor = new WPI_TalonFX(Constants.ArmConstants.armExtendMotorID);
         rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.leaderMotorID);
         rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.followMotorID);
 
@@ -40,6 +41,55 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     @Override
     public void periodic() {
+        /* get joystick button and stick */
+        // boolean fireMotionProfile = _joy.getRawButton(2);
+        // double axis = _joy.getRawAxis(2);
+
+        // boolean moveToBottomRowProfile = robotContainer.operatorController.getRawButton(1);
+        // boolean moveToMiddleRowProfile = robotContainer.operatorController.getRawButton(2);
+        // boolean moveToTopRowProfile = robotContainer.operatorController.getRawButton(3);
+        // boolean moveToRestProfile = robotContainer.operatorController.getRawButton(4);
+        // boolean moveToPlayerStationProfile = robotContainer.operatorController.getRawButton(5);
+        // boolean pickUpFromGroundProfile = robotContainer.operatorController.getRawButton(6);
+
+        /* if button is up, just drive the motor in PercentOutput */
+        if (robot.currentProfileButton == false) {
+            state = 0;
+        }
+
+        switch (state) {
+            /* drive extendMotor talon normally */
+            case 0:
+                extendMotor.set(TalonFXControlMode.Velocity, Constants.ArmConstants.armRotateSpeed);
+                if (robot.currentProfileButton == true) {
+                    /* go to MP logic */
+                    state = 1;
+                }
+                break;
+
+            /* fire the MP, and stop calling set() since that will cancel the MP */
+            case 1:
+                /* wait for 10 points to buffer in firmware, then transition to MP */
+                extendMotor.startMotionProfile(bufferedStream, 10, TalonFXControlMode.MotionProfile.toControlMode());
+                state = 2;
+                // Instrum.printLine("MP started");
+                break;
+
+            /* wait for MP to finish */
+            case 2:
+                if (extendMotor.isMotionProfileFinished()) {
+                    // Instrum.printLine("MP finished");
+                    state = 3;
+                }
+                break;
+
+            /* MP is finished, nothing to do */
+            case 3:
+                break;
+        }
+
+        /* print MP values */
+        // Instrum.loop(bPrintValues, _master);
     }
 
     public double getArmAngle() {
@@ -47,47 +97,34 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         return result;
     }
 
-    public void setArmLength(double desiredLength) {
-        // length in inches
-        // 0.0in is when arm is fully retracted
+    public void setArmAngle(double desiredAngle) {
+        // degrees
 
-        if (Math.abs(getArmAngle() - desiredLength) > Constants.ArmConstants.armAngleTolerance) {
+        if (Math.abs(getArmAngle() - desiredAngle) > Constants.ArmConstants.armAngleTolerance) {
             rotateMotorLeader.set(Constants.ArmConstants.armRotateSpeed);
         }
     }
 
-    public double[] toPolarCoordiantes(double x, double y) { // Convert from rectangular to polar coordinates
-        double[] coordinates = new double[2];
-        coordinates[0] = Math.sqrt((x * x) + (y * y));
-        coordinates[1] = Math.atan(y / x);
-        return coordinates;
-    }
+    public void setArmLength(double desiredLength) {
+        // inches
+        // 0.0in is when arm is fully retracted
 
-    public void toBottomRow() {
-        // add polar coordinate path
-    }
-
-    public void toMiddleRow() {
-        // add polar coordinate path
-    }
-
-    public void toTopRow() {
-        // add polar coordinate path
+        if (Math.abs(getArmLength() - desiredLength) > Constants.ArmConstants.armLengthTolerance) {
+            extendMotor.set(Constants.ArmConstants.armExtendSpeed);
+        }
     }
 
     public double getArmLength() {
-        return 0.0;
+        double result = extendMotor.getSelectedSensorPosition() / Constants.ArmConstants.UnitsPerArmInch;
+        return result;
     }
 
-    public void startProflies() {
-        // Rotate profile
-        rotateMotorLeader.startMotionProfile(null, 0, null);
-        // Extend profile
-        extendMotor.startMotionProfile(null, 0, null);
+    public void startProfiles() {
+        rotateMotorLeader.startMotionProfile(null, 0, ControlMode.MotionProfile); // Rotate profile
+        extendMotor.startMotionProfile(null, 0, ControlMode.MotionProfile); // Extend profile
     }
 
     public boolean isProfileComplete() {
-        return false;
+        return extendMotor.isMotionProfileFinished();
     }
-
 }
