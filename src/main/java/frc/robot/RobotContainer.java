@@ -13,7 +13,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
-import edu.wpi.first.math.controller.RamseteController ;
+import edu.wpi.first.math.controller.RamseteController;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,15 +22,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-
 public class RobotContainer {
 
     private final Drive driveSub = new Drive();
     // private final Underglow underglowSub = new Underglow();
     // private final Vision visionSub = new Vision();
 
-    // private final TurnOffUnderglow turnOffUnderGlowCom = new TurnOffUnderglow(underglowSub);
-    // private final TurnOnUnderglow turnOnUnderGlowCom = new TurnOnUnderglow(underglowSub);
+    // private final TurnOffUnderglow turnOffUnderGlowCom = new
+    // TurnOffUnderglow(underglowSub);
+    // private final TurnOnUnderglow turnOnUnderGlowCom = new
+    // TurnOnUnderglow(underglowSub);
 
     Joystick driverController; // Joystick 1
     Joystick operatorController; // Joystick 2
@@ -40,7 +41,6 @@ public class RobotContainer {
 
     // buttons
 
-
     public RobotContainer() {
         configureButtonBindings();
 
@@ -49,8 +49,10 @@ public class RobotContainer {
                 // hand, and turning controlled by the right.
                 new RunCommand( // new instance
                         () -> {
-                            double x = -driverController.getRawAxis(xAxis);
-                            double yaw = -driverController.getRawAxis(yawAxis);
+                            double x = -driverController
+                                    .getRawAxis(xAxis);
+                            double yaw = -driverController
+                                    .getRawAxis(yawAxis);
                             // fancy exponential formulas to shape the controller inputs to be flat when
                             // only pressed a little, and ramp up as stick pushed more.
                             double speed = 0.0;
@@ -83,27 +85,27 @@ public class RobotContainer {
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
-        if (controllerType == "RM TX16S Joystick") {
-          xAxis = Constants.RadioMasterConstants.leftGimbalY;
-          yawAxis = Constants.RadioMasterConstants.rightGimbalX;
+        // if (controllerType == "RM TX16S Joystick") {
+        // xAxis = Constants.RadioMasterConstants.leftGimbalY;
+        // yawAxis = Constants.RadioMasterConstants.rightGimbalX;
 
-        } else /*if (controllerType == "Logitech Dual Action")*/ { 
-            xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
-            yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
-        }
+        // } else /*if (controllerType == "Logitech Dual Action")*/ {
+        xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
+        yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
+        // }
 
         // button = new JoystickButton(controller, constant);
 
         // button.whenPressed/whileHeld(command);
-    }   
-   
-        public Command getAutonomousCommand() {
+    }
+
+    public Command getAutonomousCommand() {
         // HashMap<String, Command> eventMap = new HashMap<>();
         // eventMap.put("FirstBase", new PrintCommand("Passed first leg"));
         // eventMap.put("half way", new PrintCommand("half way there"));
         // eventMap.put("done", new PrintCommand("arrived at detination"));
 
-        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(2, 4));        
+        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(2, 4));
 
         Command ic = new InstantCommand(() -> {
             driveSub.resetEncoders();
@@ -113,15 +115,15 @@ public class RobotContainer {
         RamseteController controller = new RamseteController();
 
         Command pathFollowingCommand = new PPRamseteCommand(
-            traj, 
-            driveSub::getPose, 
-            controller, 
-            new DifferentialDriveKinematics(0.75),
-            driveSub::setSpeeds, 
-            true, 
-            driveSub
-            ); 
-        
+                traj,
+                driveSub::getPose,
+                controller,
+                new DifferentialDriveKinematics(0.75),
+                driveSub::setSpeeds,
+                true,
+                driveSub
+                );
+
         return new SequentialCommandGroup(ic, pathFollowingCommand);
     }
 }

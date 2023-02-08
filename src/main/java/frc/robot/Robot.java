@@ -97,6 +97,7 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
+        int wpk = 1 ;
     }
 
     @Override
@@ -128,12 +129,12 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
 
         /* fill our buffer object with the excel points */
-        initBuffer(MotionProfile.Points, MotionProfile.kNumPoints);
-
+        // initBuffer(MotionProfile.Points, MotionProfile.kNumPoints);
         
     }
 
-    public void robotPeriodic(int current) {
+    @Override
+    public void robotPeriodic() {
 
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled
@@ -144,76 +145,6 @@ public class Robot extends TimedRobot {
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
         
-        // /* get joystick button and stick */
-        // // boolean fireMotionProfile = _joy.getRawButton(2);
-        // // double axis = _joy.getRawAxis(2);
-       
-        boolean moveToBottomRowProfile = robotContainer.operatorController.getRawButton(1); 
-        boolean moveToMiddleRowProfile = robotContainer.operatorController.getRawButton(2);
-        boolean moveToTopRowProfile = robotContainer.operatorController.getRawButton(3);
-        boolean moveToRestProfile = robotContainer.operatorController.getRawButton(4);
-        boolean moveToPlayerStationProfile = robotContainer.operatorController.getRawButton(5);
-        boolean pickUpFromGroundProfile = robotContainer.operatorController.getRawButton(6);
-
-        if (current == 1) { currentProfileButton = moveToBottomRowProfile; }
-        else if (current == 2) { currentProfileButton = moveToMiddleRowProfile; }
-        else if (current == 3) { currentProfileButton = moveToTopRowProfile; }
-        else if (current == 4) { currentProfileButton = moveToRestProfile; }
-        else if (current == 5) { currentProfileButton = moveToPlayerStationProfile; }
-        else if (current == 6) { currentProfileButton = pickUpFromGroundProfile; }
-        
-        // /* if button is up, just drive the motor in PercentOutput */
-        // if (moveToBottomRowProfile == false) {
-        //     state = 0;
-        // }
-
-        // switch (state) {
-        //     /* drive master talon normally */
-        //     case 0:
-        //         master.set(TalonFXControlMode.Velocity, ArmConstants.armRotateSpeed);
-        //         if (moveToBottomRowProfile == true) {
-        //             /* go to MP logic */
-        //             state = 1;
-        //         } 
-        //         break;
-
-        //     /* fire the MP, and stop calling set() since that will cancel the MP */
-        //     case 1:
-        //         /* wait for 10 points to buffer in firmware, then transition to MP */
-        //         master.startMotionProfile(_bufferedStream, 10, TalonFXControlMode.MotionProfile.toControlMode());
-        //         state = 2;
-        //         // Instrum.printLine("MP started");
-        //         break;
-
-        //     /* wait for MP to finish */
-        //     case 2:
-        //         if (master.isMotionProfileFinished()) {
-        //             // Instrum.printLine("MP finished");
-        //             state = 3;
-        //         }
-        //         break;
-        //     case 3:
-        //         if (true) {
-
-        //         }
-        //         break;
-        //     case 4:
-        //         if() {
-
-        //         }
-        //         break;
-        //     case 5:
-        //         if() {
-
-        //         }
-        //         break;
-        //     /* MP is finished, nothing to do */
-        //     case 6:
-        //         break;
-        // }
-
-        // /* print MP values */
-        // // Instrum.loop(bPrintValues, _master);
     }
 
     /**
@@ -222,43 +153,43 @@ public class Robot extends TimedRobot {
      * @param profile  generated array from excel
      * @param totalCnt num points in profile
      */
-    private void initBuffer(double[][] profile, int totalCnt) {
+    // private void initBuffer(double[][] profile, int totalCnt) {
 
-        boolean forward = true; // set to false to drive in opposite direction of profile (not really needed
-                                // since you can use negative numbers in profile).
+    //     boolean forward = true; // set to false to drive in opposite direction of profile (not really needed
+    //                             // since you can use negative numbers in profile).
 
-        TrajectoryPoint point = new TrajectoryPoint(); // temp for for loop, since unused params are initialized
-                                                       // automatically, you can alloc just one
+    //     TrajectoryPoint point = new TrajectoryPoint(); // temp for for loop, since unused params are initialized
+    //                                                    // automatically, you can alloc just one
 
-        /* clear the buffer, in case it was used elsewhere */
-        bufferedStream.Clear();
+    //     /* clear the buffer, in case it was used elsewhere */
+    //     bufferedStream.Clear();
 
-        /* Insert every point into buffer, no limit on size */
-        for (int i = 0; i < totalCnt; ++i) {
+    //     /* Insert every point into buffer, no limit on size */
+    //     for (int i = 0; i < totalCnt; ++i) {
 
-            double direction = forward ? +1 : -1;
-            double positionRot = profile[i][0];
-            double velocityRPM = profile[i][1];
-            int durationMilliseconds = (int) profile[i][2];
+    //         double direction = forward ? +1 : -1;
+    //         double positionRot = profile[i][0];
+    //         double velocityRPM = profile[i][1];
+    //         int durationMilliseconds = (int) profile[i][2];
 
-            /* for each point, fill our structure and pass it to API */
-            point.timeDur = durationMilliseconds;
-            point.position = direction * positionRot * Constants.DriveConstants.countsPerRevolution; // Convert
-                                                                                                     // Revolutions to
-            // Units
-            point.velocity = direction * velocityRPM * Constants.DriveConstants.countsPerRevolution / 600.0; // Convert
-                                                                                                             // RPM to
-            // Units/100ms
-            point.auxiliaryPos = 0;
-            point.auxiliaryVel = 0;
-            point.profileSlotSelect0 = Constants.kPrimaryPIDSlot; /* which set of gains would you like to use [0,3]? */
-            point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
-            point.zeroPos = (i == 0); /* set this to true on the first point */
-            point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
-            point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
+    //         /* for each point, fill our structure and pass it to API */
+    //         point.timeDur = durationMilliseconds;
+    //         point.position = direction * positionRot * Constants.DriveConstants.countsPerRevolution; // Convert
+    //                                                                                                  // Revolutions to
+    //         // Units
+    //         point.velocity = direction * velocityRPM * Constants.DriveConstants.countsPerRevolution / 600.0; // Convert
+    //                                                                                                          // RPM to
+    //         // Units/100ms
+    //         point.auxiliaryPos = 0;
+    //         point.auxiliaryVel = 0;
+    //         point.profileSlotSelect0 = Constants.kPrimaryPIDSlot; /* which set of gains would you like to use [0,3]? */
+    //         point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
+    //         point.zeroPos = (i == 0); /* set this to true on the first point */
+    //         point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
+    //         point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
 
-            bufferedStream.Write(point);
-        }
-    }
+    //         bufferedStream.Write(point);
+    //     }
+    // }
 
 }
