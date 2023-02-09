@@ -9,6 +9,7 @@ import frc.robot.sim.PhysicsSim;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -25,10 +26,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Represents a differential drive style drivetrain. */
 public class Drive extends SubsystemBase {
-    WPI_TalonSRX driveMotorLeftLeader;
-    WPI_VictorSPX driveMotorLeftFollower;
-    WPI_TalonSRX driveMotorRightLeader;
-    WPI_VictorSPX driveMotorRightFollower;
+    WPI_TalonFX driveMotorLeftLeader;
+    WPI_TalonFX driveMotorLeftFollower;
+    WPI_TalonFX driveMotorRightLeader;
+    WPI_TalonFX driveMotorRightFollower;
 
     DifferentialDrive diffDrive;
 
@@ -36,7 +37,7 @@ public class Drive extends SubsystemBase {
     private final ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
-            Constants.DriveConstants.kTrackWidth);
+            Constants.DriveConstants.trackWidth);
     public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
@@ -52,10 +53,10 @@ public class Drive extends SubsystemBase {
      */
     public Drive() {
 
-        driveMotorLeftLeader = new WPI_TalonSRX(Constants.DriveConstants.driveMotorLeftLeaderID);
-        driveMotorLeftFollower = new WPI_VictorSPX(Constants.DriveConstants.driveMotorLeftFollowerID);
-        driveMotorRightLeader = new WPI_TalonSRX(Constants.DriveConstants.driveMotorRightLeaderID);
-        driveMotorRightFollower = new WPI_VictorSPX(Constants.DriveConstants.driveMotorRightFollowerID);
+        driveMotorLeftLeader = new WPI_TalonFX(Constants.DriveConstants.driveMotorLeftLeaderID);
+        driveMotorLeftFollower = new WPI_TalonFX(Constants.DriveConstants.driveMotorLeftFollowerID);
+        driveMotorRightLeader = new WPI_TalonFX(Constants.DriveConstants.driveMotorRightLeaderID);
+        driveMotorRightFollower = new WPI_TalonFX(Constants.DriveConstants.driveMotorRightFollowerID);
 
         // Config Motors
         driveMotorLeftLeader.configFactoryDefault();

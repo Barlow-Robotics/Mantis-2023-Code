@@ -26,20 +26,19 @@ public final class Constants {
         public static final int driveMotorRightLeaderID = 6;
         public static final int driveMotorRightFollowerID = 7;
 
-        // EP confirm variables with kinahan; move any outside of class if universal
-        public static final double kMaxSpeed = 3.0; // meters per second
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
+        //confirm variables with kinahan; move any outside of class if universal
+        public static final double maxSpeed = 3.0; // meters per second
+        public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
 
-        public static final double kTrackWidth = 0.381 * 2; // meters
-        public static final double kWheelRadius = 0.0508; // meters
-        public static final int kEncoderResolution = 4096;
-        public static final double driveGearRatio = 1.0;
-        public static final double countsPerRevolution = 4096.0 * driveGearRatio;
+        public static final double trackWidth = 0.381 * 2; // meters      NEED TO UPDATE
+        public static final int encoderResolution = 2048; //2048 for talonfx, 4096 for talonsrx
+        public static final double driveGearRatio = 9.8;
+        public static final double countsPerRevolution = encoderResolution * driveGearRatio;
         
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
         public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
-        public static final double CountsPerMeterPerSecond = 1 / metersPerCount ;
+        public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 0;
     }
 
@@ -47,7 +46,7 @@ public final class Constants {
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
 
-        public static final int armExtendMotorID = 0; // EP change
+        public static final int armExtendMotorID = 0; // change
         public static final int armLeaderMotorID = 0;
         public static final int armFollowMotorID = 0;
         
@@ -64,7 +63,7 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
-        public static final int clawMotorID = 0; // EP change
+        public static final int clawMotorID = 0; // change
 
         public static final double UnitsPerClawDegree = 0; // Need to change
 

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class RobotContainer {
 
     private final Drive driveSub = new Drive();
+    private final Arm armSub = new Arm();
     // private final Underglow underglowSub = new Underglow();
     // private final Vision visionSub = new Vision();
 
@@ -38,6 +39,9 @@ public class RobotContainer {
 
     private int xAxis;
     private int yawAxis;
+
+    private int angle;
+    private int extention;
 
     // buttons
 
@@ -53,6 +57,10 @@ public class RobotContainer {
                                     .getRawAxis(xAxis);
                             double yaw = -driverController
                                     .getRawAxis(yawAxis);
+                            // double angle = -operatorController
+                            // .getRawAxis(xAxis);
+                            // double extention = -operatorController
+                            // .getRawAxis(yawAxis);
                             // fancy exponential formulas to shape the controller inputs to be flat when
                             // only pressed a little, and ramp up as stick pushed more.
                             double speed = 0.0;
@@ -75,24 +83,46 @@ public class RobotContainer {
                             driveSub.drive(-speed, -turn * 0.4, false);
                         },
                         driveSub));
+
+        // armSub.setDefaultCommand(
+        //         new RunCommand( // new instance
+        //                 () -> {
+        //                     double x = m_operatorController.getRawAxis(Constants.Logitech_Dual_Action.Right_Stick_X);
+                                  
+        //                     armSub.armRotate(x);
+        //                     double yaw = m_operatorController.getRawAxis(Constants.LogitechDual_Dual_Action.Right_Stick_yaw);
+
+        //                     armSub.armRotate(yaw);
+
+                                    
+        //                 },
+        //                 armSub));
+
+        // Do we want the claw to open/close w/ a button?
+        // climbButton = new JoystickButton(operatorController,
+        // Constants.LogitechDualActionConstants.buttonA);
+
+        // Button.whenPressed(climbCommand);
+
     }
 
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
         operatorController = new Joystick(2);
-
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
         // if (controllerType == "RM TX16S Joystick") {
-        // xAxis = Constants.RadioMasterConstants.leftGimbalY;
-        // yawAxis = Constants.RadioMasterConstants.rightGimbalX;
-
-        // } else /*if (controllerType == "Logitech Dual Action")*/ {
-        xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
-        yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
+        xAxis = Constants.RadioMasterConstants.leftGimbalY;
+        yawAxis = Constants.RadioMasterConstants.rightGimbalX;
+        // } else {
+        // xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
+        // yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
         // }
+
+        angle = Constants.LogitechDualActionConstants.rightJoystickY;
+        extention = Constants.LogitechDualActionConstants.leftJoystickY;
 
         // button = new JoystickButton(controller, constant);
 
@@ -121,8 +151,7 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub
-                );
+                driveSub);
 
         return new SequentialCommandGroup(ic, pathFollowingCommand);
     }
