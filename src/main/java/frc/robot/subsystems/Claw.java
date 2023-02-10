@@ -35,6 +35,7 @@ public class Claw extends SubsystemBase {
         return result;
     }
 
+    // wpk - why not set desired positon using motion magic or closed loop position control.
     public void setClawAngle(double desiredAngle) {
         if (Math.abs(getClawAngle() - desiredAngle) > ClawConstants.ClawAngleTolerance) {
             clawMotor.set(Constants.ClawConstants.clawSpeed);

@@ -27,7 +27,7 @@ public final class Constants {
         public static final int driveMotorRightFollowerID = 7;
 
         //confirm variables with kinahan; move any outside of class if universal
-        public static final double maxSpeed = 3.0; // meters per second
+        public static final double maxSpeed = 4.0; // meters per second
         public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
 
         public static final double trackWidth = 0.381 * 2; // meters      NEED TO UPDATE
@@ -37,9 +37,26 @@ public final class Constants {
         
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
+        public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution ;
+
+        public static final double MaxSpeedCountPer100MSec 
+           = maxSpeed * RevolutionsPerMeter * countsPerRevolution / 10.0 ; 
+
+
+
         public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
         public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 0;
+
+        public static final double closedVoltageRampingConstant = 0.0;
+        public static final double manualVoltageRampingConstant = 0.0;
+        public static final double kF = 0.048;
+        public static final double kP = 0.005;
+        public static final double kI = 0.0001;
+        public static final double kD = 0.0;
+        public static final int PID_id = 0;
+
+
     }
 
     public static final class ArmConstants {

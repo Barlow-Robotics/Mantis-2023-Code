@@ -9,6 +9,8 @@ import frc.robot.sim.PhysicsSim;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -63,6 +65,10 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.configFactoryDefault();
         driveMotorLeftFollower.configFactoryDefault();
         driveMotorRightFollower.configFactoryDefault();
+
+        setMotorConfig(driveMotorLeftLeader);
+        setMotorConfig(driveMotorRightLeader);
+
         driveMotorLeftFollower.follow(driveMotorLeftLeader);
         driveMotorRightFollower.follow(driveMotorRightLeader);
         driveMotorRightLeader.setInverted(InvertType.InvertMotorOutput);
@@ -125,13 +131,13 @@ public class Drive extends SubsystemBase {
      * @param speeds The desired wheel speeds.
      */
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) { // EP i never see this used anywhere, do we need it?
-        driveMotorLeftLeader.set(MetersPerSecondToCountsPerSecond(speeds.leftMetersPerSecond));
-        driveMotorRightLeader.set(MetersPerSecondToCountsPerSecond(speeds.rightMetersPerSecond));
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCountsPerSecond(speeds.leftMetersPerSecond));
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCountsPerSecond(speeds.rightMetersPerSecond));
     }
 
     public void setSpeeds(double leftSpeed, double rightSpeed) {
-        driveMotorLeftLeader.set(leftSpeed);
-        driveMotorRightLeader.set(rightSpeed);
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, leftSpeed);
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity, rightSpeed);
     }
 
     private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
@@ -170,7 +176,11 @@ public class Drive extends SubsystemBase {
         NetworkTableInstance.getDefault().getEntry("drive/rot")
                 .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
         NetworkTableInstance.getDefault().getEntry("drive/arcadeDrive").setDouble(100.0);
-        diffDrive.arcadeDrive(xSpeed, rot, squareInputs);
+
+        DifferentialDrive.WheelSpeeds speeds = diffDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
+        setSpeeds( speeds.left * Constants.DriveConstants.MaxSpeedCountPer100MSec, speeds.right * Constants.DriveConstants.MaxSpeedCountPer100MSec) ;
+
+
         // diffDrive.curvatureDrive(xSpeed, rot, true);
     }
 
@@ -222,6 +232,23 @@ public class Drive extends SubsystemBase {
         // NetworkTableInstance.getDefault().getEntry("drive/pose/y").setDouble(0.0);
         // NetworkTableInstance.getDefault().getEntry("drive/pose/rotation").setDouble(0.0);
     }
+
+
+
+    private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+        motor.configClosedloopRamp(Constants.DriveConstants.closedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.DriveConstants.manualVoltageRampingConstant);
+        motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
+        motor.config_kP(Constants.DriveConstants.PID_id, Constants.DriveConstants.kP);
+        motor.config_kI(Constants.DriveConstants.PID_id, Constants.DriveConstants.kI);
+        motor.config_kD(Constants.DriveConstants.PID_id, Constants.DriveConstants.kD);
+
+        		/* Config sensor used for Primary PID [Velocity] */
+        motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
+    }
+
+
+
 
     public void simulationInit() {
         // PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);
