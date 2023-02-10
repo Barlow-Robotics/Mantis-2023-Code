@@ -4,22 +4,51 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Underglow extends SubsystemBase {
-  /** Creates a new UnderGlow. */
-  public Underglow() {}
+    /** Creates a new UnderGlow. */
+    SerialPort port = null;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+    int currentMode = 0;
 
-  public void turnOnUnderglow() {
+    public Underglow() {
+        try {
+            port = new SerialPort(9600, Constants.UnderGlowConstants.port);
+        } catch (Exception ex) {
 
-  }
+        }
+    }
 
-  public void turnOffUnderglow() {
-    
-  }
+    @Override
+    public void periodic() {
+        int desiredMode = Constants.UnderGlowConstants.NeonGreen;
+
+        if (DriverStation.isEnabled()) {
+            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+                desiredMode = Constants.UnderGlowConstants.BlueAliance;
+            } else if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+                desiredMode = Constants.UnderGlowConstants.RedAliance;
+            }
+        } else {
+            desiredMode = Constants.UnderGlowConstants.NeonGreen;
+        }
+
+        if (currentMode != desiredMode && port != null) {
+            try {
+                port.write(new byte[] { (byte) desiredMode }, 1);
+            } catch (Exception ex) {
+
+            }
+            currentMode = desiredMode;
+        }
+
+    }
+
+    public void turnOnUnderglow() {}
+
+    public void turnOffUnderglow() {}
 }

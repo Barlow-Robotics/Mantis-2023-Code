@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.SerialPort;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -90,6 +92,10 @@ public final class Constants {
     }
 
     public static final class UnderGlowConstants {
+        public static final SerialPort.Port port = SerialPort.Port.kUSB1;
+        public static final int BlueAliance = 1;
+        public static final int RedAliance = 2;
+        public static final int NeonGreen = 3;
     }
 
     public static final class VisionConstants {
