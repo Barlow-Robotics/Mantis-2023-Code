@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase { // Extend, move to a certain place,
     /** Creates a new Arm. */
@@ -85,29 +86,37 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     }
 
     public double getArmAngle() {
-        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.UnitsPerArmDegree;
+        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
         return result;
     }
 
     public void setArmAngle(double desiredAngle) {
         // degrees
 
-        if (Math.abs(getArmAngle() - desiredAngle) > Constants.ArmConstants.armAngleTolerance) {
-            rotateMotorLeader.set(Constants.ArmConstants.armRotateSpeed);
-        }
+        // if (Math.abs(getArmAngle() - desiredAngle) > Constants.ArmConstants.armAngleTolerance) {
+        //     rotateMotorLeader.set(Constants.ArmConstants.armRotateSpeed);
+        // }
+
+        double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
+        rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle);
+
+        // *** need to make it so the robot can't extend if the claw is facing down (or if the angle is between a certain range)
     }
 
     public void setArmLength(double desiredLength) {
         // inches
         // 0.0in is when arm is fully retracted
 
-        if (Math.abs(getArmLength() - desiredLength) > Constants.ArmConstants.armLengthTolerance) {
-            extendMotor.set(Constants.ArmConstants.armExtendSpeed);
-        }
+        // if (Math.abs(getArmLength() - desiredLength) > Constants.ArmConstants.armLengthTolerance) {
+        //     extendMotor.set(Constants.ArmConstants.armExtendSpeed);
+        // }
+
+        double setLength = desiredLength * ArmConstants.CountsPerArmInch;
+        extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
     }
 
     public double getArmLength() {
-        double result = extendMotor.getSelectedSensorPosition() / Constants.ArmConstants.UnitsPerArmInch;
+        double result = extendMotor.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmInch;
         return result;
     }
 

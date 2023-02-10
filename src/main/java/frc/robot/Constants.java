@@ -76,15 +76,20 @@ public final class Constants {
         public static final int armLengthTolerance = 2; // Need to change this
 
         // add values when we figure out lengths
-        public static final double UnitsPerArmDegree = 0;
-        public static final double UnitsPerArmInch = 0;
+
+        public static final double countsPerRevolution = 0;
+        public static final double metersPerRevolution = 0;
+        public static final double revolutionsPerDegree = 1.0 / metersPerRevolution ;
+
+        public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree;
+        public static final double CountsPerArmInch = 0;
 
     }
 
     public static final class ClawConstants {
         public static final int clawMotorID = 0; // change
 
-        public static final double UnitsPerClawDegree = 0; // Need to change
+        public static final double CountsPerClawDegree = 0; // Need to change
 
         public static final int ClawAngleTolerance = 0; // Need to change
 

@@ -4,16 +4,11 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-import frc.robot.sim.PhysicsSim;
-
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +20,8 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.sim.PhysicsSim;
 
 /** Represents a differential drive style drivetrain. */
 public class Drive extends SubsystemBase {
@@ -179,6 +176,7 @@ public class Drive extends SubsystemBase {
 
         DifferentialDrive.WheelSpeeds speeds = diffDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
         setSpeeds( speeds.left * Constants.DriveConstants.MaxSpeedCountPer100MSec, speeds.right * Constants.DriveConstants.MaxSpeedCountPer100MSec) ;
+        // *** need to reduce max speed when arm is extended
 
 
         // diffDrive.curvatureDrive(xSpeed, rot, true);

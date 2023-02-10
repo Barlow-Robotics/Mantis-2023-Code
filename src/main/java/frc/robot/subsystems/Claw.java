@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,15 +32,17 @@ public class Claw extends SubsystemBase {
     }
 
     public double getClawAngle() {
-        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.UnitsPerClawDegree;
+        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.CountsPerClawDegree;
         return result;
     }
 
     // wpk - why not set desired positon using motion magic or closed loop position control.
     public void setClawAngle(double desiredAngle) {
-        if (Math.abs(getClawAngle() - desiredAngle) > ClawConstants.ClawAngleTolerance) {
-            clawMotor.set(Constants.ClawConstants.clawSpeed);
-        }
+        // if (Math.abs(getClawAngle() - desiredAngle) > ClawConstants.ClawAngleTolerance) {
+        //     clawMotor.set(Constants.ClawConstants.clawSpeed);
+        // }
+        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree;
+        clawMotor.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 
     public void openClaw() {
