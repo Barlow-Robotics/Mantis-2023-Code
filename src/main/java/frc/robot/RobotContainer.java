@@ -53,10 +53,8 @@ public class RobotContainer {
                 // hand, and turning controlled by the right.
                 new RunCommand( // new instance
                         () -> {
-                            double x = -driverController
-                                    .getRawAxis(xAxis);
-                            double yaw = -driverController
-                                    .getRawAxis(yawAxis);
+                            double x = -driverController.getRawAxis(xAxis);
+                            double yaw = -driverController.getRawAxis(yawAxis);
                             // double angle = -operatorController
                             // .getRawAxis(xAxis);
                             // double extention = -operatorController
@@ -80,7 +78,9 @@ public class RobotContainer {
                             // speed.
                             // turn = turn * (-0.4 * Math.abs(speed) + 0.5);
 
-                            driveSub.drive(-speed, -turn * 0.4, false);
+                           // driveSub.drive(-speed, -turn * 0.4, false);
+
+                            driveSub.setSpeeds( 8000.0, 8000.0) ;
                         },
                         driveSub));
 

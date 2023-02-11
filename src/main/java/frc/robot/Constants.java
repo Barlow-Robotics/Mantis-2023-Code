@@ -30,24 +30,24 @@ public final class Constants {
 
         //confirm variables with kinahan; move any outside of class if universal
         public static final double maxSpeed = 4.0; // meters per second
-        public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
+        // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
 
         public static final double trackWidth = 0.381 * 2; // meters      NEED TO UPDATE
+
         public static final int encoderResolution = 2048; //2048 for talonfx, 4096 for talonsrx
         public static final double driveGearRatio = 9.8;
-        public static final double countsPerRevolution = encoderResolution * driveGearRatio;
+        public static final double countsPerWheelRevolution = encoderResolution * driveGearRatio;
         
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
         public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution ;
 
-        public static final double MaxSpeedCountPer100MSec 
-           = maxSpeed * RevolutionsPerMeter * countsPerRevolution / 10.0 ; 
+        public static final double MetersPerSecondToCountsPerSecond =  RevolutionsPerMeter * countsPerWheelRevolution ;
+        public static final double MaxSpeedCountsPer100MSec 
+            = maxSpeed *MetersPerSecondToCountsPerSecond / 10.0 ; 
 
-
-
-        public static final double metersPerCount = metersPerRevolution / countsPerRevolution;
-        public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
+        // public static final double metersPerCount = metersPerRevolution / countsPerWheelRevolution;
+        // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 0;
 
         public static final double closedVoltageRampingConstant = 0.0;
@@ -57,8 +57,6 @@ public final class Constants {
         public static final double kI = 0.0001;
         public static final double kD = 0.0;
         public static final int PID_id = 0;
-
-
     }
 
     public static final class ArmConstants {
