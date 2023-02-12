@@ -54,7 +54,13 @@ public class RobotContainer {
                 new RunCommand( // new instance
                         () -> {
                             double x = -driverController.getRawAxis(xAxis);
+                            if ( Math.abs(x) < 0.01) {
+                                x = 0.0 ;
+                            }
                             double yaw = -driverController.getRawAxis(yawAxis);
+                            if ( Math.abs(yaw) < 0.01) {
+                                yaw = 0.0 ;
+                            }
                             // double angle = -operatorController
                             // .getRawAxis(xAxis);
                             // double extention = -operatorController
@@ -78,9 +84,9 @@ public class RobotContainer {
                             // speed.
                             // turn = turn * (-0.4 * Math.abs(speed) + 0.5);
 
-                           // driveSub.drive(-speed, -turn * 0.4, false);
+                           driveSub.drive(-speed, -turn * 0.4, false);
 
-                            driveSub.setSpeeds( 8000.0, 8000.0) ;
+                           // driveSub.setSpeeds( -2.0, -2.0) ;
                         },
                         driveSub));
 
@@ -114,11 +120,12 @@ public class RobotContainer {
         System.out.println("The controller name is " + controllerType);
 
         // if (controllerType == "RM TX16S Joystick") {
-        xAxis = Constants.RadioMasterConstants.leftGimbalY;
-        yawAxis = Constants.RadioMasterConstants.rightGimbalX;
+        // xAxis = Constants.RadioMasterConstants.leftGimbalY;
+        // yawAxis = Constants.RadioMasterConstants.rightGimbalX;
         // } else {
-        // xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
-        // yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
+        xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
+        yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
+
         // }
 
         angle = Constants.LogitechDualActionConstants.rightJoystickY;
