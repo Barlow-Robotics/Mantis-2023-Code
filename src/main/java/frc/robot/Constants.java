@@ -32,7 +32,7 @@ public final class Constants {
         public static final double maxSpeed = 4.0; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
 
-        public static final double trackWidth = 0.381 * 2; // meters      NEED TO UPDATE
+        public static final double trackWidth = 26.5 * inchesToMeters; // meters      NEED TO UPDATE
 
         public static final int encoderResolution = 2048; //2048 for talonfx, 4096 for talonsrx
         public static final double driveGearRatio = 9.8;
@@ -40,15 +40,15 @@ public final class Constants {
         
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
-        public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution ;
+        public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution;
 
-        public static final double MetersPerSecondToCountsPerSecond =  RevolutionsPerMeter * countsPerWheelRevolution ;
+        public static final double MetersPerSecondToCountsPerSecond =  RevolutionsPerMeter * countsPerWheelRevolution;
         public static final double MaxSpeedCountsPer100MSec 
-            = maxSpeed *MetersPerSecondToCountsPerSecond / 10.0 ; 
+            = maxSpeed *MetersPerSecondToCountsPerSecond / 10.0; 
 
         // public static final double metersPerCount = metersPerRevolution / countsPerWheelRevolution;
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
-        public static final double CorrectionRotationSpeed = 0;
+        public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
         public static final double closedVoltageRampingConstant = 0.0;
         public static final double manualVoltageRampingConstant = 0.0;
@@ -60,46 +60,49 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
+        public static final double rotateGearRatio = 40;
+        public static final double extendGearRatio = 1; // Need to change
+
+        public static final double countsPerRevolution = 2048; 
+        public static final double metersPerRevolution = 0 * extendGearRatio; // Need to change
+        public static final double revolutionsPerDegree = 1.0/360; // Is this right?
+        
+        // add values when we figure out lengths
+        public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree;
+        public static final double CountsPerArmInch = 0; // Need to change
+
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
 
-        public static final double ExtentionCalibrationVelocity = 0; // Need to change this
+        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per second
+        public static final double RotationCalibrationVelocity = 0; // Need to change this
 
-        public static final int armExtendMotorID = 0; // change
-        public static final int armLeaderMotorID = 0;
-        public static final int armFollowMotorID = 0;
-        
-		public static final double rotateGearRatio = 40;
-        public static final double extendGearRatio = 0;
+        public static final int armExtendMotorID = 0; // Need to change
+        public static final int armLeaderMotorID = 0; // Need to change
+        public static final int armFollowMotorID = 0; // Need to change
 
-        public static final int AccelerationSmoothing = 2 ;
+        public static final int AccelerationSmoothing = 2;
 
         public static final int armAngleTolerance = 2; // Need to change this
         public static final int armLengthTolerance = 2; // Need to change this
-
-        // add values when we figure out lengths
-
-        public static final double countsPerRevolution = 0;
-        public static final double metersPerRevolution = 0;
-        public static final double revolutionsPerDegree = 1.0 / metersPerRevolution ;
-
-        public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree;
-        public static final double CountsPerArmInch = 0;
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
         // wpk need to add constants for arm angles and extensions for:
         // Home (example. Real values may be different)
-        public static final double HomeArmAngle = 0.0 ;
-        public static final double HomeArmExtension = 0.0 ;
+        public static final double HomeArmAngle = 0.0;
+        public static final double HomeArmExtension = 0.0;
         // Floor pickup
         // Substation Pickup
         // Grid level 1
         // Grid level 2
         // Grid level 3
 
+		public static final double MinAngleOfExtention = 45; // (Generously) estimated from fusion designs, need to change (the smallest angle at which extention is permitted)
+        
         // wpk will probably need to add constants for minimum angle before retracting arm. This is required to avoid
         // crashing the claw into the chassis when going to home from a position where the claw is above the chassis.
+            // public static final double MinAngleOfRetraction = 0;
 
     }
 

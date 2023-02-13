@@ -48,7 +48,7 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.armLeaderMotorID);
         rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.armFollowMotorID);
 
-        // DONE(?) - wpk need to set up config for motors (e.g., kF, kP, kI, kD, neutral mode, etc.)
+        // DONE - wpk need to set up config for motors (e.g., kF, kP, kI, kD, neutral mode, etc.)
 
         setMotorConfig(extendMotor);
         setMotorConfig(rotateMotorLeader);
@@ -116,6 +116,11 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
         /* print MP values */
         // Instrum.loop(bPrintValues, _master);
+
+
+        if (getAngle() < ArmConstants.MinAngleOfExtention /* smallest angle at which extention is permitted */) {
+            extendMotor.set(TalonFXControlMode.Velocity, 0);
+        }
     }
 
     public double getAngle() {
@@ -153,8 +158,8 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     public void StartRotatingAtVelocty(double velocity) { 
         
 
-        // wpk - need to fill this in. This is to support calibrating the arm angle by "slowly" lowing it until the limit switch is
-        // reached. This will be used in conjuction with "IsAtMinAngle" by a command to calibrate the arm position.
+        // DONE - wpk - need to fill this in. This is to support calibrating the arm angle by "slowly" lowing it until the limit
+        // switch is reached. This will be used in conjuction with "IsAtMinAngle" by a command to calibrate the arm position.
         rotateMotorLeader.set(TalonFXControlMode.Velocity, velocity);
         // Please fill in this code...
     }
@@ -171,7 +176,10 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         //     extendMotor.set(Constants.ArmConstants.armExtendSpeed);
         // }
 
-        // wpk need to set velocity and acceleration. See setArmAngle for example.
+        // DONE - wpk need to set velocity and acceleration. See setArmAngle for example.
+
+        extendMotor.configMotionCruiseVelocity(velocity) ;
+        extendMotor.configMotionAcceleration(acceleration) ;
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
@@ -195,7 +203,7 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     public void StartExtendingAtVelocty(double velocity) {
 
-        // wpk - need to fill this in. This is to support calibrating the arm extension by "slowly" retracting it until the limit switch is
+        // DONE - wpk - need to fill this in. This is to support calibrating the arm extension by "slowly" retracting it until the limit switch is
         // reached. This will be used in conjuction with "IsAtMinExtension" by a command to calibrate the arm extension.
         
         extendMotor.set(TalonFXControlMode.Velocity, velocity);
