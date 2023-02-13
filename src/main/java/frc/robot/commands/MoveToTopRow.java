@@ -10,36 +10,47 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
 public class MoveToTopRow extends CommandBase {
-  /** Creates a new MoveToTopRow. */
+    /** Creates a new MoveToTopRow. */
 
-  Arm armSub;
-  Claw clawSub;
+    Arm arm;
 
-  public MoveToTopRow(Arm a, Claw c) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    armSub = a;
-    clawSub = c;
-    
-    addRequirements(armSub, clawSub);
-  }
+    // wpk - If claw is not needed by this command, then we should remove it.
+    Claw claw;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    public MoveToTopRow(Arm a, Claw c) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        arm = a;
+        claw = c;
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    armSub.startProfiles();
-  }
+        addRequirements(arm, claw);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return Math.abs(armSub.getArmAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+
+        // wpk need to fill in the values here.
+        arm.setArmAngle(0, 0, 0);
+        arm.setArmLength(0, 0, 0);
+
+
+        arm.startProfiles();
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return Math.abs(arm
+                .getArmAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
+    }
 }

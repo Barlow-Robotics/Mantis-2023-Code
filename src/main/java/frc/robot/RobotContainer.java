@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.MoveArm;
 // import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
 
@@ -42,6 +45,9 @@ public class RobotContainer {
 
     private int angle;
     private int extention;
+
+
+    private Trigger gridLevel3Button ;
 
     // buttons
 
@@ -124,9 +130,15 @@ public class RobotContainer {
         angle = Constants.LogitechDualActionConstants.rightJoystickY;
         extention = Constants.LogitechDualActionConstants.leftJoystickY;
 
-        // button = new JoystickButton(controller, constant);
+        // wpk need to put in right constant here
+        gridLevel3Button = new JoystickButton(operatorController, 1);
+        gridLevel3Button.onTrue(new MoveArm(armSub, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)) ; // wpk need to fill in right values from constants
 
-        // button.whenPressed/whileHeld(command);
+        // wpk need to add other buttons here.
+
+        // wpk - move to home operation will be a special case since it needs to have arm angle above the chassis
+        // prior to retracting, then lowering the arm
+
     }
 
     public Command getAutonomousCommand() {

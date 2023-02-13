@@ -70,6 +70,8 @@ public final class Constants {
 		public static final double rotateGearRatio = 40;
         public static final double extendGearRatio = 0;
 
+        public static final int AccelerationSmoothing = 2 ;
+
         public static final int armAngleTolerance = 2; // Need to change this
         public static final int armLengthTolerance = 2; // Need to change this
 
@@ -81,6 +83,21 @@ public final class Constants {
 
         public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree;
         public static final double CountsPerArmInch = 0;
+
+        // wpk need to add constants for slow and fast velocities for moving the arm.
+
+        // wpk need to add constants for arm angles and extensions for:
+        // Home (example. Real values may be different)
+        public static final double HomeArmAngle = 0.0 ;
+        public static final double HomeArmExtension = 0.0 ;
+        // Floor pickup
+        // Substation Pickup
+        // Grid level 1
+        // Grid level 2
+        // Grid level 3
+
+        // wpk will probably need to add constants for minimum angle before retracting arm. This is required to avoid
+        // crashing the claw into the chassis when going to home from a position where the claw is above the chassis.
 
     }
 
