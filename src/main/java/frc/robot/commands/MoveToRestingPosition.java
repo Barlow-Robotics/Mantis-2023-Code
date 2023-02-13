@@ -48,7 +48,7 @@ public class MoveToRestingPosition extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (Math.abs(armSub.getArmAngle()
+        return (Math.abs(armSub.getAngle()
                /* - Constants.ArmConstants.restingArmAngle */ ) < Constants.ArmConstants.armAngleTolerance);
     }
 

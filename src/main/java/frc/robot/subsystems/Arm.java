@@ -10,13 +10,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase { // Extend, move to a certain place,
@@ -29,36 +27,51 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     double x = Constants.ArmConstants.rotateGearRatio;
 
-    private RobotContainer robotContainer;
-    private Robot robot;
-
     int state = 0;
 
     BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream();
 
-    public Arm() {
+    private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+        motor.configClosedloopRamp(Constants.DriveConstants.closedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.DriveConstants.manualVoltageRampingConstant);
+        motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
+        motor.config_kP(Constants.DriveConstants.PID_id, Constants.DriveConstants.kP);
+        motor.config_kI(Constants.DriveConstants.PID_id, Constants.DriveConstants.kI);
+        motor.config_kD(Constants.DriveConstants.PID_id, Constants.DriveConstants.kD);
 
+        /* Config sensor used for Primary PID [Velocity] */
+        motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
+    }
+
+    public Arm() {
         extendMotor = new WPI_TalonFX(Constants.ArmConstants.armExtendMotorID);
         rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.armLeaderMotorID);
         rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.armFollowMotorID);
 
-        // wpk need to set up config for motors (e.g., kF, kP, kI, kD, neutral mode, etc.)
+        // DONE(?) - wpk need to set up config for motors (e.g., kF, kP, kI, kD, neutral mode, etc.)
+
+        setMotorConfig(extendMotor);
+        setMotorConfig(rotateMotorLeader);
+        setMotorConfig(rotateMotorFollower);
 
         rotateMotorFollower.follow(rotateMotorLeader);
 
         rotateMotorLeader.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing) ;
-
+        
         extendMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen) ;
         extendMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen) ;
+        
         // wpk, should we also use the TalonFX built in "soft" limit switches?
 
         // wpk, we can automatically reset the encoder when the retracted (reverse) limit is reached. Do we want to do this?
         // If so, it would look like this:
         extendMotor.configClearPositionOnLimitR(true, 0) ;
 
-        // wpk - the same configuration needs to be set up for the arm angle limits.
-        // Please fill this in.
-
+        // DONE - wpk - the same configuration needs to be set up for the arm angle limits.
+        rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen) ;
+        rotateMotorLeader.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen) ;
+        
+        rotateMotorLeader.configClearPositionOnLimitR(true, 0);
 
     }
 
@@ -105,16 +118,12 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         // Instrum.loop(bPrintValues, _master);
     }
 
-    public double getArmAngle() {
+    public double getAngle() {
         double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
         return result;
     }
 
-
-    // wpk Can probably remove "Arm" from all/most of the methods since we know this is an arm and having "Arm" again
-    // is redundant and makes the names longer.
-
-    public void setArmAngle(double desiredAngle, double cruiseVelocity, double acceleration) {
+    public void setAngle(double desiredAngle, double cruiseVelocity, double acceleration) {
         // degrees
 
         // if (Math.abs(getArmAngle() - desiredAngle) > Constants.ArmConstants.armAngleTolerance) {
@@ -140,12 +149,13 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         return rotateMotorLeader.isRevLimitSwitchClosed() == 1 ;
     }
 
-
-    public void StartRotatingAtVelocty(double velocity) {
+    /* @param velocity  in degrees per second */
+    public void StartRotatingAtVelocty(double velocity) { 
+        
 
         // wpk - need to fill this in. This is to support calibrating the arm angle by "slowly" lowing it until the limit switch is
         // reached. This will be used in conjuction with "IsAtMinAngle" by a command to calibrate the arm position.
-
+        rotateMotorLeader.set(TalonFXControlMode.Velocity, velocity);
         // Please fill in this code...
     }
 
@@ -153,7 +163,7 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
 
 
-    public void setArmLength(double desiredLength, double velocity, double acceleration) {
+    public void setLength(double desiredLength, double velocity, double acceleration) {
         // inches
         // 0.0in is when arm is fully retracted
 
@@ -167,7 +177,7 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
     }
 
-    public double getArmLength() {
+    public double getLength() {
         double result = extendMotor.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmInch;
         return result;
     }
@@ -187,7 +197,9 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
         // wpk - need to fill this in. This is to support calibrating the arm extension by "slowly" retracting it until the limit switch is
         // reached. This will be used in conjuction with "IsAtMinExtension" by a command to calibrate the arm extension.
-
+        
+        extendMotor.set(TalonFXControlMode.Velocity, velocity);
+        
         // Please fill in this code...
     }
  

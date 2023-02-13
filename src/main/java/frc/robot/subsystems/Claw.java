@@ -28,7 +28,7 @@ public class Claw extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         // 0.0 is perpendicular to arm bar
-        setClawAngle(-armSub.getArmAngle()); // Probably doesnt work (?)
+        setClawAngle(-armSub.getAngle()); // Probably doesnt work (?)
     }
 
     public double getClawAngle() {

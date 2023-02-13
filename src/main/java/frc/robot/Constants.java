@@ -63,6 +63,8 @@ public final class Constants {
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
 
+        public static final double ExtentionCalibrationVelocity = 0; // Need to change this
+
         public static final int armExtendMotorID = 0; // change
         public static final int armLeaderMotorID = 0;
         public static final int armFollowMotorID = 0;

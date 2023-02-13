@@ -35,8 +35,8 @@ public class MoveToTopRow extends CommandBase {
     public void execute() {
 
         // wpk need to fill in the values here.
-        arm.setArmAngle(0, 0, 0);
-        arm.setArmLength(0, 0, 0);
+        arm.setAngle(0, 0, 0);
+        arm.setLength(0, 0, 0);
 
 
         arm.startProfiles();
@@ -51,6 +51,6 @@ public class MoveToTopRow extends CommandBase {
     @Override
     public boolean isFinished() {
         return Math.abs(arm
-                .getArmAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
+                .getAngle() /* subtract angle of last point in path */ ) < Constants.ArmConstants.armAngleTolerance;
     }
 }

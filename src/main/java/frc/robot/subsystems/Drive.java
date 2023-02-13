@@ -18,7 +18,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
@@ -33,7 +32,7 @@ public class Drive extends SubsystemBase {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    //private final ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
+    // private final ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
     private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
             Constants.DriveConstants.trackWidth);
@@ -122,7 +121,7 @@ public class Drive extends SubsystemBase {
     }
 
     // private double CountsPerSecondToMetersPerSecond(double counts) {
-    //     return counts * 10.0 * Constants.DriveConstants.metersPerCount;
+    // return counts * 10.0 * Constants.DriveConstants.metersPerCount;
     // }
 
     /**
@@ -138,7 +137,7 @@ public class Drive extends SubsystemBase {
     /**
      * Sets the desired wheel speeds.
      *
-     * @param leftSpeed The desired wheel speed in meters/second
+     * @param leftSpeed  The desired wheel speed in meters/second
      * @param rightSpeed The desired wheel speed in meters/second
      */
     public void setSpeeds(double leftSpeed, double rightSpeed) {
@@ -146,25 +145,28 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCounts(rightSpeed));
     }
 
-
     private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
-        double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0 * ( 1.0/ Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+        double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
+                * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
         return (s);
     }
 
     private double getRightSpeed() { // EP i never see this used anywhere, do we need it?
-        double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0 * ( 1.0/ Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+        double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0
+                * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
         return (s);
     }
 
     private double getLeftDistance() {
-        double d = (driveMotorLeftLeader.getSelectedSensorPosition() / Constants.DriveConstants.countsPerWheelRevolution)
+        double d = (driveMotorLeftLeader.getSelectedSensorPosition()
+                / Constants.DriveConstants.countsPerWheelRevolution)
                 * Constants.DriveConstants.metersPerRevolution;
         return (d);
     }
 
     private double getRightDistance() {
-        double d = (driveMotorRightLeader.getSelectedSensorPosition() / Constants.DriveConstants.countsPerWheelRevolution)
+        double d = (driveMotorRightLeader.getSelectedSensorPosition()
+                / Constants.DriveConstants.countsPerWheelRevolution)
                 * Constants.DriveConstants.metersPerRevolution;
         return (d);
     }
@@ -179,7 +181,7 @@ public class Drive extends SubsystemBase {
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
-        setSpeeds( speeds.left * Constants.DriveConstants.maxSpeed, speeds.right * Constants.DriveConstants.maxSpeed) ;
+        setSpeeds(speeds.left * Constants.DriveConstants.maxSpeed, speeds.right * Constants.DriveConstants.maxSpeed);
         // *** need to reduce max speed when arm is extended??
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed")
@@ -191,7 +193,6 @@ public class Drive extends SubsystemBase {
                 .setDouble(speeds.left * Constants.DriveConstants.maxSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/right_speed")
                 .setDouble(speeds.right * Constants.DriveConstants.maxSpeed);
-
 
     }
 
@@ -244,8 +245,6 @@ public class Drive extends SubsystemBase {
         // NetworkTableInstance.getDefault().getEntry("drive/pose/rotation").setDouble(0.0);
     }
 
-
-
     private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
         motor.configClosedloopRamp(Constants.DriveConstants.closedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.DriveConstants.manualVoltageRampingConstant);
@@ -254,12 +253,9 @@ public class Drive extends SubsystemBase {
         motor.config_kI(Constants.DriveConstants.PID_id, Constants.DriveConstants.kI);
         motor.config_kD(Constants.DriveConstants.PID_id, Constants.DriveConstants.kD);
 
-        		/* Config sensor used for Primary PID [Velocity] */
+        /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
-
-
-
 
     public void simulationInit() {
         // PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);

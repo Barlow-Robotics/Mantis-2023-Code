@@ -54,8 +54,8 @@ public class MoveArm extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        arm.setArmAngle(angle, angleVelocity, angleAcceleration);
-        arm.setArmLength(length, extensionVelocity, extensionAcceleration);
+        arm.setAngle(angle, angleVelocity, angleAcceleration);
+        arm.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called once the command ends or is interrupted.
