@@ -153,7 +153,7 @@ public class Drive extends SubsystemBase {
     }
 
     private double getRightSpeed() { // EP i never see this used anywhere, do we need it?
-        double s = -driveMotorRightLeader.getSelectedSensorVelocity() * 10.0 * ( 1.0/ Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+        double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0 * ( 1.0/ Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
         return (s);
     }
 
@@ -164,7 +164,7 @@ public class Drive extends SubsystemBase {
     }
 
     private double getRightDistance() {
-        double d = (-driveMotorRightLeader.getSelectedSensorPosition() / Constants.DriveConstants.countsPerWheelRevolution)
+        double d = (driveMotorRightLeader.getSelectedSensorPosition() / Constants.DriveConstants.countsPerWheelRevolution)
                 * Constants.DriveConstants.metersPerRevolution;
         return (d);
     }
@@ -178,15 +178,21 @@ public class Drive extends SubsystemBase {
      */
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
-        NetworkTableInstance.getDefault().getEntry("drive/xSpeed")
-                .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
-        NetworkTableInstance.getDefault().getEntry("drive/rot")
-                .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
-        NetworkTableInstance.getDefault().getEntry("drive/arcadeDrive").setDouble(100.0);
-
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
         setSpeeds( speeds.left * Constants.DriveConstants.maxSpeed, speeds.right * Constants.DriveConstants.maxSpeed) ;
         // *** need to reduce max speed when arm is extended??
+
+        NetworkTableInstance.getDefault().getEntry("drive/xSpeed")
+                .setDouble(xSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/rot")
+                .setDouble(rot);
+
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
+                .setDouble(speeds.left * Constants.DriveConstants.maxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
+                .setDouble(speeds.right * Constants.DriveConstants.maxSpeed);
+
+
     }
 
     public Pose2d getPose() {
