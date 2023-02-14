@@ -74,6 +74,9 @@ public final class Constants {
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
 
+        public static final double armRotateAcceleration = 0; // Need to change this
+        public static final double armExtendAcceleration = 0; // Need to change this
+
         public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per second
         public static final double RotationCalibrationVelocity = 0; // Need to change this
 

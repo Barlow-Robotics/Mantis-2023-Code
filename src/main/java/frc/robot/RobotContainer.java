@@ -149,26 +149,33 @@ public class RobotContainer {
         // wpk need to add other buttons here.
 
         moveToBottom = new SequentialCommandGroup(
-            new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed, 0.0, Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed, 0.0), // Constants to move OVER chasis
-            new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, 0.0, 0.0)
+            new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
+            new MoveArm(armSub, Constants.ArmConstants.BottomArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.BottomArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration)
         );
 
         moveToResting = new SequentialCommandGroup(
-            new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, 0.0, 0.0, Constants.ArmConstants.AvoidChasisArmLength, 0.0, 0.0), // Constants to move OVER chasis
-            new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0)
+            new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
+            new MoveArm(armSub, Constants.ArmConstants.RestingArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.RestingArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration)
         );
 
         moveToTopButton = new JoystickButton(operatorController, 2);
-        moveToTopButton.onTrue(new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0)); // wpk need to fill in right values from constants
+        moveToTopButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.TopArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
+                                            Constants.ArmConstants.TopArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from constants
 
         moveToMiddleButton = new JoystickButton(operatorController, 3);
-        moveToMiddleButton.onTrue(new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0)); // wpk need to fill in right values from constants
+        moveToMiddleButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.MiddleArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
+                                                Constants.ArmConstants.MiddleArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from constants
         
         moveToBottomButton = new JoystickButton(operatorController, 4);
         moveToBottomButton.onTrue(moveToBottom);
 
         moveToPlayerStationButton = new JoystickButton(operatorController, 5);
-        moveToPlayerStationButton.onTrue(new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0));
+        moveToPlayerStationButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armExtendAcceleration,
+                                                    Constants.ArmConstants.PlayerStationArmLength, Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration));
 
         moveToRestingPositionButton = new JoystickButton(operatorController, 5);
         moveToRestingPositionButton.onTrue(moveToResting);
