@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class CalibrateArmRotations extends CommandBase {
   /** Creates a new CalibrateArmRotations. */
+  
   private Arm armSub;
 
   public CalibrateArmRotations(Arm a) {

@@ -22,7 +22,7 @@ public class AlignWithCone extends CommandBase {
     private double rightVelocity;
     private int missedFrames = 0;
     private double adjustment;
-
+    
   public AlignWithCone(Vision v, Drive d) {
     driveSub = d;
     visionSub = v;

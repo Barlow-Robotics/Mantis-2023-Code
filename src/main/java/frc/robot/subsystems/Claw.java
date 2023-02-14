@@ -19,16 +19,15 @@ public class Claw extends SubsystemBase {
 
     Arm armSub;
 
-    public Claw(Arm a) {
+    public Claw() {
         clawMotor = new WPI_TalonFX(Constants.ClawConstants.clawMotorID);
-        armSub = a;
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         // 0.0 is perpendicular to arm bar
-        setClawAngle(-armSub.getAngle()); // Probably doesnt work (?)
+        setClawAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
     }
 
     public double getClawAngle() {
@@ -46,11 +45,11 @@ public class Claw extends SubsystemBase {
     }
 
     public void openClaw() {
-        // Need to make this
+        // Need to make this, need piston
     }
 
     public void closeClaw() {
-        // Need to make this
+        // Need to make this, need piston
     }
 
     public boolean clawIsOpen() {

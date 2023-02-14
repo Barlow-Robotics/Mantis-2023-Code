@@ -5,6 +5,11 @@
 package frc.robot;
 
 import frc.robot.commands.MoveArm;
+import frc.robot.commands.MoveToBottomRow;
+import frc.robot.commands.MoveToMiddleRow;
+import frc.robot.commands.MoveToPlayerStationPosition;
+import frc.robot.commands.MoveToRestingPosition;
+import frc.robot.commands.MoveToTopRow;
 // import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -29,6 +34,7 @@ public class RobotContainer {
 
     private final Drive driveSub = new Drive();
     private final Arm armSub = new Arm();
+    private final Claw clawSub = new Claw();
     // private final Underglow underglowSub = new Underglow();
     // private final Vision visionSub = new Vision();
 
@@ -47,7 +53,16 @@ public class RobotContainer {
     private int extention;
 
 
-    private Trigger gridLevel3Button ;
+    private Trigger gridLevel3Button;
+    private Trigger moveToTopButton;
+    private Trigger moveToMiddleButton;
+    private Trigger moveToBottomButton;
+    private Trigger moveToRestingPositionButton; 
+    private Trigger moveToPlayerStationButton;
+
+    private Command moveToBottom;
+    private Command moveToResting;
+    
 
     // buttons
 
@@ -61,11 +76,11 @@ public class RobotContainer {
                         () -> {
                             double x = -driverController.getRawAxis(xAxis);
                             if ( Math.abs(x) < 0.01) {
-                                x = 0.0 ;
+                                x = 0.0;
                             }
                             double yaw = -driverController.getRawAxis(yawAxis);
                             if ( Math.abs(yaw) < 0.01) {
-                                yaw = 0.0 ;
+                                yaw = 0.0;
                             }
                             // double angle = -operatorController
                             // .getRawAxis(xAxis);
@@ -92,7 +107,7 @@ public class RobotContainer {
 
                            driveSub.drive(-speed, -turn * 0.4, false);
 
-                           // driveSub.setSpeeds( -2.0, -2.0) ;
+                           // driveSub.setSpeeds( -2.0, -2.0);
                         },
                         driveSub));
 
@@ -125,27 +140,40 @@ public class RobotContainer {
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
-        // if (controllerType == "RM TX16S Joystick") {
-        // xAxis = Constants.RadioMasterConstants.leftGimbalY;
-        // yawAxis = Constants.RadioMasterConstants.rightGimbalX;
-        // } else {
         xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
         yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
-
-        // }
 
         angle = Constants.LogitechDualActionConstants.rightJoystickY;
         extention = Constants.LogitechDualActionConstants.leftJoystickY;
 
-        // wpk need to put in right constant here
-        gridLevel3Button = new JoystickButton(operatorController, 1);
-        gridLevel3Button.onTrue(new MoveArm(armSub, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)) ; // wpk need to fill in right values from constants
-
         // wpk need to add other buttons here.
 
+        moveToBottom = new SequentialCommandGroup(
+            new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed, 0.0, Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed, 0.0), // Constants to move OVER chasis
+            new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, 0.0, 0.0)
+        );
+
+        moveToResting = new SequentialCommandGroup(
+            new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, 0.0, 0.0, Constants.ArmConstants.AvoidChasisArmLength, 0.0, 0.0), // Constants to move OVER chasis
+            new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0)
+        );
+
+        moveToTopButton = new JoystickButton(operatorController, 2);
+        moveToTopButton.onTrue(new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0)); // wpk need to fill in right values from constants
+
+        moveToMiddleButton = new JoystickButton(operatorController, 3);
+        moveToMiddleButton.onTrue(new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0)); // wpk need to fill in right values from constants
+        
+        moveToBottomButton = new JoystickButton(operatorController, 4);
+        moveToBottomButton.onTrue(moveToBottom);
+
+        moveToPlayerStationButton = new JoystickButton(operatorController, 5);
+        moveToPlayerStationButton.onTrue(new MoveArm(armSub, 0.0, Constants.ArmConstants.armRotateSpeed, 0.0, 0.0, Constants.ArmConstants.armExtendSpeed, 0.0));
+
+        moveToRestingPositionButton = new JoystickButton(operatorController, 5);
+        moveToRestingPositionButton.onTrue(moveToResting);
         // wpk - move to home operation will be a special case since it needs to have arm angle above the chassis
         // prior to retracting, then lowering the arm
-
     }
 
     public Command getAutonomousCommand() {

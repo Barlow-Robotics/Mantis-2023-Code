@@ -90,13 +90,26 @@ public final class Constants {
 
         // wpk need to add constants for arm angles and extensions for:
         // Home (example. Real values may be different)
-        public static final double HomeArmAngle = 0.0;
-        public static final double HomeArmExtension = 0.0;
-        // Floor pickup
-        // Substation Pickup
-        // Grid level 1
-        // Grid level 2
-        // Grid level 3
+        public static final double RestingArmAngle = 0.0;
+        public static final double RestingArmLength = 0.0;
+
+        public static final double FloorArmAngle = 0.0;
+        public static final double FloorArmLength = 0.0;
+
+        public static final double PlayerStationArmAngle = 0.0;
+        public static final double PlayerStationArmLength = 0.0;
+
+        public static final double TopArmAngle = 0.0;
+        public static final double TopArmLength = 0.0;
+
+        public static final double MiddleArmAngle = 0.0;
+        public static final double MiddleArmLength = 0.0;
+
+        public static final double BottomArmAngle = 0.0;
+        public static final double BottomArmLength = 0.0;
+
+        public static final double AvoidChasisArmAngle = 0.0;
+        public static final double AvoidChasisArmLength = 0.0;
 
 		public static final double MinAngleOfExtention = 45; // (Generously) estimated from fusion designs, need to change (the smallest angle at which extention is permitted)
         

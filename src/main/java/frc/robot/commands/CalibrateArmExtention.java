@@ -16,7 +16,6 @@ public class CalibrateArmExtention extends CommandBase {
   public CalibrateArmExtention(Arm a) {
     // Use addRequirements() here to declare subsystem dependencies.
     a = armSub;
-
     addRequirements(armSub);
   }
 

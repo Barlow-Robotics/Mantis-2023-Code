@@ -38,15 +38,15 @@ public class Vision extends SubsystemBase {
   
   }
 
-  public boolean visionTargetIsVisible() {
+  public boolean aprilTagIsVisible() {
     //The data for this will come from the Jetson Nano via network tables.
-    return NetworkTableInstance.getDefault().getEntry("vision/vision_target_detected").getBoolean(false);
+    return NetworkTableInstance.getDefault().getEntry("vision/april_tag_detected").getBoolean(false);
   }
 
-  public double visionTargetDistanceFromCenter() {
+  public double aprilTagDistanceFromCenter() {
     //returns the number of pixels from the center of the screen to the center of the vision target. 
     //The data for this will come from the Jetson Nano via network tables.
-    return NetworkTableInstance.getDefault().getEntry("vision/vision_target_distance_from_center").getDouble(0.0);
+    return NetworkTableInstance.getDefault().getEntry("vision/april_tag_distance_from_center").getDouble(0.0);
   }
 
 
@@ -56,7 +56,7 @@ public class Vision extends SubsystemBase {
   }
 
   public double coneDistanceFromCenter() {
-    //tell how many pixels the piece of cargo is from the center of the screen.
+    //tell how many pixels the cone is from the center of the screen.
     //The data for this will come from the Jetson Nano via network tables.
     return NetworkTableInstance.getDefault().getEntry("vision/cone_distance_from_center").getDouble(0.0);
   }
@@ -67,7 +67,7 @@ public class Vision extends SubsystemBase {
   }
 
   public double cubeDistanceFromCenter() {
-    //tell how many pixels the piece of cargo is from the center of the screen.
+    //tell how many pixels the cube is from the center of the screen.
     //The data for this will come from the Jetson Nano via network tables.
     return NetworkTableInstance.getDefault().getEntry("vision/cube_distance_from_center").getDouble(0.0);
   }
@@ -78,7 +78,7 @@ public class Vision extends SubsystemBase {
   }
 
   public double poleDistanceFromCenter() {
-    //tell how many pixels the piece of cargo is from the center of the screen.
+    //tell how many pixels the pole is from the center of the screen.
     //The data for this will come from the Jetson Nano via network tables.
     return NetworkTableInstance.getDefault().getEntry("vision/pole_distance_from_center").getDouble(0.0);
   }
@@ -106,6 +106,15 @@ public class Vision extends SubsystemBase {
   public double bbPoleWidth() {
     return NetworkTableInstance.getDefault().getEntry("vision/target_bb_pole_width").getDouble(0.0);
   }
+  
+  public double bbAprilTagHeight() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_april_tag_height").getDouble(0.0);
+  }
+
+  public double bbAprilTagWidth() {
+    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_april_tag_width").getDouble(0.0);
+  }
+
 
 }
 
