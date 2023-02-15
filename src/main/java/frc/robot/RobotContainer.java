@@ -33,7 +33,7 @@ public class RobotContainer {
 
     private final Drive driveSub = new Drive();
     private final Arm armSub = new Arm();
-    private final Claw clawSub = new Claw();
+    private final Claw clawSub = new Claw(armSub);
     private final Vision visionSub = new Vision();
     // private final Underglow underglowSub = new Underglow();
     // private final Vision visionSub = new Vision();
@@ -61,9 +61,11 @@ public class RobotContainer {
     private Trigger alignWithConeButton;
     private Trigger alignWithCubeButton;
     private Trigger alignWithPoleButton;
+    private Trigger moveToFloorButton;
 
     private Command moveToBottom;
     private Command moveToResting;
+    private Command moveToFloor;
 
     // buttons
 
@@ -172,6 +174,16 @@ public class RobotContainer {
                         Constants.ArmConstants.RestingArmLength, Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
 
+        moveToFloor = new SequentialCommandGroup(
+                new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
+                new MoveArm(armSub, Constants.ArmConstants.FloorArmAngle, Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.FloorArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration));
+
         moveToTopButton = new JoystickButton(operatorController, 2);
         moveToTopButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.TopArmAngle,
                 Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
@@ -186,6 +198,16 @@ public class RobotContainer {
 
         moveToBottomButton = new JoystickButton(operatorController, 4);
         moveToBottomButton.onTrue(moveToBottom);
+
+        moveToFloorButton = new JoystickButton(operatorController, 4);
+        moveToFloorButton.onTrue(moveToFloor);
+        
+        
+
+
+
+
+        // Add a move to floor button
 
         moveToPlayerStationButton = new JoystickButton(operatorController, 5);
         moveToPlayerStationButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle,

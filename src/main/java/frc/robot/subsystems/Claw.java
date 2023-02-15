@@ -15,12 +15,13 @@ public class Claw extends SubsystemBase {
     /** Creates a new Claw. */
 
     WPI_TalonFX clawMotor; // For adjusting angle
-    // Need to add piston to open claw
+    // Need to add piston to open claw (look at Tarzan code)
 
     Arm armSub;
 
-    public Claw() {
-        clawMotor = new WPI_TalonFX(Constants.ClawConstants.clawMotorID);
+    public Claw(Arm a) { // add arm to constructors
+        armSub = a;
+        clawMotor = new WPI_TalonFX(Constants.ClawConstants.clawMotorID); // needs config 
     }
 
     @Override

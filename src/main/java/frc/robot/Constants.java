@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 public final class Constants {
 
     public static final double inchesToMeters = 0.0254;
+    public static final double secondsTo100MSec = 0.1/100;
 
     public static final class DriveConstants {
         public static final int driveMotorLeftLeaderID = 4;
@@ -61,14 +62,14 @@ public final class Constants {
 
     public static final class ArmConstants {
         public static final double rotateGearRatio = 40;
-        public static final double extendGearRatio = 1; // Need to change
+        public static final double extendGearRatio = 16;
 
         public static final double countsPerRevolution = 2048; 
         public static final double metersPerRevolution = 0 * extendGearRatio; // Need to change
         public static final double revolutionsPerDegree = 1.0/360; // Is this right?
         
         // add values when we figure out lengths
-        public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree;
+        public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree * rotateGearRatio;
         public static final double CountsPerArmInch = 0; // Need to change
 
         public static final double armRotateSpeed = 0; // Need to change this
@@ -121,13 +122,21 @@ public final class Constants {
             // public static final double MinAngleOfRetraction = 0;
 
         // Not sure, but these (124-130) might need to change (right now they're just taken from DriveConstants):
-        public static final double closedVoltageRampingConstant = 0.0;
-        public static final double manualVoltageRampingConstant = 0.0;
-        public static final double kF = 0.048;
-        public static final double kP = 0.005;
-        public static final double kI = 0.0001;
-        public static final double kD = 0.0;
-        public static final int PID_id = 0;
+        public static final double rotateclosedVoltageRampingConstant = 0.0;
+        public static final double rotatemanualVoltageRampingConstant = 0.0;
+        public static final double rotateKF = 0.048;
+        public static final double rotateKP = 0.005;
+        public static final double rotateKI = 0.0001;
+        public static final double rotateKD = 0.0;
+        public static final int rotatePID_id = 0;
+
+        public static final double extendclosedVoltageRampingConstant = 0.0;
+        public static final double extendmanualVoltageRampingConstant = 0.0;
+        public static final double extendKF = 0.048;
+        public static final double extendKP = 0.005;
+        public static final double extendKI = 0.0001;
+        public static final double extendKD = 0.0;
+        public static final int extendPID_id = 0;
 
     }
 
