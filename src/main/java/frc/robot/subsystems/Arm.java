@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -33,12 +32,12 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     // Need to change these to ARM constants, not Drive
     private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
-        motor.configClosedloopRamp(Constants.DriveConstants.closedVoltageRampingConstant);
-        motor.configOpenloopRamp(Constants.DriveConstants.manualVoltageRampingConstant);
-        motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
-        motor.config_kP(Constants.DriveConstants.PID_id, Constants.DriveConstants.kP);
-        motor.config_kI(Constants.DriveConstants.PID_id, Constants.DriveConstants.kI);
-        motor.config_kD(Constants.DriveConstants.PID_id, Constants.DriveConstants.kD);
+        motor.configClosedloopRamp(Constants.ArmConstants.closedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.ArmConstants.manualVoltageRampingConstant);
+        motor.config_kF(Constants.ArmConstants.PID_id, Constants.ArmConstants.kF);
+        motor.config_kP(Constants.ArmConstants.PID_id, Constants.ArmConstants.kP);
+        motor.config_kI(Constants.ArmConstants.PID_id, Constants.ArmConstants.kI);
+        motor.config_kD(Constants.ArmConstants.PID_id, Constants.ArmConstants.kD);
 
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);

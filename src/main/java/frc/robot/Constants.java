@@ -94,31 +94,40 @@ public final class Constants {
         // wpk need to add constants for arm angles and extensions for:
         // Home (example. Real values may be different)
         public static final double RestingArmAngle = 0.0;
-        public static final double RestingArmLength = 0.0;
+        public static final double RestingArmLength = 0.0; // Need to change this
 
-        public static final double FloorArmAngle = 0.0;
-        public static final double FloorArmLength = 0.0;
+        public static final double FloorArmAngle = 0.0; // Need to change this
+        public static final double FloorArmLength = 0.0; // Need to change this
 
-        public static final double PlayerStationArmAngle = 0.0;
-        public static final double PlayerStationArmLength = 0.0;
+        public static final double PlayerStationArmAngle = 0.0; // Need to change this
+        public static final double PlayerStationArmLength = 0.0; // Need to change this
 
-        public static final double TopArmAngle = 0.0;
-        public static final double TopArmLength = 0.0;
+        public static final double TopArmAngle = 0.0; // Need to change this
+        public static final double TopArmLength = 0.0; // Need to change this
 
-        public static final double MiddleArmAngle = 0.0;
-        public static final double MiddleArmLength = 0.0;
+        public static final double MiddleArmAngle = 0.0; // Need to change this
+        public static final double MiddleArmLength = 0.0; // Need to change this
 
-        public static final double BottomArmAngle = 0.0;
-        public static final double BottomArmLength = 0.0;
+        public static final double BottomArmAngle = 0.0; // Need to change this
+        public static final double BottomArmLength = 0.0; // Need to change this
 
-        public static final double AvoidChasisArmAngle = 0.0;
-        public static final double AvoidChasisArmLength = 0.0;
+        public static final double AvoidChasisArmAngle = 0.0; // Need to change this
+        public static final double AvoidChasisArmLength = 0.0; // Need to change this
 
 		public static final double MinAngleOfExtention = 45; // (Generously) estimated from fusion designs, need to change (the smallest angle at which extention is permitted)
         
         // wpk will probably need to add constants for minimum angle before retracting arm. This is required to avoid
         // crashing the claw into the chassis when going to home from a position where the claw is above the chassis.
             // public static final double MinAngleOfRetraction = 0;
+
+        // Not sure, but these (124-130) might need to change (right now they're just taken from DriveConstants):
+        public static final double closedVoltageRampingConstant = 0.0;
+        public static final double manualVoltageRampingConstant = 0.0;
+        public static final double kF = 0.048;
+        public static final double kP = 0.005;
+        public static final double kI = 0.0001;
+        public static final double kD = 0.0;
+        public static final int PID_id = 0;
 
     }
 
