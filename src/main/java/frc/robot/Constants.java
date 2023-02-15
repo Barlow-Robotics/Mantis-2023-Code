@@ -32,7 +32,7 @@ public final class Constants {
         public static final double maxSpeed = 4.0; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
 
-        public static final double trackWidth = 26.5 * inchesToMeters; // meters      NEED TO UPDATE
+        public static final double trackWidth = 26.5 * inchesToMeters; // meters
 
         public static final int encoderResolution = 2048; //2048 for talonfx, 4096 for talonsrx
         public static final double driveGearRatio = 9.8;

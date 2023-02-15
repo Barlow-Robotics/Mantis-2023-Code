@@ -29,8 +29,9 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
 
     int state = 0;
 
-    BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream();
+    // BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream();
 
+    // Need to change these to ARM constants, not Drive
     private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
         motor.configClosedloopRamp(Constants.DriveConstants.closedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.DriveConstants.manualVoltageRampingConstant);
@@ -76,53 +77,7 @@ public class Arm extends SubsystemBase { // Extend, move to a certain place,
     }
 
     @Override
-    public void periodic() {
-
-        // /* if button is up, just drive the motor in PercentOutput */
-        // if (robot.currentProfileButton == false) {
-        // state = 0;
-        // }
-
-        // switch (state) {
-        // /* drive extendMotor talon normally */
-        // case 0:
-        // extendMotor.set(TalonFXControlMode.Velocity,
-        // Constants.ArmConstants.armRotateSpeed);
-        // if (robot.currentProfileButton == true) {
-        // /* go to MP logic */
-        // state = 1;
-        // }
-        // break;
-
-        // /* fire the MP, and stop calling set() since that will cancel the MP */
-        // case 1:
-        // /* wait for 10 points to buffer in firmware, then transition to MP */
-        // extendMotor.startMotionProfile(bufferedStream, 10,
-        // TalonFXControlMode.MotionProfile.toControlMode());
-        // state = 2;
-        // // Instrum.printLine("MP started");
-        // break;
-
-        // /* wait for MP to finish */
-        // case 2:
-        // if (extendMotor.isMotionProfileFinished()) {
-        // // Instrum.printLine("MP finished");
-        // state = 3;
-        // }
-        // break;
-
-        // /* MP is finished, nothing to do */
-        // case 3:
-        // break;
-        // }
-
-        /* print MP values */
-        // Instrum.loop(bPrintValues, _master);
-
-        if (getAngle() < ArmConstants.MinAngleOfExtention /* smallest angle at which extention is permitted */) {
-            extendMotor.set(TalonFXControlMode.Velocity, 0);
-        }
-    }
+    public void periodic() {}
 
     public double getAngle() {
         double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
