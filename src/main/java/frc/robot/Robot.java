@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
-import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.Joystick;

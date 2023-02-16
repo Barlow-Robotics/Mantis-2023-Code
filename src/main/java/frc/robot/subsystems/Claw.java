@@ -44,7 +44,7 @@ public class Claw extends SubsystemBase {
         // if (Math.abs(getClawAngle() - desiredAngle) > ClawConstants.ClawAngleTolerance) {
         //     clawMotor.set(Constants.ClawConstants.clawSpeed);
         // }
-        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree;
+        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; //wrong I think?
         clawMotor.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 

@@ -116,9 +116,9 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
-    private double MetersPerSecondToCounts(double mps) {
-        return mps * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0;
-    }
+    // private double MetersPerSecondToCounts(double mps) {
+    //     return mps * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0;
+    // }
 
     // private double CountsPerSecondToMetersPerSecond(double counts) {
     // return counts * 10.0 * Constants.DriveConstants.metersPerCount;
@@ -130,8 +130,8 @@ public class Drive extends SubsystemBase {
      * @param speeds The desired wheel speeds.
      */
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) { // EP i never see this used anywhere, do we need it?
-        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCounts(speeds.leftMetersPerSecond));
-        driveMotorRightLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCounts(speeds.rightMetersPerSecond));
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity,(speeds.leftMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity,(speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
     }
 
     /**
@@ -141,8 +141,8 @@ public class Drive extends SubsystemBase {
      * @param rightSpeed The desired wheel speed in meters/second
      */
     public void setSpeeds(double leftSpeed, double rightSpeed) {
-        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCounts(leftSpeed));
-        driveMotorRightLeader.set(TalonFXControlMode.Velocity, MetersPerSecondToCounts(rightSpeed));
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity, (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
     }
 
     private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
