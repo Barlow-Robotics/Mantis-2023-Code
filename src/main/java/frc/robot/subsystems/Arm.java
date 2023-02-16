@@ -64,8 +64,8 @@ public class Arm extends SubsystemBase {
     }
 
     private void setExtendMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
-        motor.configClosedloopRamp(Constants.ArmConstants.extendclosedVoltageRampingConstant);
-        motor.configOpenloopRamp(Constants.ArmConstants.extendmanualVoltageRampingConstant);
+        motor.configClosedloopRamp(Constants.ArmConstants.extendClosedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.ArmConstants.extendManualVoltageRampingConstant);
         motor.config_kF(Constants.ArmConstants.extendPID_id, Constants.ArmConstants.extendKF);
         motor.config_kP(Constants.ArmConstants.extendPID_id, Constants.ArmConstants.extendKP);
         motor.config_kI(Constants.ArmConstants.extendPID_id, Constants.ArmConstants.extendKI);
@@ -75,8 +75,8 @@ public class Arm extends SubsystemBase {
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
     private void setRotateMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
-        motor.configClosedloopRamp(Constants.ArmConstants.rotateclosedVoltageRampingConstant);
-        motor.configOpenloopRamp(Constants.ArmConstants.rotatemanualVoltageRampingConstant);
+        motor.configClosedloopRamp(Constants.ArmConstants.rotateClosedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.ArmConstants.rotateManualVoltageRampingConstant);
         motor.config_kF(Constants.ArmConstants.rotatePID_id, Constants.ArmConstants.rotateKF);
         motor.config_kP(Constants.ArmConstants.rotatePID_id, Constants.ArmConstants.rotateKP);
         motor.config_kI(Constants.ArmConstants.rotatePID_id, Constants.ArmConstants.rotateKI);
@@ -91,12 +91,12 @@ public class Arm extends SubsystemBase {
     }
 
     public double getAngle() {
-        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree * Constants.secondsTo100MSec * Constants.ArmConstants.CountsPerArmDegree;
+        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
         return result;
     }
     
     public void setAngle(double desiredAngle, double cruiseVelocity, double acceleration) {
-        rotateMotorLeader.configMotionCruiseVelocity(cruiseVelocity * Constants.secondsTo100MSec * Constants.ArmConstants.CountsPerArmDegree);
+        rotateMotorLeader.configMotionCruiseVelocity(cruiseVelocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         rotateMotorLeader.configMotionAcceleration(acceleration); // convert from degrees per sec^2 to counts per 100 ms^2
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
@@ -104,18 +104,18 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean IsAtMaxAngle() {
-        return rotateMotorLeader.isFwdLimitSwitchClosed() == 1 * Constants.secondsTo100MSec * Constants.ArmConstants.CountsPerArmDegree;
+        return rotateMotorLeader.isFwdLimitSwitchClosed() == 1 * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec;
     }
 
     public boolean IsAtMinAngle() {
-        return rotateMotorLeader.isRevLimitSwitchClosed() == 1 * Constants.secondsTo100MSec * Constants.ArmConstants.CountsPerArmDegree;
+        return rotateMotorLeader.isRevLimitSwitchClosed() == 1 * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec;
     }
 
     public void StartRotatingAtVelocty(double velocity) { // Velocity in degrees per second
-        rotateMotorLeader.set(TalonFXControlMode.Velocity, velocity * Constants.secondsTo100MSec * Constants.ArmConstants.CountsPerArmDegree);
+        rotateMotorLeader.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
-    public void setLength(double desiredLength, double velocity, double acceleration) {
+    public void setLength(double desiredLength, double velocity, double accelerationTime) {
         // inches
         // 0.0in is when arm is fully retracted
 
@@ -124,8 +124,8 @@ public class Arm extends SubsystemBase {
         // extendMotor.set(Constants.ArmConstants.armExtendSpeed);
         // }
 
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.secondsTo100MSec * Constants.ArmConstants.CountsPerArmDegree);
-        extendMotor.configMotionAcceleration(acceleration);
+        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        extendMotor.configMotionAcceleration(velocity*Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime); // convert from degrees/sec/sec to counts/100Ms/sec
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
@@ -147,7 +147,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void StartExtendingAtVelocty(double velocity) {
-        extendMotor.set(TalonFXControlMode.Velocity, velocity);
+        extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
     public void StopMoving() { // Make neutral mode for extaend and rotate motors to brake

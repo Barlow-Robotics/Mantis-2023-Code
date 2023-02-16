@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
@@ -15,7 +17,9 @@ public class Claw extends SubsystemBase {
     /** Creates a new Claw. */
 
     WPI_TalonFX clawMotor; // For adjusting angle
-    // Need to add piston to open claw (look at Tarzan code)
+    Solenoid extendSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.ExtendSolenoidID);
+    Solenoid retractSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.RetractSolenoidID);
+    // Need to evetually 
 
     Arm armSub;
 
@@ -36,7 +40,6 @@ public class Claw extends SubsystemBase {
         return result;
     }
 
-    // wpk - why not set desired positon using motion magic or closed loop position control.
     public void setClawAngle(double desiredAngle) {
         // if (Math.abs(getClawAngle() - desiredAngle) > ClawConstants.ClawAngleTolerance) {
         //     clawMotor.set(Constants.ClawConstants.clawSpeed);
@@ -46,14 +49,19 @@ public class Claw extends SubsystemBase {
     }
 
     public void openClaw() {
-        // Need to make this, need piston
+        extendSolenoid.set(false);
+        retractSolenoid.set(true);      
     }
 
     public void closeClaw() {
-        // Need to make this, need piston
+        retractSolenoid.set(false);
+        extendSolenoid.set(true);
+        
     }
 
     public boolean clawIsOpen() {
-        return true; // Need to make this
+        return retractSolenoid.get() && !extendSolenoid.get();
     }
+
+    
 }

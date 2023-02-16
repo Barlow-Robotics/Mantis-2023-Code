@@ -225,6 +225,19 @@ public class Drive extends SubsystemBase {
         gyro.reset();
     }
 
+    public void balanceBot() {
+        if (Math.abs(gyro.getPitch()) > Constants.DriveConstants.balanceTolerance) {
+            
+        }
+        else if (Math.abs(gyro.getPitch()) < Constants.DriveConstants.balanceTolerance) {
+
+        }
+    }
+
+    public boolean isBotBalanced() {
+        return (Math.abs(gyro.getPitch()) > Constants.DriveConstants.balanceTolerance);
+    }
+
     private void CreateNetworkTableEntries() {
         NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(0.0);

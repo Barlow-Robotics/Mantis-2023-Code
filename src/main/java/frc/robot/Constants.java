@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 public final class Constants {
 
     public static final double inchesToMeters = 0.0254;
-    public static final double secondsTo100MSec = 0.1/100;
+    public static final double secondsTo100MSec = 0.1;
 
     public static final class DriveConstants {
         public static final int driveMotorLeftLeaderID = 4;
@@ -58,6 +58,8 @@ public final class Constants {
         public static final double kI = 0.0001;
         public static final double kD = 0.0;
         public static final int PID_id = 0;
+
+        public static final double balanceTolerance = 10; // Need to change
     }
 
     public static final class ArmConstants {
@@ -71,6 +73,8 @@ public final class Constants {
         // add values when we figure out lengths
         public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree * rotateGearRatio;
         public static final double CountsPerArmInch = 0; // Need to change
+
+        public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * secondsTo100MSec;
 
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
@@ -122,16 +126,16 @@ public final class Constants {
             // public static final double MinAngleOfRetraction = 0;
 
         // Not sure, but these (124-130) might need to change (right now they're just taken from DriveConstants):
-        public static final double rotateclosedVoltageRampingConstant = 0.0;
-        public static final double rotatemanualVoltageRampingConstant = 0.0;
+        public static final double rotateClosedVoltageRampingConstant = 0.0;
+        public static final double rotateManualVoltageRampingConstant = 0.0;
         public static final double rotateKF = 0.048;
         public static final double rotateKP = 0.005;
         public static final double rotateKI = 0.0001;
         public static final double rotateKD = 0.0;
         public static final int rotatePID_id = 0;
 
-        public static final double extendclosedVoltageRampingConstant = 0.0;
-        public static final double extendmanualVoltageRampingConstant = 0.0;
+        public static final double extendClosedVoltageRampingConstant = 0.0;
+        public static final double extendManualVoltageRampingConstant = 0.0;
         public static final double extendKF = 0.048;
         public static final double extendKP = 0.005;
         public static final double extendKI = 0.0001;
@@ -142,6 +146,8 @@ public final class Constants {
 
     public static final class ClawConstants {
         public static final int clawMotorID = 0; // change
+        public static final int ExtendSolenoidID = 0; // change
+        public static final int RetractSolenoidID = 0; // change
 
         public static final double CountsPerClawDegree = 0; // Need to change
 
