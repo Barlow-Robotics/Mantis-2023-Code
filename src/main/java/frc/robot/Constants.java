@@ -22,6 +22,9 @@ public final class Constants {
 
     public static final double inchesToMeters = 0.0254;
     public static final double secondsTo100MSec = 0.1;
+    
+    public static final double talonFXEncoderResolution = 2048;
+    public static final double talonSRXEncoderResolution = 4096;
 
     public static final class DriveConstants {
         public static final int driveMotorLeftLeaderID = 4;
@@ -29,23 +32,20 @@ public final class Constants {
         public static final int driveMotorRightLeaderID = 6;
         public static final int driveMotorRightFollowerID = 7;
 
-        //confirm variables with kinahan; move any outside of class if universal
         public static final double maxSpeed = 4.0; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
 
         public static final double trackWidth = 26.5 * inchesToMeters; // meters
 
-        public static final int encoderResolution = 2048; //2048 for talonfx, 4096 for talonsrx
         public static final double driveGearRatio = 9.8;
-        public static final double countsPerWheelRevolution = encoderResolution * driveGearRatio;
+        public static final double countsPerWheelRevolution = talonFXEncoderResolution * driveGearRatio;
         
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
         public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution;
 
         public static final double MetersPerSecondToCountsPerSecond =  RevolutionsPerMeter * countsPerWheelRevolution;
-        public static final double MaxSpeedCountsPer100MSec 
-            = maxSpeed *MetersPerSecondToCountsPerSecond / 10.0; 
+        public static final double MaxSpeedCountsPer100MSec = maxSpeed * MetersPerSecondToCountsPerSecond / 10.0; 
 
         // public static final double metersPerCount = metersPerRevolution / countsPerWheelRevolution;
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
@@ -66,12 +66,11 @@ public final class Constants {
         public static final double rotateGearRatio = 40;
         public static final double extendGearRatio = 16;
 
-        public static final double countsPerRevolution = 2048; 
         public static final double metersPerRevolution = 0 * extendGearRatio; // Need to change
         public static final double revolutionsPerDegree = 1.0/360; // Is this right?
         
         // add values when we figure out lengths
-        public static final double CountsPerArmDegree = countsPerRevolution * revolutionsPerDegree * rotateGearRatio;
+        public static final double CountsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
         public static final double CountsPerArmInch = 0; // Need to change
 
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * secondsTo100MSec;
@@ -199,8 +198,6 @@ public final class Constants {
     }
 
     public final class RadioMasterConstants {
-
-        // EP need to confirm that these are correct for RadioMasterTX12
         public static final int leftGimbalX = 0;
         public static final int leftGimbalY = 1;
         public static final int rightGimbalX = 3;
