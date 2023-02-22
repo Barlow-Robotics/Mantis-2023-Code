@@ -153,47 +153,79 @@ public class RobotContainer {
         /* * * * * * ARM BUTTONS * * * * * */
 
         moveToBottom = new SequentialCommandGroup(
-                new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed,
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.AvoidChassisArmAngle, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.AvoidChassisArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
-                new MoveArm(armSub, Constants.ArmConstants.BottomArmAngle, Constants.ArmConstants.armRotateSpeed,
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.BottomArmAngle, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.BottomArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.BottomArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
 
         // wpk - move to home operation is a special case since it needs to have arm
         // angle above the chassis prior to retracting, then lowering the arm
         moveToResting = new SequentialCommandGroup(
-                new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed,
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.AvoidChassisArmAngle, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.AvoidChassisArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
-                new MoveArm(armSub, Constants.ArmConstants.RestingArmAngle, Constants.ArmConstants.armRotateSpeed,
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.RestingArmAngle, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.RestingArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.RestingArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
 
         moveToFloor = new SequentialCommandGroup(
-                new MoveArm(armSub, Constants.ArmConstants.AvoidChasisArmAngle, Constants.ArmConstants.armRotateSpeed,
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.AvoidChassisArmAngle, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChasisArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.AvoidChassisArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
-                new MoveArm(armSub, Constants.ArmConstants.FloorArmAngle, Constants.ArmConstants.armRotateSpeed,
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.FloorArmAngle, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.FloorArmLength, Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.FloorArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
 
         moveToTopButton = new JoystickButton(operatorController, 2);
-        moveToTopButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.TopArmAngle,
-                Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
-                Constants.ArmConstants.TopArmLength, Constants.ArmConstants.armExtendSpeed,
+        moveToTopButton.onTrue(new MoveArm(
+                armSub, 
+                Constants.ArmConstants.TopArmAngle,
+                Constants.ArmConstants.armRotateSpeed, 
+                Constants.ArmConstants.armRotateAcceleration,
+                Constants.ArmConstants.TopArmLength, 
+                Constants.ArmConstants.armExtendSpeed,
                 Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from constants
 
         moveToMiddleButton = new JoystickButton(operatorController, 3);
-        moveToMiddleButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.MiddleArmAngle,
-                Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armRotateAcceleration,
-                Constants.ArmConstants.MiddleArmLength, Constants.ArmConstants.armExtendSpeed,
+        moveToMiddleButton.onTrue(new MoveArm(
+                armSub, 
+                Constants.ArmConstants.MiddleArmAngle,
+                Constants.ArmConstants.armRotateSpeed, 
+                Constants.ArmConstants.armRotateAcceleration,
+                Constants.ArmConstants.MiddleArmLength, 
+                Constants.ArmConstants.armExtendSpeed,
                 Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from constants
 
         moveToBottomButton = new JoystickButton(operatorController, 4);
@@ -201,19 +233,17 @@ public class RobotContainer {
 
         moveToFloorButton = new JoystickButton(operatorController, 4);
         moveToFloorButton.onTrue(moveToFloor);
-        
-        
-
-
-
-
-        // Add a move to floor button
 
         moveToPlayerStationButton = new JoystickButton(operatorController, 5);
-        moveToPlayerStationButton.onTrue(new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle,
-                Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.armExtendAcceleration,
-                Constants.ArmConstants.PlayerStationArmLength, Constants.ArmConstants.armExtendSpeed,
-                Constants.ArmConstants.armExtendAcceleration));
+        moveToPlayerStationButton.onTrue(
+                new MoveArm(
+                        armSub, 
+                        Constants.ArmConstants.PlayerStationArmAngle,
+                        Constants.ArmConstants.armRotateSpeed, 
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.PlayerStationArmLength, 
+                        Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration));
 
         moveToRestingPositionButton = new JoystickButton(operatorController, 5);
         moveToRestingPositionButton.onTrue(moveToResting);

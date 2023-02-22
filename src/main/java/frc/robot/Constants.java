@@ -115,8 +115,8 @@ public final class Constants {
         public static final double BottomArmAngle = 0.0; // Need to change this
         public static final double BottomArmLength = 0.0; // Need to change this
 
-        public static final double AvoidChasisArmAngle = 0.0; // Need to change this
-        public static final double AvoidChasisArmLength = 0.0; // Need to change this
+        public static final double AvoidChassisArmAngle = 0.0; // Need to change this
+        public static final double AvoidChassisArmLength = 0.0; // Need to change this
 
 		public static final double MinAngleOfExtention = 45; // (Generously) estimated from fusion designs, need to change (the smallest angle at which extention is permitted)
         

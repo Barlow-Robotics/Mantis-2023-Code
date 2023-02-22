@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+// import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -34,8 +34,8 @@ public class Drive extends SubsystemBase {
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
     // private final ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
-    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
-            Constants.DriveConstants.trackWidth);
+    // private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
+    //    Constants.DriveConstants.trackWidth);
     public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
@@ -145,17 +145,17 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.set(TalonFXControlMode.Velocity, (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
     }
 
-    private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
-        double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
-                * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
-        return (s);
-    }
+    // private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
+    //     double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
+    //             * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+    //     return (s);
+    // }
 
-    private double getRightSpeed() { // EP i never see this used anywhere, do we need it?
-        double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0
-                * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
-        return (s);
-    }
+    // private double getRightSpeed() { // EP i never see this used anywhere, do we need it?
+    //     double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0
+    //             * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+    //     return (s);
+    // }
 
     private double getLeftDistance() {
         double d = (driveMotorLeftLeader.getSelectedSensorPosition()

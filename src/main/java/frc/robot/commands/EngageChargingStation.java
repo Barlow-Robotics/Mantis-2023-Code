@@ -4,18 +4,19 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
-public class Engage extends CommandBase {
+public class EngageChargingStation extends CommandBase {
     /** Creates a new Engage. */
-    public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+    public final AHRS navX = new AHRS();
 
     private Drive driveSub;
 
-    public Engage(Drive d) {
+    public EngageChargingStation(Drive d) {
         driveSub = d;
         addRequirements(driveSub);
         // Use addRequirements() here to declare subsystem dependencies.
@@ -29,9 +30,9 @@ public class Engage extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double error = 0 - gyro.getAngle();
+        double error = 0 - navX.getPitch();
 
-        if (Math.abs(gyro.getAngle()) >= Constants.DriveConstants.balanceTolerance) {
+        if (Math.abs(navX.getAngle()) >= Constants.DriveConstants.balanceTolerance) {
             driveSub.setSpeeds(Constants.DriveConstants.kP * error, Constants.DriveConstants.kP * error);
         }
 
@@ -45,6 +46,6 @@ public class Engage extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (Math.abs(gyro.getAngle()) <= Constants.DriveConstants.balanceTolerance);
+        return (Math.abs(navX.getAngle()) <= Constants.DriveConstants.balanceTolerance);
     }
 }
