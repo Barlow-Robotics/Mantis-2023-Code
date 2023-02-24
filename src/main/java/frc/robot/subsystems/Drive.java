@@ -141,17 +141,17 @@ public class Drive extends SubsystemBase {
      * @param rightSpeed The desired wheel speed in meters/second
      */
     public void setSpeeds(double leftSpeed, double rightSpeed) {
-        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
-        driveMotorRightLeader.set(TalonFXControlMode.Velocity, (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity, (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond/ 10.0));
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity, (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0));
     }
 
-    // private double getLeftSpeed() { // EP i never see this used anywhere, do we need it?
+    // private double getLeftSpeed() { 
     //     double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
     //             * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
     //     return (s);
     // }
 
-    // private double getRightSpeed() { // EP i never see this used anywhere, do we need it?
+    // private double getRightSpeed() { 
     //     double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0
     //             * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
     //     return (s);

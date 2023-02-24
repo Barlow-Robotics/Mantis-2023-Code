@@ -17,8 +17,10 @@ public class Claw extends SubsystemBase {
     /** Creates a new Claw. */
 
     WPI_TalonFX clawMotor; // For adjusting angle
-    Solenoid extendSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.ExtendSolenoidID);
-    Solenoid retractSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.RetractSolenoidID);
+    // Solenoid extendSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.ExtendSolenoidID);
+    // Solenoid retractSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.RetractSolenoidID);
+    Solenoid extendSolenoid ; // = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.ExtendSolenoidID);
+    Solenoid retractSolenoid ; // = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */, Constants.ClawConstants.RetractSolenoidID);
     // Need to evetually 
 
     Arm armSub;
