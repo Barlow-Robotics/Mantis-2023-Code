@@ -73,6 +73,7 @@ public class Arm extends SubsystemBase {
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
+    
     private void setRotateMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
         motor.configClosedloopRamp(Constants.ArmConstants.rotateClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.ArmConstants.rotateManualVoltageRampingConstant);
