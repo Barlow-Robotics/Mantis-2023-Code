@@ -22,6 +22,7 @@ public final class Constants {
 
     public static final double inchesToMeters = 0.0254;
     public static final double secondsTo100MSec = 0.1;
+    public static final double InchesToMillimeters = inchesToMeters*1000;
     
     public static final double talonFXEncoderResolution = 2048;
     public static final double talonSRXEncoderResolution = 4096;
@@ -148,11 +149,21 @@ public final class Constants {
         public static final int ExtendSolenoidID = 0; // change
         public static final int RetractSolenoidID = 0; // change
 
+        public static final double clawClosedVoltageRampingConstant = 0.0;
+        public static final double clawManualVoltageRampingConstant = 0.0;
+        public static final double clawKF = 0.048;
+        public static final double clawKP = 0.005;
+        public static final double clawKI = 0.0001;
+        public static final double clawKD = 0.0;
+        public static final int clawPID_id = 0;
+
         public static final double CountsPerClawDegree = 0; // Need to change
 
         public static final int ClawAngleTolerance = 0; // Need to change
 
         public static final double clawSpeed = 0; // Need to change
+        public static final int DistanceSensorID = 0; // Need to change
+        public static final double InchesForAutoClosing = 2;
     }
 
     public static final class UnderGlowConstants {

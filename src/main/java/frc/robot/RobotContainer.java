@@ -113,7 +113,7 @@ public class RobotContainer {
 
                             driveSub.drive(-speed, -turn * 0.4, false);
 
-                            // driveSub.setSpeeds( 1.0, 1.0);
+                            // driveSub.setSpeeds( -2.0, -2.0);
                         },
                         driveSub));
 
