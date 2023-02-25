@@ -110,10 +110,10 @@ public class Drive extends SubsystemBase {
     }
 
     public void setDefaultNeutralMode() {
-        // driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
-        // driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
-        driveMotorLeftLeader.setNeutralMode(NeutralMode.Coast);
-        driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
+        driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
+        driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
+        // driveMotorLeftLeader.setNeutralMode(NeutralMode.Coast);
+        // driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
     // private double MetersPerSecondToCounts(double mps) {
@@ -132,6 +132,10 @@ public class Drive extends SubsystemBase {
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) { // EP i never see this used anywhere, do we need it?
         driveMotorLeftLeader.set(TalonFXControlMode.Velocity,(speeds.leftMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
         driveMotorRightLeader.set(TalonFXControlMode.Velocity,(speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
+                .setDouble(speeds.leftMetersPerSecond * Constants.DriveConstants.maxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
+                .setDouble(speeds.rightMetersPerSecond * Constants.DriveConstants.maxSpeed);
     }
 
     /**
@@ -143,6 +147,9 @@ public class Drive extends SubsystemBase {
     public void setSpeeds(double leftSpeed, double rightSpeed) {
         driveMotorLeftLeader.set(TalonFXControlMode.Velocity, (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond/ 10.0));
         driveMotorRightLeader.set(TalonFXControlMode.Velocity, (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0));
+        
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed").setDouble(leftSpeed * Constants.DriveConstants.maxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed * Constants.DriveConstants.maxSpeed);
     }
 
     // private double getLeftSpeed() { 
@@ -184,16 +191,8 @@ public class Drive extends SubsystemBase {
         setSpeeds(speeds.left * Constants.DriveConstants.maxSpeed, speeds.right * Constants.DriveConstants.maxSpeed);
         // *** need to reduce max speed when arm is extended??
 
-        NetworkTableInstance.getDefault().getEntry("drive/xSpeed")
-                .setDouble(xSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/rot")
-                .setDouble(rot);
-
-        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(speeds.left * Constants.DriveConstants.maxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(speeds.right * Constants.DriveConstants.maxSpeed);
-
+        NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
     }
 
     public Pose2d getPose() {
@@ -201,7 +200,8 @@ public class Drive extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
+        //odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
+        odometry.resetPosition(gyro.getRotation2d(), 0.0, 0.0, pose);
     }
 
     public void resetEncoders() {
