@@ -28,6 +28,9 @@ public class Claw extends SubsystemBase {
     // Add distance sensor from playing with fusion
 
     Arm armSub;
+    // private final Timer timer = new Timer();
+
+    boolean autoCloseEnabled = true;
 
     public Claw(Arm a) { // add arm to constructors
         armSub = a;
@@ -53,13 +56,12 @@ public class Claw extends SubsystemBase {
         // This method will be called once per scheduler run
         // 0.0 is perpendicular to arm bar
         setClawAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
-
-        if (distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-            closeClaw();
-        }
-        else if (distanceSensor.getRange() >= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-            openClaw();
-        }
+        
+        if (clawIsOpen() && autoCloseEnabled) {
+            if (distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+                closeClaw();
+            }
+        }  
 
     }
 
@@ -89,6 +91,18 @@ public class Claw extends SubsystemBase {
 
     public boolean clawIsOpen() {
         return retractSolenoid.get() && !extendSolenoid.get();
+    }
+
+    public void enableAutoClose() {
+        autoCloseEnabled = true;
+    }
+
+    public void disableAutoClose() {
+        autoCloseEnabled = false;
+    }
+
+    public void toggleAutoClose() {
+        autoCloseEnabled = !autoCloseEnabled;
     }
 
 }
