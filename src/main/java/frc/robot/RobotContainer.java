@@ -4,14 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.AlignWithAprilTags;
-import frc.robot.commands.AlignWithCone;
-import frc.robot.commands.AlignWithCube;
-import frc.robot.commands.AlignWithPole;
-import frc.robot.commands.MoveArm;
-// import frc.robot.commands.*;
-import frc.robot.subsystems.*;
-
 import java.util.HashMap;
 
 // import java.util.HashMap;
@@ -21,8 +13,9 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
-import edu.wpi.first.math.controller.RamseteController;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +25,15 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AlignWithAprilTags;
+import frc.robot.commands.AlignWithGamePiece;
+import frc.robot.commands.AlignWithPole;
+import frc.robot.commands.MoveArm;
+// import frc.robot.commands.*;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
 
@@ -50,11 +52,15 @@ public class RobotContainer {
     Joystick driverController; // Joystick 1
     Joystick operatorController; // Joystick 2
 
+    PIDController pid;
+
     private int xAxis;
     private int yawAxis;
+    private boolean lastAutoSteer = false;
+    private float yawMultiplier = 1.0f;
 
     private int angle;
-    private int extention;
+    private int extension;
 
     private Trigger moveToTopButton;
     private Trigger moveToMiddleButton;
@@ -62,8 +68,7 @@ public class RobotContainer {
     private Trigger moveToRestingPositionButton;
     private Trigger moveToPlayerStationButton;
     private Trigger alignWithAprilTagsButton;
-    private Trigger alignWithConeButton;
-    private Trigger alignWithCubeButton;
+    private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton;
 
@@ -81,6 +86,9 @@ public class RobotContainer {
                 // hand, and turning controlled by the right.
                 new RunCommand(
                         () -> {
+
+                            boolean autoSteer = alignWithGamePieceButton.getAsBoolean();
+
                             double x = -driverController.getRawAxis(xAxis);
                             if (Math.abs(x) < 0.01) {
                                 x = 0.0;
@@ -89,55 +97,71 @@ public class RobotContainer {
                             if (Math.abs(yaw) < 0.01) {
                                 yaw = 0.0;
                             }
-                            // double angle = -operatorController
-                            // .getRawAxis(xAxis);
-                            // double extention = -operatorController
-                            // .getRawAxis(yawAxis);
                             // fancy exponential formulas to shape the controller inputs to be flat when
                             // only pressed a little, and ramp up as stick pushed more.
                             double speed = 0.0;
                             if (x != 0) {
-                                speed = (Math.abs(x) / x) * (Math.exp(-400.0 * Math.pow(x / 3.0, 4.0)))
+                                speed = (Math.abs(x) / x) * (Math
+                                        .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
                                         + (-Math.abs(x) / x);
                             }
                             double turn = -yaw;
+                            
                             // double turn = 0.0;
                             // if (yaw != 0) {
-                            // turn = (Math.abs(yaw) / yaw) * (Math.exp(-400.0 * Math.pow(yaw / 3.0, 4.0)))
+                            // turn = (Math.abs(yaw) / yaw) * (Math.exp(-400.0 *
+                            // Math.pow(yaw / 3.0, 4.0)))
                             // + (-Math.abs(yaw) / yaw);
                             // }
-                            // The turn input results in really quick movement of the bot, so
-                            // let's reduce the turn input and make it even less if we are going faster
-                            // This is a simple y = mx + b equation to adjust the turn input based on the
-                            // speed.
+
+                            // The turn input results in really quick movement of the bot, so let's reduce
+                            // the turn input and make it even less if we are going faster. This is a simple
+                            // y = mx + b equation to adjust the turn input based on the speed.
+
                             // turn = turn * (-0.4 * Math.abs(speed) + 0.5);
+
+                            if (!autoSteer || !clawSub.clawIsOpen()) {
+                                yaw = -turn;
+
+                                yawMultiplier = (float) (0.6 + Math.abs(speed) * 0.2f);
+
+                                yaw = (Math.abs(yaw) / yaw) * (yaw * yaw) * yawMultiplier;
+                                if (Math.abs(yaw) < 0.05f) {
+                                    yaw = 0.0f;
+                                }
+                                lastAutoSteer = false;
+                            } else {
+                                if (!lastAutoSteer) {
+                                    pid.reset();
+                                }
+                                yaw = -pid.calculate(visionSub.gamePieceDistanceFromCenter());
+                                lastAutoSteer = true;
+                            }
 
                             driveSub.drive(-speed, -turn * 0.4, false);
 
-                            // driveSub.setSpeeds( -2.0, -2.0);
                         },
                         driveSub));
 
-        // armSub.setDefaultCommand(
-        // new RunCommand( // new instance
-        // () -> {
-        // double x =
-        // m_operatorController.getRawAxis(Constants.Logitech_Dual_Action.Right_Stick_X);
+        armSub.setDefaultCommand(
+                // A split-stick arcade command, with forward/backward controlled by the left
+                // hand, and turning controlled by the right.
+                new RunCommand(
+                        () -> {
+                            double x = operatorController.getRawAxis(angle);
+                            if (Math.abs(angle) < 0.01) {
+                                x = 0.0;
+                            }
 
-        // armSub.armRotate(x);
-        // double yaw =
-        // m_operatorController.getRawAxis(Constants.LogitechDual_Dual_Action.Right_Stick_yaw);
+                            double yaw = operatorController.getRawAxis(extension);
+                            if (Math.abs(extension) < 0.01) {
+                                yaw = 0.0;
+                            }
 
-        // armSub.armRotate(yaw);
-
-        // },
-        // armSub));
-
-        // Do we want the claw to open/close w/ a button?
-        // climbButton = new JoystickButton(operatorController,
-        // Constants.LogitechDualActionConstants.buttonA);
-
-        // Button.whenPressed(climbCommand);
+                            armSub.startRotatingAtVelocty(angle);
+                            armSub.startExtendingAtVelocty(extension);
+                        },
+                        armSub));
 
     }
 
@@ -151,89 +175,97 @@ public class RobotContainer {
         xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
         yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
 
-        angle = Constants.LogitechDualActionConstants.rightJoystickY;
-        extention = Constants.LogitechDualActionConstants.leftJoystickY;
+        angle = Constants.LogitechDualActionConstants.rightJoystickY; // need to check with unity sim
+        extension = Constants.LogitechDualActionConstants.leftJoystickY; // need to check with unity sim
 
         /* * * * * * ARM BUTTONS * * * * * */
 
         moveToBottom = new SequentialCommandGroup(
                 new MoveArm(
-                        armSub, 
-                        Constants.ArmConstants.AvoidChassisArmAngle, 
+                        armSub,
+                        Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChassisArmLength, 
+                        Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
+                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
+                                                                       // chasis
                 new MoveArm(
-                        armSub, 
-                        Constants.ArmConstants.BottomArmAngle, 
+                        armSub,
+                        Constants.ArmConstants.BottomArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.BottomArmLength, 
+                        Constants.ArmConstants.BottomArmLength,
                         Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
+
+        moveToBottomButton = new JoystickButton(operatorController, 4);
+        moveToBottomButton.onTrue(moveToBottom);
 
         // wpk - move to home operation is a special case since it needs to have arm
         // angle above the chassis prior to retracting, then lowering the arm
         moveToResting = new SequentialCommandGroup(
                 new MoveArm(
-                        armSub, 
-                        Constants.ArmConstants.AvoidChassisArmAngle, 
+                        armSub,
+                        Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChassisArmLength, 
+                        Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
+                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
+                                                                       // chasis
                 new MoveArm(
-                        armSub, 
-                        Constants.ArmConstants.RestingArmAngle, 
+                        armSub,
+                        Constants.ArmConstants.RestingArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.RestingArmLength, 
+                        Constants.ArmConstants.RestingArmLength,
                         Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
 
+        moveToRestingPositionButton = new JoystickButton(operatorController, 5);
+        moveToRestingPositionButton.onTrue(moveToResting);
+
         moveToFloor = new SequentialCommandGroup(
                 new MoveArm(
-                        armSub, 
-                        Constants.ArmConstants.AvoidChassisArmAngle, 
+                        armSub,
+                        Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChassisArmLength, 
+                        Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER chasis
+                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
+                                                                       // chasis
                 new MoveArm(
-                        armSub, 
-                        Constants.ArmConstants.FloorArmAngle, 
+                        armSub,
+                        Constants.ArmConstants.FloorArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.FloorArmLength, 
+                        Constants.ArmConstants.FloorArmLength,
                         Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
 
         moveToTopButton = new JoystickButton(operatorController, 2);
         moveToTopButton.onTrue(new MoveArm(
-                armSub, 
+                armSub,
                 Constants.ArmConstants.TopArmAngle,
-                Constants.ArmConstants.armRotateSpeed, 
+                Constants.ArmConstants.armRotateSpeed,
                 Constants.ArmConstants.armRotateAcceleration,
-                Constants.ArmConstants.TopArmLength, 
+                Constants.ArmConstants.TopArmLength,
                 Constants.ArmConstants.armExtendSpeed,
-                Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from constants
+                Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
+                                                                // constants
 
         moveToMiddleButton = new JoystickButton(operatorController, 3);
         moveToMiddleButton.onTrue(new MoveArm(
-                armSub, 
+                armSub,
                 Constants.ArmConstants.MiddleArmAngle,
-                Constants.ArmConstants.armRotateSpeed, 
+                Constants.ArmConstants.armRotateSpeed,
                 Constants.ArmConstants.armRotateAcceleration,
-                Constants.ArmConstants.MiddleArmLength, 
+                Constants.ArmConstants.MiddleArmLength,
                 Constants.ArmConstants.armExtendSpeed,
-                Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from constants
-
-        moveToBottomButton = new JoystickButton(operatorController, 4);
-        moveToBottomButton.onTrue(moveToBottom);
+                Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
+                                                                // constants
 
         moveToFloorButton = new JoystickButton(operatorController, 4);
         moveToFloorButton.onTrue(moveToFloor);
@@ -241,36 +273,29 @@ public class RobotContainer {
         moveToPlayerStationButton = new JoystickButton(operatorController, 5);
         moveToPlayerStationButton.onTrue(
                 new MoveArm(
-                        armSub, 
+                        armSub,
                         Constants.ArmConstants.PlayerStationArmAngle,
-                        Constants.ArmConstants.armRotateSpeed, 
+                        Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armExtendAcceleration,
-                        Constants.ArmConstants.PlayerStationArmLength, 
+                        Constants.ArmConstants.PlayerStationArmLength,
                         Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration));
-
-        moveToRestingPositionButton = new JoystickButton(operatorController, 5);
-        moveToRestingPositionButton.onTrue(moveToResting);
 
         /* * * * * * VISION BUTTONS * * * * * */
 
         alignWithAprilTagsButton = new JoystickButton(operatorController, 6);
         moveToRestingPositionButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
 
-        alignWithConeButton = new JoystickButton(operatorController, 6);
-        moveToRestingPositionButton.onTrue(new AlignWithCone(visionSub, driveSub));
-
-        alignWithCubeButton = new JoystickButton(operatorController, 6);
-        moveToRestingPositionButton.onTrue(new AlignWithCube(visionSub, driveSub));
+        alignWithGamePieceButton = new JoystickButton(operatorController, 6);
+        moveToRestingPositionButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
 
         alignWithPoleButton = new JoystickButton(operatorController, 6);
         moveToRestingPositionButton.onTrue(new AlignWithPole(visionSub, driveSub));
-
     }
 
     public Command getAutonomousCommand() {
         HashMap<String, Command> eventMap = new HashMap<>();
-        
+
         eventMap.put("event1", new PrintCommand("Passed first leg"));
         eventMap.put("event2", new PrintCommand("half way there"));
         eventMap.put("event3", new PrintCommand("almost, i swear"));
@@ -281,10 +306,9 @@ public class RobotContainer {
         RamseteController controller = new RamseteController();
 
         Command ic = new InstantCommand(() -> {
-            //driveSub.resetEncoders();
+            // driveSub.resetEncoders();
             driveSub.resetOdometry(traj.getInitialPose());
         });
-
 
         Command pathFollowingCommand = new PPRamseteCommand(
                 traj,
@@ -294,10 +318,11 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 driveSub);
-        
-        Command followPathWithEvents = new FollowPathWithEvents(pathFollowingCommand, traj.getMarkers(), eventMap) ;
 
-//        return new SequentialCommandGroup(ic, pathFollowingCommand);
+        Command followPathWithEvents = new FollowPathWithEvents(pathFollowingCommand, traj.getMarkers(),
+                eventMap);
+
+        // return new SequentialCommandGroup(ic, pathFollowingCommand);
         return new SequentialCommandGroup(ic, followPathWithEvents);
     }
 }

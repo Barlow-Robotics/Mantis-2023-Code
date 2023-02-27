@@ -103,8 +103,7 @@ public class Claw extends SubsystemBase {
         autoCloseEnabled = false;
     }
 
-    public void toggleAutoClose() {
-        autoCloseEnabled = !autoCloseEnabled;
-    }
-
+    // public void toggleAutoClose() {
+    //     autoCloseEnabled = !autoCloseEnabled;
+    // }
 }

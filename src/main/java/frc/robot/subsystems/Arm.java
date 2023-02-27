@@ -88,6 +88,11 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (getAngle() <= Constants.ArmConstants.MinAngleOfExtention) {
+
+        }
+
+
     }
 
     public double getAngle() {
@@ -103,15 +108,15 @@ public class Arm extends SubsystemBase {
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 
-    public boolean IsAtMaxAngle() {
+    public boolean isAtMaxAngle() {
         return rotateMotorLeader.isFwdLimitSwitchClosed() == 1 * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec;
     }
 
-    public boolean IsAtMinAngle() {
+    public boolean isAtMinAngle() {
         return rotateMotorLeader.isRevLimitSwitchClosed() == 1 * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec;
     }
 
-    public void StartRotatingAtVelocty(double velocity) { // Velocity in degrees per second
+    public void startRotatingAtVelocty(double velocity) { // Velocity in degrees per second
         rotateMotorLeader.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
@@ -136,21 +141,21 @@ public class Arm extends SubsystemBase {
         return result;
     }
 
-    public boolean IsAtMaxExtension() {
+    public boolean isAtMaxExtension() {
         // wpk need to read and return the value of the limit switch
         return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
     }
 
-    public boolean IsAtMinExtension() {
+    public boolean isAtMinExtension() {
         // wpk need to read and return the value of the limit switch
         return rotateMotorLeader.isRevLimitSwitchClosed() == 1;
     }
 
-    public void StartExtendingAtVelocty(double velocity) {
+    public void startExtendingAtVelocty(double velocity) {
         extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
-    public void StopMoving() { // Make neutral mode for extaend and rotate motors to brake
+    public void stopMoving() { // Make neutral mode for extaend and rotate motors to brake
         rotateMotorLeader.set(TalonFXControlMode.PercentOutput, 0.0);
         extendMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }

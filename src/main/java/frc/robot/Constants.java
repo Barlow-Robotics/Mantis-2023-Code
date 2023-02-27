@@ -98,6 +98,7 @@ public final class Constants {
 
         // wpk need to add constants for arm angles and extensions for:
         // Home (example. Real values may be different)
+        // Ang - Check https://github.com/kinahawi/FRC2023_UnityBot/blob/main/Assets/Scripts/PlayerInput.cs for values
         public static final double RestingArmAngle = 0.0;
         public static final double RestingArmLength = 0.0; // Need to change this
 

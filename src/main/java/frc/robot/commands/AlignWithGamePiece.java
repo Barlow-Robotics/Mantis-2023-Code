@@ -10,7 +10,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
-public class AlignWithCube extends CommandBase {
+public class AlignWithGamePiece extends CommandBase {
     /** Creates a new AlignWithCube. */
 
     private PIDController pid = new PIDController(0.01, 0, 0);
@@ -23,7 +23,7 @@ public class AlignWithCube extends CommandBase {
     private int missedFrames = 0;
     private double adjustment;
 
-    public AlignWithCube(Vision v, Drive d) {
+    public AlignWithGamePiece(Vision v, Drive d) {
         driveSub = d;
         visionSub = v;
         addRequirements(driveSub, visionSub);
@@ -39,8 +39,8 @@ public class AlignWithCube extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (visionSub.cubeIsVisible() && (visionSub.bbCubeWidth() > 50 || visionSub.bbCubeHeight() > 85)) {
-            error = visionSub.cubeDistanceFromCenter();
+        if (visionSub.gamePieceIsVisible() && (visionSub.bbGamePieceWidth() > 50 || visionSub.bbGamePieceHeight() > 85)) {
+            error = visionSub.gamePieceDistanceFromCenter();
             adjustment = pid.calculate(error);
             adjustment = Math.signum(adjustment)
                     * Math.min(Math.abs(adjustment), Constants.DriveConstants.CorrectionRotationSpeed / 4.0);
