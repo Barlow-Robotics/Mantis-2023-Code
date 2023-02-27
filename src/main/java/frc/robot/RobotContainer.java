@@ -106,7 +106,7 @@ public class RobotContainer {
                                         + (-Math.abs(x) / x);
                             }
                             double turn = -yaw;
-                            
+
                             // double turn = 0.0;
                             // if (yaw != 0) {
                             // turn = (Math.abs(yaw) / yaw) * (Math.exp(-400.0 *
@@ -201,9 +201,7 @@ public class RobotContainer {
 
         moveToBottomButton = new JoystickButton(operatorController, 4);
         moveToBottomButton.onTrue(moveToBottom);
-
-        // wpk - move to home operation is a special case since it needs to have arm
-        // angle above the chassis prior to retracting, then lowering the arm
+        
         moveToResting = new SequentialCommandGroup(
                 new MoveArm(
                         armSub,
@@ -246,26 +244,28 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendAcceleration));
 
         moveToTopButton = new JoystickButton(operatorController, 2);
-        moveToTopButton.onTrue(new MoveArm(
-                armSub,
-                Constants.ArmConstants.TopArmAngle,
-                Constants.ArmConstants.armRotateSpeed,
-                Constants.ArmConstants.armRotateAcceleration,
-                Constants.ArmConstants.TopArmLength,
-                Constants.ArmConstants.armExtendSpeed,
-                Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
-                                                                // constants
+        moveToTopButton.onTrue(
+                new MoveArm(
+                        armSub,
+                        Constants.ArmConstants.TopArmAngle,
+                        Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.TopArmLength,
+                        Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
+                                                                        // constants
 
         moveToMiddleButton = new JoystickButton(operatorController, 3);
-        moveToMiddleButton.onTrue(new MoveArm(
-                armSub,
-                Constants.ArmConstants.MiddleArmAngle,
-                Constants.ArmConstants.armRotateSpeed,
-                Constants.ArmConstants.armRotateAcceleration,
-                Constants.ArmConstants.MiddleArmLength,
-                Constants.ArmConstants.armExtendSpeed,
-                Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
-                                                                // constants
+        moveToMiddleButton.onTrue(
+                new MoveArm(
+                        armSub,
+                        Constants.ArmConstants.MiddleArmAngle,
+                        Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.MiddleArmLength,
+                        Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
+                                                                        // constants
 
         moveToFloorButton = new JoystickButton(operatorController, 4);
         moveToFloorButton.onTrue(moveToFloor);
