@@ -163,7 +163,8 @@ public final class Constants {
 
         public static final double clawSpeed = 0; // Need to change
         public static final int DistanceSensorID = 0; // Need to change
-        public static final double InchesForAutoClosing = 2;
+        public static final double InchesForAutoClosing = 3;
+        public static final double ClawLengthInches = 9;
     }
 
     public static final class UnderGlowConstants {

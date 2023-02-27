@@ -57,11 +57,13 @@ public class Claw extends SubsystemBase {
         // 0.0 is perpendicular to arm bar
         setClawAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
         
-        if (clawIsOpen() && autoCloseEnabled) {
-            if (distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-                closeClaw();
-            }
-        }  
+        if (clawIsOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+            closeClaw();
+            disableAutoClose();
+        }
+        else if (clawIsOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
+            enableAutoClose();
+        }
 
     }
 
