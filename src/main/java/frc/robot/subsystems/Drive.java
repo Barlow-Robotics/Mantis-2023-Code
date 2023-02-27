@@ -200,8 +200,8 @@ public class Drive extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        //odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
-        odometry.resetPosition(gyro.getRotation2d(), 0.0, 0.0, pose);
+        odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
+        //odometry.resetPosition(gyro.getRotation2d(), 0.0, 0.0, pose);
     }
 
     public void resetEncoders() {

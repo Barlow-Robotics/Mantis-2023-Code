@@ -19,6 +19,7 @@ import java.util.HashMap;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.RamseteController;
 
@@ -280,8 +281,7 @@ public class RobotContainer {
         RamseteController controller = new RamseteController();
 
         Command ic = new InstantCommand(() -> {
-            driveSub.resetEncoders();
-            System.out.println("trajectory.initial pose x is " + traj.getInitialPose().getX()) ;
+            //driveSub.resetEncoders();
             driveSub.resetOdometry(traj.getInitialPose());
         });
 
@@ -294,7 +294,10 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 driveSub);
+        
+        Command followPathWithEvents = new FollowPathWithEvents(pathFollowingCommand, traj.getMarkers(), eventMap) ;
 
-        return new SequentialCommandGroup(ic, pathFollowingCommand);
+//        return new SequentialCommandGroup(ic, pathFollowingCommand);
+        return new SequentialCommandGroup(ic, followPathWithEvents);
     }
 }
