@@ -12,11 +12,14 @@ import frc.robot.commands.MoveArm;
 // import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
+import java.util.HashMap;
+
 // import java.util.HashMap;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.RamseteController;
 
@@ -24,6 +27,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -265,19 +269,22 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // HashMap<String, Command> eventMap = new HashMap<>();
-        // eventMap.put("FirstBase", new PrintCommand("Passed first leg"));
-        // eventMap.put("half way", new PrintCommand("half way there"));
-        // eventMap.put("done", new PrintCommand("arrived at detination"));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        
+        eventMap.put("event1", new PrintCommand("Passed first leg"));
+        eventMap.put("event2", new PrintCommand("half way there"));
+        eventMap.put("event3", new PrintCommand("almost, i swear"));
+        eventMap.put("event4", new PrintCommand("arrived at detination"));
 
-        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(2, 4));
+        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(1, 4));
+
+        RamseteController controller = new RamseteController();
 
         Command ic = new InstantCommand(() -> {
-            driveSub.resetEncoders();
+            //driveSub.resetEncoders();
             driveSub.resetOdometry(traj.getInitialPose());
         });
 
-        RamseteController controller = new RamseteController();
 
         Command pathFollowingCommand = new PPRamseteCommand(
                 traj,
@@ -287,7 +294,10 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 driveSub);
+        
+        Command followPathWithEvents = new FollowPathWithEvents(pathFollowingCommand, traj.getMarkers(), eventMap) ;
 
-        return new SequentialCommandGroup(ic, pathFollowingCommand);
+//        return new SequentialCommandGroup(ic, pathFollowingCommand);
+        return new SequentialCommandGroup(ic, followPathWithEvents);
     }
 }
