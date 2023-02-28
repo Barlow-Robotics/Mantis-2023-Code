@@ -100,11 +100,6 @@ public final class Constants {
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
-        // wpk need to add constants for arm angles and extensions for:
-        // Home (example. Real values may be different)
-        // Ang - Check
-        // https://github.com/kinahawi/FRC2023_UnityBot/blob/main/Assets/Scripts/PlayerInput.cs
-        // for values
         public static final double RestingArmAngle = 0.0;
         public static final double RestingArmLength = 0.0;
 
@@ -119,24 +114,23 @@ public final class Constants {
         public static final double TopArmAngle = 110.0;
         public static final double TopArmLength = 0.7;
 
-        public static final double MiddleArmAngle = 1000.0; // Need to change this
-        public static final double MiddleArmLength = 0.05; // Need to change this
+        public static final double MiddleArmAngle = 100.0;
+        public static final double MiddleArmLength = 0.05;
 
         public static final double MiddleFromBottomArmAngle = 100.0;
         public static final double MiddleFromBottomArmLength = 0.0;
-        
+
         public static final double BottomArmAngle = 30.0;
         public static final double BottomArmLength = 0.3;
 
-        public static final double AvoidChassisArmAngle = 0.0; // Need to change this
-        public static final double AvoidChassisArmLength = 0.0; // Need to change this
+        public static final double AvoidChassisArmAngle = 30.0;
+        public static final double AvoidChassisArmLength = 0.0;
 
         public static final double MinAngleOfExtention = 45;
 
         // wpk will probably need to add constants for minimum angle before retracting
         // arm. This is required to avoid crashing the claw into the chassis when going
         // to home from a position where the claw is above the chassis.
-        // public static final double MinAngleOfRetraction = 0;
 
         // Not sure, but these (124-130) might need to change (right now they're just
         // taken from DriveConstants):

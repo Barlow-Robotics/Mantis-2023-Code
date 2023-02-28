@@ -189,8 +189,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
-                                                                       // chasis
+                        Constants.ArmConstants.armExtendAcceleration),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.BottomArmAngle,
@@ -210,7 +209,7 @@ public class RobotContainer {
                             Constants.ArmConstants.RestingFromFloorArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
                             Constants.ArmConstants.armRotateAcceleration,
-                            0, // *** Need to change (says "armContronl.Extention" in sim)
+                            0, // *** Need to change (says "armContronl.Extention" in sim) - Angela
                             Constants.ArmConstants.armExtendSpeed,
                             Constants.ArmConstants.armExtendAcceleration),
 
@@ -226,7 +225,7 @@ public class RobotContainer {
             moveToResting = new SequentialCommandGroup(
                     new MoveArm(
                             armSub,
-                            0, // *** Need to change (says "armContronl.Rotation()" in sim)
+                            0, // *** Need to change (says "armContronl.Rotation()" in sim) - Angela
                             Constants.ArmConstants.armRotateSpeed,
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.RestingArmLength,
@@ -254,8 +253,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
-                                                                       // chasis
+                        Constants.ArmConstants.armExtendAcceleration), 
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
@@ -274,8 +272,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.TopArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
-                                                                        // constants
+                        Constants.ArmConstants.armExtendAcceleration)); 
 
         moveToFloor = new SequentialCommandGroup(
                 new MoveArm(
@@ -285,8 +282,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
-                                                                       // chasis
+                        Constants.ArmConstants.armExtendAcceleration),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
@@ -318,7 +314,7 @@ public class RobotContainer {
                             Constants.ArmConstants.MiddleArmLength,
                             Constants.ArmConstants.armExtendSpeed,
                             Constants.ArmConstants.armExtendAcceleration));
-        } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim
+        } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim - Angela
             moveToMiddle = new SequentialCommandGroup(
                     new MoveArm(
                             armSub,
