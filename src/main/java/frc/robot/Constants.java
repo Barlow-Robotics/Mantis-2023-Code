@@ -22,8 +22,8 @@ public final class Constants {
 
     public static final double inchesToMeters = 0.0254;
     public static final double secondsTo100MSec = 0.1;
-    public static final double InchesToMillimeters = inchesToMeters*1000;
-    
+    public static final double InchesToMillimeters = inchesToMeters * 1000;
+
     public static final double talonFXEncoderResolution = 2048;
     public static final double talonSRXEncoderResolution = 4096;
 
@@ -34,21 +34,23 @@ public final class Constants {
         public static final int driveMotorRightFollowerID = 7;
 
         public static final double maxSpeed = 4.0; // meters per second
-        // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per second
+        // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
+        // second
 
         public static final double trackWidth = 26.5 * inchesToMeters; // meters
 
         public static final double driveGearRatio = 9.8;
         public static final double countsPerWheelRevolution = talonFXEncoderResolution * driveGearRatio;
-        
+
         public static final double wheelDiameter = 6.0 * inchesToMeters;
         public static final double metersPerRevolution = wheelDiameter * Math.PI;
         public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution;
 
-        public static final double MetersPerSecondToCountsPerSecond =  RevolutionsPerMeter * countsPerWheelRevolution;
-        public static final double MaxSpeedCountsPer100MSec = maxSpeed * MetersPerSecondToCountsPerSecond / 10.0; 
+        public static final double MetersPerSecondToCountsPerSecond = RevolutionsPerMeter * countsPerWheelRevolution;
+        public static final double MaxSpeedCountsPer100MSec = maxSpeed * MetersPerSecondToCountsPerSecond / 10.0;
 
-        // public static final double metersPerCount = metersPerRevolution / countsPerWheelRevolution;
+        // public static final double metersPerCount = metersPerRevolution /
+        // countsPerWheelRevolution;
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
@@ -68,10 +70,11 @@ public final class Constants {
         public static final double extendGearRatio = 16;
 
         public static final double metersPerRevolution = 0 * extendGearRatio; // Need to change
-        public static final double revolutionsPerDegree = 1.0/360; // Is this right?
-        
+        public static final double revolutionsPerDegree = 1.0 / 360; // Is this right?
+
         // add values when we figure out lengths
-        public static final double CountsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
+        public static final double CountsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree
+                * rotateGearRatio;
         public static final double CountsPerArmInch = 0; // Need to change
 
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * secondsTo100MSec;
@@ -82,7 +85,8 @@ public final class Constants {
         public static final double armRotateAcceleration = 0; // Need to change this
         public static final double armExtendAcceleration = 0; // Need to change this
 
-        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per second
+        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per
+                                                                     // second
         public static final double RotationCalibrationVelocity = 0; // Need to change this
 
         public static final int armExtendMotorID = 0; // Need to change
@@ -98,35 +102,44 @@ public final class Constants {
 
         // wpk need to add constants for arm angles and extensions for:
         // Home (example. Real values may be different)
-        // Ang - Check https://github.com/kinahawi/FRC2023_UnityBot/blob/main/Assets/Scripts/PlayerInput.cs for values
+        // Ang - Check
+        // https://github.com/kinahawi/FRC2023_UnityBot/blob/main/Assets/Scripts/PlayerInput.cs
+        // for values
         public static final double RestingArmAngle = 0.0;
-        public static final double RestingArmLength = 0.0; // Need to change this
+        public static final double RestingArmLength = 0.0;
 
-        public static final double FloorArmAngle = 0.0; // Need to change this
-        public static final double FloorArmLength = 0.0; // Need to change this
+        public static final double RestingFromFloorArmAngle = 50.0;
 
-        public static final double PlayerStationArmAngle = 0.0; // Need to change this
-        public static final double PlayerStationArmLength = 0.0; // Need to change this
+        public static final double FloorArmAngle = 30.0;
+        public static final double FloorArmLength = 0.3;
 
-        public static final double TopArmAngle = 0.0; // Need to change this
-        public static final double TopArmLength = 0.0; // Need to change this
+        public static final double PlayerStationArmAngle = 93.0;
+        public static final double PlayerStationArmLength = 0.0;
 
-        public static final double MiddleArmAngle = 0.0; // Need to change this
-        public static final double MiddleArmLength = 0.0; // Need to change this
+        public static final double TopArmAngle = 110.0;
+        public static final double TopArmLength = 0.7;
 
-        public static final double BottomArmAngle = 0.0; // Need to change this
-        public static final double BottomArmLength = 0.0; // Need to change this
+        public static final double MiddleArmAngle = 1000.0; // Need to change this
+        public static final double MiddleArmLength = 0.05; // Need to change this
+
+        public static final double MiddleFromBottomArmAngle = 100.0;
+        public static final double MiddleFromBottomArmLength = 0.0;
+        
+        public static final double BottomArmAngle = 30.0;
+        public static final double BottomArmLength = 0.3;
 
         public static final double AvoidChassisArmAngle = 0.0; // Need to change this
         public static final double AvoidChassisArmLength = 0.0; // Need to change this
 
-		public static final double MinAngleOfExtention = 45; // (Generously) estimated from fusion designs, need to change (the smallest angle at which extention is permitted)
-        
-        // wpk will probably need to add constants for minimum angle before retracting arm. This is required to avoid
-        // crashing the claw into the chassis when going to home from a position where the claw is above the chassis.
-            // public static final double MinAngleOfRetraction = 0;
+        public static final double MinAngleOfExtention = 45;
 
-        // Not sure, but these (124-130) might need to change (right now they're just taken from DriveConstants):
+        // wpk will probably need to add constants for minimum angle before retracting
+        // arm. This is required to avoid crashing the claw into the chassis when going
+        // to home from a position where the claw is above the chassis.
+        // public static final double MinAngleOfRetraction = 0;
+
+        // Not sure, but these (124-130) might need to change (right now they're just
+        // taken from DriveConstants):
         public static final double rotateClosedVoltageRampingConstant = 0.0;
         public static final double rotateManualVoltageRampingConstant = 0.0;
         public static final double rotateKF = 0.048;
@@ -180,9 +193,9 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = 2.25; 
+        public static final double kMaxSpeedMetersPerSecond = 2.25;
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxSpeedMetersPerSecond / 2.0;
-        public static final double kMaxAngularSpeedRadiansPerSecond = 10*Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 10 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = kMaxAngularSpeedRadiansPerSecond / 0.5;
     }
 
@@ -228,11 +241,17 @@ public final class Constants {
     }
 
     public final static double kNeutralDeadband = 0.001;
-	
-	/**
-	 * PID Gains may have to be adjusted based on the responsiveness of control loop
-	 * 	                                    			  kP   kI    kD     kF             Iz    PeakOut */
-	public final static Gains kGains_MotProf = new Gains( 1.0, 0.0,  0.0, 1023.0/6800.0,  400,  1.00 ); /* measured 6800 velocity units at full motor output */
-	
-	public final static int kPrimaryPIDSlot = 0; // any slot [0,3]
+
+    /**
+     * PID Gains may have to be adjusted based on the responsiveness of control loop
+     * kP kI kD kF Iz PeakOut
+     */
+    public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00); /*
+                                                                                                      * measured 6800
+                                                                                                      * velocity units
+                                                                                                      * at full motor
+                                                                                                      * output
+                                                                                                      */
+
+    public final static int kPrimaryPIDSlot = 0; // any slot [0,3]
 }

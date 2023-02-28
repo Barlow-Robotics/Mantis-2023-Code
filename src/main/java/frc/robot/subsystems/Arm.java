@@ -160,6 +160,10 @@ public class Arm extends SubsystemBase {
         extendMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
+    public String state() {
+        return "returnValue";
+    }
+
     // public void startProfiles() {
     // rotateMotorLeader.startMotionProfile(null, 0, ControlMode.MotionProfile); //
     // Rotate profile

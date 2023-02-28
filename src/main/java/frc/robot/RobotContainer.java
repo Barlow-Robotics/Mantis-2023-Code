@@ -73,6 +73,7 @@ public class RobotContainer {
     private Trigger moveToFloorButton;
 
     private Command moveToBottom;
+    private Command moveToMiddle;
     private Command moveToResting;
     private Command moveToFloor;
 
@@ -201,25 +202,46 @@ public class RobotContainer {
 
         moveToBottomButton = new JoystickButton(operatorController, 4);
         moveToBottomButton.onTrue(moveToBottom);
-        
-        moveToResting = new SequentialCommandGroup(
-                new MoveArm(
-                        armSub,
-                        Constants.ArmConstants.AvoidChassisArmAngle,
-                        Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.AvoidChassisArmLength,
-                        Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
-                                                                       // chasis
-                new MoveArm(
-                        armSub,
-                        Constants.ArmConstants.RestingArmAngle,
-                        Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.RestingArmLength,
-                        Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+
+        if (armSub.state().equalsIgnoreCase("Floor") || armSub.state().equalsIgnoreCase("Bottom")) {
+            moveToResting = new SequentialCommandGroup(
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.RestingFromFloorArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            0, // *** Need to change (says "armContronl.Extention" in sim)
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration),
+
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.RestingArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.RestingArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration));
+        } else {
+            moveToResting = new SequentialCommandGroup(
+                    new MoveArm(
+                            armSub,
+                            0, // *** Need to change (says "armContronl.Rotation()" in sim)
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.RestingArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration),
+
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.RestingArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.RestingArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration));
+        }
 
         moveToRestingPositionButton = new JoystickButton(operatorController, 5);
         moveToRestingPositionButton.onTrue(moveToResting);
@@ -255,31 +277,76 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
                                                                         // constants
 
-        moveToMiddleButton = new JoystickButton(operatorController, 3);
-        moveToMiddleButton.onTrue(
+        moveToFloor = new SequentialCommandGroup(
                 new MoveArm(
                         armSub,
-                        Constants.ArmConstants.MiddleArmAngle,
+                        Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
                         Constants.ArmConstants.armRotateAcceleration,
-                        Constants.ArmConstants.MiddleArmLength,
+                        Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration)); // wpk need to fill in right values from
-                                                                        // constants
+                        Constants.ArmConstants.armExtendAcceleration), // Constants to move OVER
+                                                                       // chasis
+                new MoveArm(
+                        armSub,
+                        Constants.ArmConstants.FloorArmAngle,
+                        Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.FloorArmLength,
+                        Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration));
 
         moveToFloorButton = new JoystickButton(operatorController, 4);
         moveToFloorButton.onTrue(moveToFloor);
 
+        if (armSub.state().equalsIgnoreCase("Floor") || armSub.state().equalsIgnoreCase("Bottom")) {
+            moveToMiddle = new SequentialCommandGroup(
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.MiddleFromBottomArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.MiddleFromBottomArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration),
+
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.MiddleArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.MiddleArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration));
+        } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim
+            moveToMiddle = new SequentialCommandGroup(
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.MiddleFromBottomArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.MiddleFromBottomArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration),
+
+                    new MoveArm(
+                            armSub,
+                            Constants.ArmConstants.MiddleArmAngle,
+                            Constants.ArmConstants.armRotateSpeed,
+                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.MiddleArmLength,
+                            Constants.ArmConstants.armExtendSpeed,
+                            Constants.ArmConstants.armExtendAcceleration));
+        }
+
+        moveToMiddleButton = new JoystickButton(operatorController, 3);
+        moveToMiddleButton.onTrue(moveToMiddle);
+
         moveToPlayerStationButton = new JoystickButton(operatorController, 5);
         moveToPlayerStationButton.onTrue(
-                new MoveArm(
-                        armSub,
-                        Constants.ArmConstants.PlayerStationArmAngle,
-                        Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
-                        Constants.ArmConstants.PlayerStationArmLength,
-                        Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+                new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle, Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armExtendAcceleration, Constants.ArmConstants.PlayerStationArmLength,
+                        Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration));
 
         /* * * * * * VISION BUTTONS * * * * * */
 
