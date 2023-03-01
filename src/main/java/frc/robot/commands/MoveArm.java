@@ -53,7 +53,7 @@ public class MoveArm extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        armSub.setState(state);
+        armSub.setState(Arm.Position.Transition);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -74,6 +74,7 @@ public class MoveArm extends CommandBase {
     public boolean isFinished() {
         if (Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.armAngleTolerance
                 && Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.armLengthTolerance) {
+            armSub.setState(state);
             return true;
         } else {
             return false;

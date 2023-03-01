@@ -410,10 +410,10 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         HashMap<String, Command> eventMap = new HashMap<>();
 
-        eventMap.put("event1", new PrintCommand("Passed first leg"));
-        eventMap.put("event2", new PrintCommand("half way there"));
-        eventMap.put("event3", new PrintCommand("almost, i swear"));
-        eventMap.put("event4", new PrintCommand("arrived at detination"));
+        eventMap.put("event1", new PrintCommand("\t\t\t*** PASSED FIRST LEG ***"));
+        eventMap.put("event2", new PrintCommand("\t\t\t*** HALF WAY THERE (living on a prayer) ***"));
+        eventMap.put("event3", new PrintCommand("\t\t\t*** ALMOST, I SWEAR ***"));
+        eventMap.put("event4", new PrintCommand("\t\t\t*** ARRIVED AT DESTINATION ***"));
 
         PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(1, 4));
 
