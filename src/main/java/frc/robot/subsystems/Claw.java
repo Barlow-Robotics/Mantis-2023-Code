@@ -20,10 +20,10 @@ public class Claw extends SubsystemBase {
 
     WPI_TalonFX clawMotor; // For adjusting angle
     Solenoid extendSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
-            Constants.ClawConstants.ExtendSolenoidID);
+            Constants.ClawConstants.extendSolenoidID);
     Solenoid retractSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
-            Constants.ClawConstants.RetractSolenoidID);
-    TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.DistanceSensorID);
+            Constants.ClawConstants.retractSolenoidID);
+    TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.distanceSensorID);
 
     // Add distance sensor from playing with fusion
 
@@ -57,18 +57,18 @@ public class Claw extends SubsystemBase {
         // 0.0 is perpendicular to arm bar
         setClawAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
         
-        if (clawIsOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+        if (clawIsOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.inchesForAutoClosing) * Constants.InchesToMillimeters) {
             closeClaw();
             disableAutoClose();
         }
-        else if (clawIsOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
+        else if (clawIsOpen() && distanceSensor.getRange() >= (ClawConstants.clawLengthInches) * Constants.InchesToMillimeters) {
             enableAutoClose();
         }
 
     }
 
     public double getClawAngle() {
-        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.CountsPerClawDegree;
+        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.countsPerClawDegree;
         return result;
     }
 
@@ -77,7 +77,7 @@ public class Claw extends SubsystemBase {
         // ClawConstants.ClawAngleTolerance) {
         // clawMotor.set(Constants.ClawConstants.clawSpeed);
         // }
-        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; 
+        double setAngle = desiredAngle * ClawConstants.countsPerClawDegree; 
         clawMotor.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 

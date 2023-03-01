@@ -73,10 +73,10 @@ public final class Constants {
         public static final double revolutionsPerDegree = 1.0 / 360; // Is this right?
 
         // add values when we figure out lengths
-        public static final double CountsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
-        public static final double CountsPerArmInch = 0; // Need to change
+        public static final double countsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
+        public static final double countsPerArmInch = 0; // Need to change
 
-        public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * secondsTo100MSec;
+        public static final double degreesPerSecToCountsPer100MSec = countsPerArmDegree * secondsTo100MSec;
 
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
@@ -91,17 +91,19 @@ public final class Constants {
         public static final int armLeaderMotorID = 0; // Need to change
         public static final int armFollowMotorID = 0; // Need to change
 
-        public static final int AccelerationSmoothing = 2;
+        public static final int accelerationSmoothing = 2;
 
         public static final int armAngleTolerance = 2; // Need to change this
         public static final int armLengthTolerance = 2; // Need to change this
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
-        public static final double RestingArmAngle = 0.0;
-        public static final double RestingArmLength = 0.0;
+        /* Automatic Arm Positioning Constants */
 
-        public static final double RestingFromFloorArmAngle = 50.0;
+        public static final double restingArmAngle = 0.0;
+        public static final double restingArmLength = 0.0;
+
+        public static final double restingFromFloorArmAngle = 50.0; //ask angela 
 
         public static final double FloorArmAngle = 30.0;
         public static final double FloorArmLength = 0.3;
@@ -118,20 +120,30 @@ public final class Constants {
         public static final double MiddleFromBottomArmAngle = 100.0;
         public static final double MiddleFromBottomArmLength = 0.0;
 
-        public static final double BottomArmAngle = 30.0;
-        public static final double BottomArmLength = 0.3;
+        public static final double bottomArmAngle = 30.0;
+        public static final double bottomArmLength = 0.3;
 
-        public static final double AvoidChassisArmAngle = 30.0;
-        public static final double AvoidChassisArmLength = 0.0;
+        public static final double avoidChassisArmAngle = 30.0;
+        public static final double avoidChassisArmLength = 0.0;
 
-        public static final double MinAngleOfExtention = 45;
+        public static final double armMinAngle = 0.0;
+        public static final double armMaxAngle = 120.0;
+        public static final double armMinLength = 0.0;
+        public static final double armMaxLength = 32.0; //need to confirm (inches)
+
+        public static final double angleVel = 0.5;
+        public static final double angleAccelerationTime = angleVel * 4.0;
+        public static final double angleMultiplier = 0.5;
+
+        public static final double lengthVel = 0.5;
+        public static final double lengthAccelTime = lengthVel * 4.0;
+        public static final double lengthMultiplier = 0.5;
 
         // wpk will probably need to add constants for minimum angle before retracting
         // arm. This is required to avoid crashing the claw into the chassis when going
         // to home from a position where the claw is above the chassis.
 
-        // Not sure, but these (124-130) might need to change (right now they're just
-        // taken from DriveConstants):
+        // Not sure, but these (124-130) might need to change (right now they're just taken from DriveConstants):
         public static final double rotateClosedVoltageRampingConstant = 0.0;
         public static final double rotateManualVoltageRampingConstant = 0.0;
         public static final double rotateKF = 0.048;
@@ -140,20 +152,20 @@ public final class Constants {
         public static final double rotateKD = 0.0;
         public static final int rotatePID_id = 0;
 
-        public static final double extendClosedVoltageRampingConstant = 0.0;
-        public static final double extendManualVoltageRampingConstant = 0.0;
-        public static final double extendKF = 0.048;
-        public static final double extendKP = 0.005;
-        public static final double extendKI = 0.0001;
-        public static final double extendKD = 0.0;
-        public static final int extendPID_id = 0;
+        public static final double lengthClosedVoltageRampingConstant = 0.0;
+        public static final double lengthManualVoltageRampingConstant = 0.0;
+        public static final double lengthKF = 0.048;
+        public static final double lengthKP = 0.005;
+        public static final double lengthKI = 0.0001;
+        public static final double lengthKD = 0.0;
+        public static final int lengthPID_id = 0;
 
     }
 
     public static final class ClawConstants {
         public static final int clawMotorID = 0; // change
-        public static final int ExtendSolenoidID = 0; // change
-        public static final int RetractSolenoidID = 0; // change
+        public static final int extendSolenoidID = 0; // change
+        public static final int retractSolenoidID = 0; // change
 
         public static final double clawClosedVoltageRampingConstant = 0.0;
         public static final double clawManualVoltageRampingConstant = 0.0;
@@ -163,14 +175,14 @@ public final class Constants {
         public static final double clawKD = 0.0;
         public static final int clawPID_id = 0;
 
-        public static final double CountsPerClawDegree = 0; // Need to change
+        public static final double countsPerClawDegree = 0; // Need to change
 
-        public static final int ClawAngleTolerance = 0; // Need to change
+        public static final int clawAngleTolerance = 0; // Need to change
 
         public static final double clawSpeed = 0; // Need to change
-        public static final int DistanceSensorID = 0; // Need to change
-        public static final double InchesForAutoClosing = 3;
-        public static final double ClawLengthInches = 9;
+        public static final int distanceSensorID = 0; // Need to change
+        public static final double inchesForAutoClosing = 3;
+        public static final double clawLengthInches = 9;
     }
 
     public static final class UnderGlowConstants {
