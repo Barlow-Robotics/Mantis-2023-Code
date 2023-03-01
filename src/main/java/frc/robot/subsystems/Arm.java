@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 
-public class Arm extends SubsystemBase { 
+public class Arm extends SubsystemBase {
     /** Creates a new Arm. */
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
@@ -25,7 +25,13 @@ public class Arm extends SubsystemBase {
 
     double x = Constants.ArmConstants.rotateGearRatio;
 
-    public String armState;
+    // public String armState;
+
+    public enum Position {
+        Resting, Bottom, Middle, Top, Floor, PlayerStation, Transition
+    };
+
+    public Position armState = Position.Resting;
 
     // BufferedTrajectoryPointStream bufferedStream = new
     // BufferedTrajectoryPointStream();
@@ -73,7 +79,7 @@ public class Arm extends SubsystemBase {
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
-    
+
     private void setRotateMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
         motor.configClosedloopRamp(Constants.ArmConstants.rotateClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.ArmConstants.rotateManualVoltageRampingConstant);
@@ -88,20 +94,19 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getAngle() <= Constants.ArmConstants.MinAngleOfExtention) {  }
+        if (getAngle() <= Constants.ArmConstants.MinAngleOfExtention) {
+        }
     }
-    
-
-    
 
     public double getAngle() {
         double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
         return result;
     }
-    
+
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
         rotateMotorLeader.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.configMotionAcceleration(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime); 
+        rotateMotorLeader.configMotionAcceleration(
+                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle);
@@ -116,7 +121,8 @@ public class Arm extends SubsystemBase {
     }
 
     public void startRotatingAtVelocty(double velocity) { // Velocity in degrees per second
-        rotateMotorLeader.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rotateMotorLeader.set(TalonFXControlMode.Velocity,
+                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
     public void setLength(double desiredLength, double velocity, double accelerationTime) {
@@ -129,7 +135,8 @@ public class Arm extends SubsystemBase {
         // }
 
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime); 
+        extendMotor.configMotionAcceleration(
+                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
@@ -141,12 +148,10 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean isAtMaxExtension() {
-        // wpk need to read and return the value of the limit switch
         return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
     }
 
     public boolean isAtMinExtension() {
-        // wpk need to read and return the value of the limit switch
         return rotateMotorLeader.isRevLimitSwitchClosed() == 1;
     }
 
@@ -159,8 +164,12 @@ public class Arm extends SubsystemBase {
         extendMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
-    public void setState(String returnValue) {
+    public void setState(Position returnValue) {
         armState = returnValue;
+    }
+
+    public Position getState() {
+        return armState;
     }
 
     // public void startProfiles() {

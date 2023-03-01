@@ -35,6 +35,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Arm.Position;
 
 public class RobotContainer {
 
@@ -174,7 +175,7 @@ public class RobotContainer {
                             armSub.setAngle(desiredAngle, angleVel, angleAccelerationTime);
 
                             /* Extension */
-                            double extensionVel = 0.5; 
+                            double extensionVel = 0.5;
                             double extensionAccelTime = 0.5;
                             double desiredLength = armSub.getLength();
 
@@ -217,7 +218,8 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration),
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Transition),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.BottomArmAngle,
@@ -225,22 +227,24 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.BottomArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Bottom));
 
         moveToBottomButton = new JoystickButton(operatorController, 4);
         moveToBottomButton.onTrue(moveToBottom);
 
-        if (armSub.armState.equalsIgnoreCase("Floor") || armSub.armState.equalsIgnoreCase("Bottom")) {
+        if (armSub.armState == Position.Bottom || armSub.armState == Position.Floor) {
             moveToResting = new SequentialCommandGroup(
                     new MoveArm(
-                            armSub, 
+                            armSub,
                             Constants.ArmConstants.RestingFromFloorArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
                             Constants.ArmConstants.armRotateAcceleration,
                             0, // *** Need to change (says "armContronl.Extention" in sim) -
                                // Angela
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration),
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Transition),
 
                     new MoveArm(
                             armSub,
@@ -249,7 +253,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.RestingArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration));
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Resting));
         } else {
             moveToResting = new SequentialCommandGroup(
                     new MoveArm(
@@ -260,7 +265,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.RestingArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration),
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Transition),
 
                     new MoveArm(
                             armSub,
@@ -269,7 +275,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.RestingArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration));
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Resting));
         }
 
         moveToRestingPositionButton = new JoystickButton(operatorController, 5);
@@ -283,7 +290,8 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration),
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Transition),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
@@ -291,7 +299,8 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.FloorArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Floor));
 
         moveToTopButton = new JoystickButton(operatorController, 2);
         moveToTopButton.onTrue(
@@ -302,7 +311,8 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.TopArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Top));
 
         moveToFloor = new SequentialCommandGroup(
                 new MoveArm(
@@ -312,7 +322,8 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration),
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Transition),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
@@ -320,12 +331,13 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.FloorArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.Floor));
 
         moveToFloorButton = new JoystickButton(operatorController, 4);
         moveToFloorButton.onTrue(moveToFloor);
 
-        if (armSub.armState.equalsIgnoreCase("Floor") || armSub.armState.equalsIgnoreCase("Bottom")) {
+        if (armSub.armState == Position.Bottom || armSub.armState == Position.Floor) {
             moveToMiddle = new SequentialCommandGroup(
                     new MoveArm(
                             armSub,
@@ -334,7 +346,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.MiddleFromBottomArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration),
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Transition),
 
                     new MoveArm(
                             armSub,
@@ -343,7 +356,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.MiddleArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration));
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Middle));
         } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim
                  // - Angela
             moveToMiddle = new SequentialCommandGroup(
@@ -354,7 +368,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.MiddleFromBottomArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration),
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Transition),
 
                     new MoveArm(
                             armSub,
@@ -363,7 +378,8 @@ public class RobotContainer {
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.MiddleArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration));
+                            Constants.ArmConstants.armExtendAcceleration,
+                            Position.Middle));
         }
 
         moveToMiddleButton = new JoystickButton(operatorController, 3);
@@ -376,17 +392,18 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendAcceleration,
                         Constants.ArmConstants.PlayerStationArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration));
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Position.PlayerStation));
 
         /* * * * * * VISION BUTTONS * * * * * */
 
         alignWithAprilTagsButton = new JoystickButton(operatorController, 6);
         moveToRestingPositionButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
 
-        alignWithGamePieceButton = new JoystickButton(operatorController, 6);
+        alignWithGamePieceButton = new JoystickButton(operatorController, 7);
         moveToRestingPositionButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
 
-        alignWithPoleButton = new JoystickButton(operatorController, 6);
+        alignWithPoleButton = new JoystickButton(operatorController, 8);
         moveToRestingPositionButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
 
