@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AlignWithAprilTags;
 import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
@@ -98,7 +99,8 @@ public class RobotContainer {
                             if (Math.abs(yaw) < 0.01) {
                                 yaw = 0.0;
                             }
-                            // fancy exponential formulas to shape the controller inputs to be flat when
+                            // fancy exponential formulas to shape the controller inputs to
+                            // be flat when
                             // only pressed a little, and ramp up as stick pushed more.
                             double speed = 0.0;
                             if (x != 0) {
@@ -115,9 +117,12 @@ public class RobotContainer {
                             // + (-Math.abs(yaw) / yaw);
                             // }
 
-                            // The turn input results in really quick movement of the bot, so let's reduce
-                            // the turn input and make it even less if we are going faster. This is a simple
-                            // y = mx + b equation to adjust the turn input based on the speed.
+                            // The turn input results in really quick movement of the bot,
+                            // so let's reduce
+                            // the turn input and make it even less if we are going faster.
+                            // This is a simple
+                            // y = mx + b equation to adjust the turn input based on the
+                            // speed.
 
                             // turn = turn * (-0.4 * Math.abs(speed) + 0.5);
 
@@ -126,7 +131,8 @@ public class RobotContainer {
 
                                 yawMultiplier = (float) (0.6 + Math.abs(speed) * 0.2f);
 
-                                yaw = (Math.abs(yaw) / yaw) * (yaw * yaw) * yawMultiplier;
+                                yaw = (Math.abs(yaw) / yaw) * (yaw * yaw)
+                                        * yawMultiplier;
                                 if (Math.abs(yaw) < 0.05f) {
                                     yaw = 0.0f;
                                 }
@@ -135,7 +141,8 @@ public class RobotContainer {
                                 if (!lastAutoSteer) {
                                     pid.reset();
                                 }
-                                yaw = -pid.calculate(visionSub.gamePieceDistanceFromCenter());
+                                yaw = -pid.calculate(visionSub
+                                        .gamePieceDistanceFromCenter());
                                 lastAutoSteer = true;
                             }
 
@@ -149,21 +156,42 @@ public class RobotContainer {
                 // hand, and turning controlled by the right.
                 new RunCommand(
                         () -> {
-                            double x = operatorController.getRawAxis(angle);
+                            /* Angle */
+                            double angleVel = 0.5;
+                            double angleAccelerationTime = 0.5;
+
+                            double desiredAngle = operatorController.getRawAxis(angle);
                             if (Math.abs(angle) < 0.01) {
-                                x = 0.0;
+                                desiredAngle = armSub.getAngle();
                             }
 
-                            double yaw = operatorController.getRawAxis(extension);
+                            if (armSub.isAtMinAngle() || armSub.isAtMaxAngle()) {
+                                desiredAngle = desiredAngle - 1;
+                            } else {
+                                desiredAngle = desiredAngle + 1;
+                            }
+
+                            armSub.setAngle(desiredAngle, angleVel, angleAccelerationTime);
+
+                            /* Extension */
+                            double extensionVel = 0.5; 
+                            double extensionAccelTime = 0.5;
+                            double desiredLength = armSub.getLength();
+
+                            double lengthIncrement = operatorController.getRawAxis(extension);
                             if (Math.abs(extension) < 0.01) {
-                                yaw = 0.0;
+                                desiredLength = armSub.getLength();
                             }
 
-                            armSub.startRotatingAtVelocty(angle);
-                            armSub.startExtendingAtVelocty(extension);
+                            if (armSub.isAtMinExtension() || armSub.isAtMaxExtension()) {
+                                desiredLength = desiredLength + lengthIncrement;
+                            } else {
+                                desiredLength = desiredLength + lengthIncrement;
+                            }
+
+                            armSub.setLength(desiredLength, extensionVel, extensionAccelTime);
                         },
                         armSub));
-
     }
 
     private void configureButtonBindings() {
@@ -176,8 +204,8 @@ public class RobotContainer {
         xAxis = Constants.LogitechDualActionConstants.leftJoystickY;
         yawAxis = Constants.LogitechDualActionConstants.rightJoystickX;
 
-        angle = Constants.LogitechDualActionConstants.rightJoystickY; // need to check with unity sim
-        extension = Constants.LogitechDualActionConstants.leftJoystickY; // need to check with unity sim
+        angle = Constants.LogitechDualActionConstants.leftJoystickY; // need to check with unity sim
+        extension = Constants.LogitechDualActionConstants.rightJoystickX; // need to check with unity sim
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -209,7 +237,8 @@ public class RobotContainer {
                             Constants.ArmConstants.RestingFromFloorArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
                             Constants.ArmConstants.armRotateAcceleration,
-                            0, // *** Need to change (says "armContronl.Extention" in sim) - Angela
+                            0, // *** Need to change (says "armContronl.Extention" in sim) -
+                               // Angela
                             Constants.ArmConstants.armExtendSpeed,
                             Constants.ArmConstants.armExtendAcceleration),
 
@@ -225,7 +254,8 @@ public class RobotContainer {
             moveToResting = new SequentialCommandGroup(
                     new MoveArm(
                             armSub,
-                            0, // *** Need to change (says "armContronl.Rotation()" in sim) - Angela
+                            0, // *** Need to change (says "armContronl.Rotation()" in sim)
+                               // - Angela
                             Constants.ArmConstants.armRotateSpeed,
                             Constants.ArmConstants.armRotateAcceleration,
                             Constants.ArmConstants.RestingArmLength,
@@ -253,7 +283,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration), 
+                        Constants.ArmConstants.armExtendAcceleration),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
@@ -272,7 +302,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armRotateAcceleration,
                         Constants.ArmConstants.TopArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration)); 
+                        Constants.ArmConstants.armExtendAcceleration));
 
         moveToFloor = new SequentialCommandGroup(
                 new MoveArm(
@@ -314,7 +344,8 @@ public class RobotContainer {
                             Constants.ArmConstants.MiddleArmLength,
                             Constants.ArmConstants.armExtendSpeed,
                             Constants.ArmConstants.armExtendAcceleration));
-        } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim - Angela
+        } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim
+                 // - Angela
             moveToMiddle = new SequentialCommandGroup(
                     new MoveArm(
                             armSub,
@@ -340,9 +371,12 @@ public class RobotContainer {
 
         moveToPlayerStationButton = new JoystickButton(operatorController, 5);
         moveToPlayerStationButton.onTrue(
-                new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle, Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armExtendAcceleration, Constants.ArmConstants.PlayerStationArmLength,
-                        Constants.ArmConstants.armExtendSpeed, Constants.ArmConstants.armExtendAcceleration));
+                new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle,
+                        Constants.ArmConstants.armRotateSpeed,
+                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.PlayerStationArmLength,
+                        Constants.ArmConstants.armExtendSpeed,
+                        Constants.ArmConstants.armExtendAcceleration));
 
         /* * * * * * VISION BUTTONS * * * * * */
 

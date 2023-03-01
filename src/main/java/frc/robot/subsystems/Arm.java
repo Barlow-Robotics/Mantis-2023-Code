@@ -88,11 +88,6 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getAngle() <= Constants.ArmConstants.MinAngleOfExtention) {
-
-        }
-
-
     }
 
     public double getAngle() {
@@ -100,9 +95,9 @@ public class Arm extends SubsystemBase {
         return result;
     }
     
-    public void setAngle(double desiredAngle, double cruiseVelocity, double acceleration) {
-        rotateMotorLeader.configMotionCruiseVelocity(cruiseVelocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.configMotionAcceleration(acceleration); // convert from degrees per sec^2 to counts per 100 ms^2
+    public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
+        rotateMotorLeader.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rotateMotorLeader.configMotionAcceleration(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime); 
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle);
@@ -130,7 +125,7 @@ public class Arm extends SubsystemBase {
         // }
 
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(velocity*Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime); // convert from degrees/sec/sec to counts/100Ms/sec
+        extendMotor.configMotionAcceleration(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime); 
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength);

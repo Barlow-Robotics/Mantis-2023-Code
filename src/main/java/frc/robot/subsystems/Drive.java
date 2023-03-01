@@ -129,7 +129,7 @@ public class Drive extends SubsystemBase {
      *
      * @param speeds The desired wheel speeds.
      */
-    public void setSpeeds(DifferentialDriveWheelSpeeds speeds) { // EP i never see this used anywhere, do we need it?
+    public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
         driveMotorLeftLeader.set(TalonFXControlMode.Velocity,(speeds.leftMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
         driveMotorRightLeader.set(TalonFXControlMode.Velocity,(speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
         NetworkTableInstance.getDefault().getEntry("drive/left_speed")
