@@ -230,10 +230,10 @@ public class RobotContainer {
         moveToBottomButton = new JoystickButton(operatorController, 4);
         moveToBottomButton.onTrue(moveToBottom);
 
-        if (armSub.state().equalsIgnoreCase("Floor") || armSub.state().equalsIgnoreCase("Bottom")) {
+        if (armSub.armState.equalsIgnoreCase("Floor") || armSub.armState.equalsIgnoreCase("Bottom")) {
             moveToResting = new SequentialCommandGroup(
                     new MoveArm(
-                            armSub,
+                            armSub, 
                             Constants.ArmConstants.RestingFromFloorArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
                             Constants.ArmConstants.armRotateAcceleration,
@@ -325,7 +325,7 @@ public class RobotContainer {
         moveToFloorButton = new JoystickButton(operatorController, 4);
         moveToFloorButton.onTrue(moveToFloor);
 
-        if (armSub.state().equalsIgnoreCase("Floor") || armSub.state().equalsIgnoreCase("Bottom")) {
+        if (armSub.armState.equalsIgnoreCase("Floor") || armSub.armState.equalsIgnoreCase("Bottom")) {
             moveToMiddle = new SequentialCommandGroup(
                     new MoveArm(
                             armSub,

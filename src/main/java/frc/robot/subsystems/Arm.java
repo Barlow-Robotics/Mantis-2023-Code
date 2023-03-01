@@ -25,7 +25,7 @@ public class Arm extends SubsystemBase {
 
     double x = Constants.ArmConstants.rotateGearRatio;
 
-    int state = 0;
+    public String armState;
 
     // BufferedTrajectoryPointStream bufferedStream = new
     // BufferedTrajectoryPointStream();
@@ -88,7 +88,11 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (getAngle() <= Constants.ArmConstants.MinAngleOfExtention) {  }
     }
+    
+
+    
 
     public double getAngle() {
         double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
@@ -155,8 +159,8 @@ public class Arm extends SubsystemBase {
         extendMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
-    public String state() {
-        return "returnValue";
+    public void setState(String returnValue) {
+        armState = returnValue;
     }
 
     // public void startProfiles() {
