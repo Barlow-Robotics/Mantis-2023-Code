@@ -75,6 +75,7 @@ public final class Constants {
         // add values when we figure out lengths
         public static final double countsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
         public static final double countsPerArmInch = 0; // Need to change
+        public static final double CountsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree
                 * rotateGearRatio;
         public static final double CountsPerArmInch = 0; // Need to change
 
