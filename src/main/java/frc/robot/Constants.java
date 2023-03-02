@@ -75,6 +75,8 @@ public final class Constants {
         // add values when we figure out lengths
         public static final double countsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
         public static final double countsPerArmInch = 0; // Need to change
+                * rotateGearRatio;
+        public static final double CountsPerArmInch = 0; // Need to change
 
         public static final double degreesPerSecToCountsPer100MSec = countsPerArmDegree * secondsTo100MSec;
 
@@ -84,7 +86,8 @@ public final class Constants {
         public static final double armRotateAcceleration = 0; // Need to change this
         public static final double armExtendAcceleration = 0; // Need to change this
 
-        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per second
+        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per
+                                                                     // second
         public static final double RotationCalibrationVelocity = 0; // Need to change this
 
         public static final int armExtendMotorID = 0; // Need to change
