@@ -20,66 +20,73 @@ import edu.wpi.first.wpilibj.SerialPort;
  */
 public final class Constants {
 
-    public static final double inchesToMeters = 0.0254;
-    public static final double secondsTo100MSec = 0.1;
-    public static final double InchesToMillimeters = inchesToMeters * 1000;
+    public static final double InchesToMeters = 0.0254;
+    public static final double SecondsTo100MSec = 0.1;
+    public static final double InchesToMillimeters = InchesToMeters * 1000;
 
-    public static final double talonFXEncoderResolution = 2048;
-    public static final double talonSRXEncoderResolution = 4096;
+    public static final double TalonFXEncoderResolution = 2048;
+    public static final double TalonSRXEncoderResolution = 4096;
+
+    public final static double kNeutralDeadband = 0.001;
+
+    // PID Gains may have to be adjusted based on the responsiveness of control loop
+    // kP kI kD kF Iz PeakOut
+    public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
+    // measured 6800 velocity units at full motor output
+
+    public final static int kPrimaryPIDSlot = 0; // any slot [0,3]
 
     public static final class DriveConstants {
-        public static final int driveMotorLeftLeaderID = 4;
-        public static final int driveMotorLeftFollowerID = 5;
-        public static final int driveMotorRightLeaderID = 6;
-        public static final int driveMotorRightFollowerID = 7;
+        public static final int DriveMotorLeftLeaderID = 4;
+        public static final int DriveMotorLeftFollowerID = 5;
+        public static final int DriveMotorRightLeaderID = 6;
+        public static final int DriveMotorRightFollowerID = 7;
 
-        public static final double maxSpeed = 4.0; // meters per second
+        public static final double MaxSpeed = 4.0; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
 
-        public static final double trackWidth = 26.5 * inchesToMeters; // meters
+        public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
-        public static final double driveGearRatio = 9.8;
-        public static final double countsPerWheelRevolution = talonFXEncoderResolution * driveGearRatio;
+        public static final double DriveGearRatio = 9.8;
+        public static final double CountsPerWheelRevolution = TalonFXEncoderResolution * DriveGearRatio;
 
-        public static final double wheelDiameter = 6.0 * inchesToMeters;
-        public static final double metersPerRevolution = wheelDiameter * Math.PI;
-        public static final double RevolutionsPerMeter = 1.0 / metersPerRevolution;
+        public static final double WheelDiameter = 6.0 * InchesToMeters;
+        public static final double MetersPerRevolution = WheelDiameter * Math.PI;
+        public static final double RevolutionsPerMeter = 1.0 / MetersPerRevolution;
 
-        public static final double MetersPerSecondToCountsPerSecond = RevolutionsPerMeter * countsPerWheelRevolution;
-        public static final double MaxSpeedCountsPer100MSec = maxSpeed * MetersPerSecondToCountsPerSecond / 10.0;
+        public static final double MetersPerSecondToCountsPerSecond = RevolutionsPerMeter * CountsPerWheelRevolution;
+        public static final double MaxSpeedCountsPer100MSec = MaxSpeed * MetersPerSecondToCountsPerSecond / 10.0;
 
         // public static final double metersPerCount = metersPerRevolution /
         // countsPerWheelRevolution;
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
-        public static final double closedVoltageRampingConstant = 0.0;
-        public static final double manualVoltageRampingConstant = 0.0;
+        public static final double ClosedVoltageRampingConstant = 0.0;
+        public static final double ManualVoltageRampingConstant = 0.0;
         public static final double kF = 0.048;
         public static final double kP = 0.005;
         public static final double kI = 0.0001;
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 
-        public static final double balanceTolerance = 10; // Need to change
+        public static final double BalanceTolerance = 10; // Need to change
     }
 
     public static final class ArmConstants {
-        public static final double rotateGearRatio = 40;
-        public static final double extendGearRatio = 16;
+        public static final double RotateGearRatio = 40;
+        public static final double ExtendGearRatio = 16;
 
-        public static final double metersPerRevolution = 0 * extendGearRatio; // Need to change
-        public static final double revolutionsPerDegree = 1.0 / 360; // Is this right?
+        public static final double MetersPerRevolution = 0 * ExtendGearRatio; // Need to change
+        public static final double RevolutionsPerDegree = 1.0 / 360; // Is this right?
 
         // add values when we figure out lengths
-        public static final double countsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree * rotateGearRatio;
-        public static final double countsPerArmInch = 0; // Need to change
-        public static final double CountsPerArmDegree = talonFXEncoderResolution * revolutionsPerDegree
-                * rotateGearRatio;
+        public static final double CountsPerArmDegree = TalonFXEncoderResolution * RevolutionsPerDegree
+                * RotateGearRatio;
         public static final double CountsPerArmInch = 0; // Need to change
 
-        public static final double degreesPerSecToCountsPer100MSec = countsPerArmDegree * secondsTo100MSec;
+        public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
         public static final double armRotateSpeed = 0; // Need to change this
         public static final double armExtendSpeed = 0; // Need to change this
@@ -87,27 +94,26 @@ public final class Constants {
         public static final double armRotateAcceleration = 0; // Need to change this
         public static final double armExtendAcceleration = 0; // Need to change this
 
-        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow and measured in DEGREES per
-                                                                     // second
+        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow, measured in degrees/sec
         public static final double RotationCalibrationVelocity = 0; // Need to change this
 
-        public static final int armExtendMotorID = 0; // Need to change
-        public static final int armLeaderMotorID = 0; // Need to change
-        public static final int armFollowMotorID = 0; // Need to change
+        public static final int ArmExtendMotorID = 0; // Need to change
+        public static final int ArmLeaderMotorID = 0; // Need to change
+        public static final int ArmFollowMotorID = 0; // Need to change
 
-        public static final int accelerationSmoothing = 2;
+        public static final int AccelerationSmoothing = 2;
 
-        public static final int armAngleTolerance = 2; // Need to change this
-        public static final int armLengthTolerance = 2; // Need to change this
+        public static final int ArmAngleTolerance = 2; // Need to change this
+        public static final int ArmLengthTolerance = 2; // Need to change this
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
         /* Automatic Arm Positioning Constants */
 
-        public static final double restingArmAngle = 0.0;
-        public static final double restingArmLength = 0.0;
+        public static final double RestingArmAngle = 0.0;
+        public static final double RestingArmLength = 0.0;
 
-        public static final double restingFromFloorArmAngle = 50.0; //ask angela 
+        public static final double RestingFromFloorArmAngle = 50.0; // ask angela
 
         public static final double FloorArmAngle = 30.0;
         public static final double FloorArmLength = 0.3;
@@ -124,80 +130,81 @@ public final class Constants {
         public static final double MiddleFromBottomArmAngle = 100.0;
         public static final double MiddleFromBottomArmLength = 0.0;
 
-        public static final double bottomArmAngle = 30.0;
-        public static final double bottomArmLength = 0.3;
+        public static final double BottomArmAngle = 30.0;
+        public static final double BottomArmLength = 0.3;
 
-        public static final double avoidChassisArmAngle = 30.0;
-        public static final double avoidChassisArmLength = 0.0;
+        public static final double AvoidChassisArmAngle = 30.0;
+        public static final double AvoidChassisArmLength = 0.0;
 
-        public static final double armMinAngle = 0.0;
-        public static final double armMaxAngle = 120.0;
-        public static final double armMinLength = 0.0;
-        public static final double armMaxLength = 32.0; //need to confirm (inches)
+        public static final double ArmMinAngle = 0.0;
+        public static final double ArmMaxAngle = 120.0;
+        public static final double ArmMinLength = 0.0;
+        public static final double ArmMaxLength = 32.0; // need to confirm (inches)
 
-        public static final double angleVel = 0.5;
-        public static final double angleAccelerationTime = angleVel * 4.0;
-        public static final double angleMultiplier = 0.5;
+        public static final double AngleVel = 0.5;
+        public static final double AngleAccelerationTime = AngleVel * 4.0;
+        public static final double AngleMultiplier = 0.5;
 
-        public static final double lengthVel = 0.5;
-        public static final double lengthAccelTime = lengthVel * 4.0;
-        public static final double lengthMultiplier = 0.5;
+        public static final double LengthVel = 0.5;
+        public static final double LengthAccelTime = LengthVel * 4.0;
+        public static final double LengthMultiplier = 0.5;
 
         // wpk will probably need to add constants for minimum angle before retracting
         // arm. This is required to avoid crashing the claw into the chassis when going
         // to home from a position where the claw is above the chassis.
 
-        // Not sure, but these (124-130) might need to change (right now they're just taken from DriveConstants):
-        public static final double rotateClosedVoltageRampingConstant = 0.0;
-        public static final double rotateManualVoltageRampingConstant = 0.0;
-        public static final double rotateKF = 0.048;
-        public static final double rotateKP = 0.005;
-        public static final double rotateKI = 0.0001;
-        public static final double rotateKD = 0.0;
-        public static final int rotatePID_id = 0;
+        // Not sure, but these (124-130) might need to change (right now they're just
+        // taken from DriveConstants):
+        public static final double RotateClosedVoltageRampingConstant = 0.0;
+        public static final double RotateManualVoltageRampingConstant = 0.0;
+        public static final double RotateKF = 0.048;
+        public static final double RotateKP = 0.005;
+        public static final double RotateKI = 0.0001;
+        public static final double RotateKD = 0.0;
+        public static final int RotatePID_id = 0;
 
-        public static final double lengthClosedVoltageRampingConstant = 0.0;
-        public static final double lengthManualVoltageRampingConstant = 0.0;
-        public static final double lengthKF = 0.048;
-        public static final double lengthKP = 0.005;
-        public static final double lengthKI = 0.0001;
-        public static final double lengthKD = 0.0;
-        public static final int lengthPID_id = 0;
+        public static final double LengthClosedVoltageRampingConstant = 0.0;
+        public static final double LengthManualVoltageRampingConstant = 0.0;
+        public static final double LengthKF = 0.048;
+        public static final double LengthKP = 0.005;
+        public static final double LengthKI = 0.0001;
+        public static final double LengthKD = 0.0;
+        public static final int LengthPID_id = 0;
 
     }
 
     public static final class ClawConstants {
-        public static final int clawMotorID = 0; // change
-        public static final int extendSolenoidID = 0; // change
-        public static final int retractSolenoidID = 0; // change
+        public static final int ClawMotorID = 0; // change
+        public static final int ExtendSolenoidID = 0; // change
+        public static final int RetractSolenoidID = 0; // change
 
-        public static final double clawClosedVoltageRampingConstant = 0.0;
-        public static final double clawManualVoltageRampingConstant = 0.0;
-        public static final double clawKF = 0.048;
-        public static final double clawKP = 0.005;
-        public static final double clawKI = 0.0001;
-        public static final double clawKD = 0.0;
-        public static final int clawPID_id = 0;
+        public static final double ClawClosedVoltageRampingConstant = 0.0;
+        public static final double ClawManualVoltageRampingConstant = 0.0;
+        public static final double ClawKF = 0.048;
+        public static final double ClawKP = 0.005;
+        public static final double ClawKI = 0.0001;
+        public static final double ClawKD = 0.0;
+        public static final int ClawPID_id = 0;
 
-        public static final double countsPerClawDegree = 0; // Need to change
+        public static final double CountsPerClawDegree = 0; // Need to change
 
-        public static final int clawAngleTolerance = 0; // Need to change
+        public static final int ClawAngleTolerance = 0; // Need to change
 
-        public static final double clawSpeed = 0; // Need to change
-        public static final int distanceSensorID = 0; // Need to change
-        public static final double inchesForAutoClosing = 3;
-        public static final double clawLengthInches = 9;
+        public static final double ClawSpeed = 0; // Need to change
+        public static final int DistanceSensorID = 0; // Need to change
+        public static final double InchesForAutoClosing = 3;
+        public static final double ClawLengthInches = 9;
     }
 
     public static final class UnderGlowConstants {
-        public static final SerialPort.Port port = SerialPort.Port.kUSB1;
+        public static final SerialPort.Port Port = SerialPort.Port.kUSB1;
         public static final int BlueAliance = 1;
         public static final int RedAliance = 2;
         public static final int NeonGreen = 3;
     }
 
     public static final class VisionConstants {
-        public static final int cameraLightID = 0;
+        public static final int CameraLightID = 0;
     }
 
     public static final class AutoConstants {
@@ -208,58 +215,69 @@ public final class Constants {
     }
 
     public final class LogitechDualActionConstants {
-        public static final int leftJoystickX = 0;
-        public static final int leftJoystickY = 1;
-        public static final int rightJoystickX = 2;
-        public static final int rightJoystickY = 3;
+        public static final int LeftJoystickX = 0;
+        public static final int LeftJoystickY = 1;
+        public static final int RightJoystickX = 2;
+        public static final int RightJoystickY = 3;
 
-        public static final int leftTrigger = 7;
-        public static final int rightTrigger = 8;
-        public static final int leftBumper = 5;
-        public static final int rightBumper = 6;
-        public static final int buttonA = 2;
-        public static final int buttonB = 3;
-        public static final int buttonX = 1;
-        public static final int buttonY = 4;
-        public static final int backButton = 9;
-        public static final int startButton = 10;
-        public static final int leftJoystick = 11;
-        public static final int rightJoystick = 12;
+        public static final int LeftTrigger = 7;
+        public static final int RightTrigger = 8;
+        public static final int LeftBumper = 5;
+        public static final int RightBumper = 6;
+        public static final int ButtonA = 2;
+        public static final int ButtonB = 3;
+        public static final int ButtonX = 1;
+        public static final int ButtonY = 4;
+        public static final int BackButton = 9;
+        public static final int StartButton = 10;
+        public static final int LeftJoystick = 11;
+        public static final int RightJoystick = 12;
 
-        public static final double forwardAxisAttenuation = -0.5;
-        public static final double lateralAxisAttenuation = 0.5;
-        public static final double yawAxisAttenuation = 0.5;
+        public static final double ForwardAxisAttenuation = -0.5;
+        public static final double LateralAxisAttenuation = 0.5;
+        public static final double YawAxisAttenuation = 0.5;
     }
 
     public final class RadioMasterConstants {
-        public static final int leftGimbalX = 0;
-        public static final int leftGimbalY = 1;
-        public static final int rightGimbalX = 3;
-        public static final int rightGimbalY = 2;
+        public static final int LeftGimbalX = 0;
+        public static final int LeftGimbalY = 1;
+        public static final int RightGimbalX = 3;
+        public static final int RightGimbalY = 2;
 
-        public static final int SB3Axis = 6;
-        public static final int SFAxis = 4;
-        public static final int SEAxis = 5;
-        public static final int SHMomentary = 4;
-        public static final int SCButton = 1;
+        public static final int SliderF = 5;
+        public static final int SliderE = 4;
+        public static final int SliderC = 6;
 
-        public static final double forwardAxisAttenuation = 1.0;
-        public static final double lateralAxisAttenuation = 1.0;
-        public static final double yawAxisAttenuation = 0.6;
+        public static final int ButtonD = 3;
+        public static final int ButtonA = 1;
+
+        public static final double FowardAxisAttenuation = 1.0;
+        public static final double LateralAxisAttenuation = 1.0;
+        public static final double YawAxisAttenuation = 0.6;
     }
 
-    public final static double kNeutralDeadband = 0.001;
+    public final class XboxControllerConstants {
+        public static final int LeftStickX = 0;
+        public static final int LeftStickY = 1;
+        public static final int LeftTrigger = 2;
+        public static final int RightTrigger = 4;
+        public static final int RightStickX = 4;
+        public static final int RightStickY = 5;
 
-    /**
-     * PID Gains may have to be adjusted based on the responsiveness of control loop
-     * kP kI kD kF Iz PeakOut
-     */
-    public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00); /*
-                                                                                                      * measured 6800
-                                                                                                      * velocity units
-                                                                                                      * at full motor
-                                                                                                      * output
-                                                                                                      */
+        public static final int ButtonA = 1;
+        public static final int ButtonB = 2;
+        public static final int ButtonX = 3;
+        public static final int ButtonY = 4;
+        public static final int LeftBumper = 5;
+        public static final int RightBumper = 6;
+        public static final int BackButton = 7;
+        public static final int StartButton = 8;
+        public static final int LeftStick = 9;
+        public static final int RightStick = 10;
+        public static final int WindowButton= 13;
 
-    public final static int kPrimaryPIDSlot = 0; // any slot [0,3]
+        public static final double ForwardAxisAttenuation = -0.5;
+        public static final double LateralAxisAttenuation = 0.5;
+        public static final double YawAxisAttenuation = 0.5;
+    }
 }

@@ -72,8 +72,8 @@ public class MoveArm extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.armAngleTolerance
-                && Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.armLengthTolerance) {
+        if (Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.ArmAngleTolerance
+                && Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.ArmLengthTolerance) {
             armSub.setState(state);
             return true;
         } else {

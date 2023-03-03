@@ -15,7 +15,7 @@ public class Vision extends SubsystemBase {
   DigitalOutput cameraLight;
 
   public Vision() {
-    cameraLight = new DigitalOutput(Constants.VisionConstants.cameraLightID);
+    cameraLight = new DigitalOutput(Constants.VisionConstants.CameraLightID);
   }
 
   @Override

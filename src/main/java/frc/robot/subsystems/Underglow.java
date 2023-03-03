@@ -17,7 +17,7 @@ public class Underglow extends SubsystemBase {
 
     public Underglow() {
         try {
-            port = new SerialPort(9600, Constants.UnderGlowConstants.port);
+            port = new SerialPort(9600, Constants.UnderGlowConstants.Port);
         } catch (Exception ex) {
 
         }

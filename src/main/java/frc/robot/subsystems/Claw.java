@@ -20,10 +20,10 @@ public class Claw extends SubsystemBase {
 
     WPI_TalonFX clawMotor; // For adjusting angle
     Solenoid extendSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
-            Constants.ClawConstants.extendSolenoidID);
+            Constants.ClawConstants.ExtendSolenoidID);
     Solenoid retractSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
-            Constants.ClawConstants.retractSolenoidID);
-    TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.distanceSensorID);
+            Constants.ClawConstants.RetractSolenoidID);
+    TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.DistanceSensorID);
 
     // Add distance sensor from playing with fusion
 
@@ -34,18 +34,18 @@ public class Claw extends SubsystemBase {
 
     public Claw(Arm a) { // add arm to constructors
         armSub = a;
-        clawMotor = new WPI_TalonFX(Constants.ClawConstants.clawMotorID); // needs config
+        clawMotor = new WPI_TalonFX(Constants.ClawConstants.ClawMotorID); // needs config
 
         setClawMotorConfig(clawMotor);
     }
 
     private void setClawMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
-        motor.configClosedloopRamp(Constants.ClawConstants.clawClosedVoltageRampingConstant);
-        motor.configOpenloopRamp(Constants.ClawConstants.clawManualVoltageRampingConstant);
-        motor.config_kF(Constants.ClawConstants.clawPID_id, Constants.ClawConstants.clawKF);
-        motor.config_kP(Constants.ClawConstants.clawPID_id, Constants.ClawConstants.clawKP);
-        motor.config_kI(Constants.ClawConstants.clawPID_id, Constants.ClawConstants.clawKI);
-        motor.config_kD(Constants.ClawConstants.clawPID_id, Constants.ClawConstants.clawKD);
+        motor.configClosedloopRamp(Constants.ClawConstants.ClawClosedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.ClawConstants.ClawManualVoltageRampingConstant);
+        motor.config_kF(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKF);
+        motor.config_kP(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKP);
+        motor.config_kI(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKI);
+        motor.config_kD(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKD);
 
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
@@ -57,27 +57,23 @@ public class Claw extends SubsystemBase {
         // 0.0 is perpendicular to arm bar
         setClawAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
         
-        if (clawIsOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.inchesForAutoClosing) * Constants.InchesToMillimeters) {
+        if (clawIsOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
             closeClaw();
             disableAutoClose();
         }
-        else if (clawIsOpen() && distanceSensor.getRange() >= (ClawConstants.clawLengthInches) * Constants.InchesToMillimeters) {
+        else if (clawIsOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
             enableAutoClose();
         }
 
     }
 
     public double getClawAngle() {
-        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.countsPerClawDegree;
+        double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.CountsPerClawDegree;
         return result;
     }
 
     public void setClawAngle(double desiredAngle) {
-        // if (Math.abs(getClawAngle() - desiredAngle) >
-        // ClawConstants.ClawAngleTolerance) {
-        // clawMotor.set(Constants.ClawConstants.clawSpeed);
-        // }
-        double setAngle = desiredAngle * ClawConstants.countsPerClawDegree; 
+        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; 
         clawMotor.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 

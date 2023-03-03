@@ -52,10 +52,10 @@ public class Drive extends SubsystemBase {
      */
     public Drive() {
 
-        driveMotorLeftLeader = new WPI_TalonFX(Constants.DriveConstants.driveMotorLeftLeaderID);
-        driveMotorLeftFollower = new WPI_TalonFX(Constants.DriveConstants.driveMotorLeftFollowerID);
-        driveMotorRightLeader = new WPI_TalonFX(Constants.DriveConstants.driveMotorRightLeaderID);
-        driveMotorRightFollower = new WPI_TalonFX(Constants.DriveConstants.driveMotorRightFollowerID);
+        driveMotorLeftLeader = new WPI_TalonFX(Constants.DriveConstants.DriveMotorLeftLeaderID);
+        driveMotorLeftFollower = new WPI_TalonFX(Constants.DriveConstants.DriveMotorLeftFollowerID);
+        driveMotorRightLeader = new WPI_TalonFX(Constants.DriveConstants.DriveMotorRightLeaderID);
+        driveMotorRightFollower = new WPI_TalonFX(Constants.DriveConstants.DriveMotorRightFollowerID);
 
         // Config Motors
         driveMotorLeftLeader.configFactoryDefault();
@@ -117,15 +117,6 @@ public class Drive extends SubsystemBase {
         // driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
-    // private double MetersPerSecondToCounts(double mps) {
-    // return mps * Constants.DriveConstants.MetersPerSecondToCountsPerSecond /
-    // 10.0;
-    // }
-
-    // private double CountsPerSecondToMetersPerSecond(double counts) {
-    // return counts * 10.0 * Constants.DriveConstants.metersPerCount;
-    // }
-
     /**
      * Sets the desired wheel speeds.
      *
@@ -137,9 +128,9 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.set(TalonFXControlMode.Velocity,
                 (speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
         NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(speeds.leftMetersPerSecond * Constants.DriveConstants.maxSpeed);
+                .setDouble(speeds.leftMetersPerSecond * Constants.DriveConstants.MaxSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(speeds.rightMetersPerSecond * Constants.DriveConstants.maxSpeed);
+                .setDouble(speeds.rightMetersPerSecond * Constants.DriveConstants.MaxSpeed);
     }
 
     /**
@@ -155,9 +146,9 @@ public class Drive extends SubsystemBase {
                 (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0));
 
         NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(leftSpeed * Constants.DriveConstants.maxSpeed);
+                .setDouble(leftSpeed * Constants.DriveConstants.MaxSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(rightSpeed * Constants.DriveConstants.maxSpeed);
+                .setDouble(rightSpeed * Constants.DriveConstants.MaxSpeed);
     }
 
     // private double getLeftSpeed() {
@@ -174,15 +165,15 @@ public class Drive extends SubsystemBase {
 
     private double getLeftDistance() {
         double d = (driveMotorLeftLeader.getSelectedSensorPosition()
-                / Constants.DriveConstants.countsPerWheelRevolution)
-                * Constants.DriveConstants.metersPerRevolution;
+                / Constants.DriveConstants.CountsPerWheelRevolution)
+                * Constants.DriveConstants.MetersPerRevolution;
         return (d);
     }
 
     private double getRightDistance() {
         double d = (driveMotorRightLeader.getSelectedSensorPosition()
-                / Constants.DriveConstants.countsPerWheelRevolution)
-                * Constants.DriveConstants.metersPerRevolution;
+                / Constants.DriveConstants.CountsPerWheelRevolution)
+                * Constants.DriveConstants.MetersPerRevolution;
         return (d);
     }
 
@@ -196,7 +187,7 @@ public class Drive extends SubsystemBase {
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
-        setSpeeds(speeds.left * Constants.DriveConstants.maxSpeed, speeds.right * Constants.DriveConstants.maxSpeed);
+        setSpeeds(speeds.left * Constants.DriveConstants.MaxSpeed, speeds.right * Constants.DriveConstants.MaxSpeed);
         // *** need to reduce max speed when arm is extended??
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
@@ -233,21 +224,6 @@ public class Drive extends SubsystemBase {
         gyro.reset();
     }
 
-    // public void balanceBot() {
-    // if (Math.abs(gyro.getPitch()) > Constants.DriveConstants.balanceTolerance) {
-
-    // }
-    // else if (Math.abs(gyro.getPitch()) <
-    // Constants.DriveConstants.balanceTolerance) {
-
-    // }
-    // }
-
-    // public boolean isBotBalanced() {
-    // return (Math.abs(gyro.getPitch()) >
-    // Constants.DriveConstants.balanceTolerance);
-    // }
-
     private void CreateNetworkTableEntries() {
         NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(0.0);
@@ -269,8 +245,8 @@ public class Drive extends SubsystemBase {
     }
 
     private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
-        motor.configClosedloopRamp(Constants.DriveConstants.closedVoltageRampingConstant);
-        motor.configOpenloopRamp(Constants.DriveConstants.manualVoltageRampingConstant);
+        motor.configClosedloopRamp(Constants.DriveConstants.ClosedVoltageRampingConstant);
+        motor.configOpenloopRamp(Constants.DriveConstants.ManualVoltageRampingConstant);
         motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
         motor.config_kP(Constants.DriveConstants.PID_id, Constants.DriveConstants.kP);
         motor.config_kI(Constants.DriveConstants.PID_id, Constants.DriveConstants.kI);
