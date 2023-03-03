@@ -33,11 +33,8 @@ import frc.robot.commands.AlignWithAprilTags;
 import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.MoveArm;
-// import frc.robot.commands.*;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Vision;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.Arm.Position;
 
 public class RobotContainer {
@@ -84,7 +81,7 @@ public class RobotContainer {
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
 
-  //  private final StartShootingLow toggleClaw = new StartShootingLow(m_shooterIndex);
+    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
 
 
     public RobotContainer() {
@@ -133,7 +130,7 @@ public class RobotContainer {
 
                             // turn = turn * (-0.4 * Math.abs(speed) + 0.5);
 
-                            if (!autoSteer || !clawSub.clawIsOpen()) {
+                            if (!autoSteer || !clawSub.isOpen()) {
                                 yaw = -turn;
 
                                 yawMultiplier = (float) (0.6 + Math.abs(speed) * 0.2f);
@@ -208,7 +205,8 @@ public class RobotContainer {
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX; 
                 
         toggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
-        //toggleClawButton.onTrue(closeClaw()); 
+        toggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
+        toggleClawButton.onTrue(toggleClaw);
 
         /* * * * * * ARM BUTTONS * * * * * */
 

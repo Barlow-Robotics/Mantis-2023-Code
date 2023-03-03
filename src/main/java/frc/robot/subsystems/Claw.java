@@ -29,7 +29,7 @@ public class Claw extends SubsystemBase {
 
     Arm armSub;
     // private final Timer timer = new Timer();
-
+    
     boolean autoCloseEnabled = true;
 
     public Claw(Arm a) { // add arm to constructors
@@ -55,39 +55,38 @@ public class Claw extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         // 0.0 is perpendicular to arm bar
-        setClawAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
+        setAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
         
-        if (clawIsOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-            closeClaw();
+        if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+            close();
             disableAutoClose();
         }
-        else if (clawIsOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
+        else if (isOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
             enableAutoClose();
         }
-
     }
 
-    public double getClawAngle() {
+    public double getAngle() {
         double result = clawMotor.getSelectedSensorPosition() / Constants.ClawConstants.CountsPerClawDegree;
         return result;
     }
 
-    public void setClawAngle(double desiredAngle) {
+    public void setAngle(double desiredAngle) {
         double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; 
         clawMotor.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 
-    public void openClaw() {
+    public void open() {
         extendSolenoid.set(false);
         retractSolenoid.set(true);
     }
 
-    public void closeClaw() {
+    public void close() {
         retractSolenoid.set(false);
         extendSolenoid.set(true);
     }
 
-    public boolean clawIsOpen() {
+    public boolean isOpen() {
         return retractSolenoid.get() && !extendSolenoid.get();
     }
 
@@ -98,8 +97,4 @@ public class Claw extends SubsystemBase {
     public void disableAutoClose() {
         autoCloseEnabled = false;
     }
-
-    // public void toggleAutoClose() {
-    //     autoCloseEnabled = !autoCloseEnabled;
-    // }
 }
