@@ -5,10 +5,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,41 +50,40 @@ public class Arm extends SubsystemBase {
         setRotateMotorConfig(rotateMotorFollower);
 
         rotateMotorFollower.follow(rotateMotorLeader);
+        rotateMotorFollower.setInverted(InvertType.OpposeMaster);
 
         rotateMotorLeader.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
 
-        extendMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-        extendMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        rotateMotorLeader.setSelectedSensorPosition(0);
+        // extendMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        // LimitSwitchNormal.NormallyOpen);
+        // extendMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        // LimitSwitchNormal.NormallyOpen);
+        // extendMotor.configClearPositionOnLimitR(true, 0);
 
-        // wpk, should we also use the TalonFX built in "soft" limit switches?
-
-        // wpk, we can automatically reset the encoder when the retracted (reverse)
-        // limit is reached. Do we want to do this?
-        // If so, it would look like this:
-        extendMotor.configClearPositionOnLimitR(true, 0);
-
-        rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-                LimitSwitchNormal.NormallyOpen);
-        rotateMotorLeader.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-                LimitSwitchNormal.NormallyOpen);
-
-        rotateMotorLeader.configClearPositionOnLimitR(true, 0);
-
+        // rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        // LimitSwitchNormal.NormallyOpen);
+        // rotateMotorLeader.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        // LimitSwitchNormal.NormallyOpen);
+        // rotateMotorLeader.configClearPositionOnLimitR(true, 0);
     }
 
     private void setExtendMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+        motor.setNeutralMode(NeutralMode.Brake);
+        // motor.setNeutralMode(NeutralMode.Coast);
         motor.configClosedloopRamp(Constants.ArmConstants.LengthClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.ArmConstants.LengthManualVoltageRampingConstant);
         motor.config_kF(Constants.ArmConstants.LengthPID_id, Constants.ArmConstants.LengthKF);
         motor.config_kP(Constants.ArmConstants.LengthPID_id, Constants.ArmConstants.LengthKP);
         motor.config_kI(Constants.ArmConstants.LengthPID_id, Constants.ArmConstants.LengthKI);
         motor.config_kD(Constants.ArmConstants.LengthPID_id, Constants.ArmConstants.LengthKD);
-
+        motor.setInverted(TalonFXInvertType.Clockwise);
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
 
     private void setRotateMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+        motor.setNeutralMode(NeutralMode.Brake);
         motor.configClosedloopRamp(Constants.ArmConstants.RotateClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.ArmConstants.RotateManualVoltageRampingConstant);
         motor.config_kF(Constants.ArmConstants.RotatePID_id, Constants.ArmConstants.RotateKF);
@@ -95,25 +97,10 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // if (getAngle() <= Constants.ArmConstants.ArmMinAngle || getAngle() >=
-        // Constants.ArmConstants.ArmMaxAngle) {
-        // disableRotation = true;
-        // }
-        // if (getAngle() <= 25) {
-        // setLength(0, Constants.ArmConstants.armExtendSpeed, 2);
-        // }
     }
 
-    public double getAngle() {
-        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
-        return result;
-    }
-
+    /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
-        rotateMotorLeader
-                .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
         rotateMotorLeader
                 .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         rotateMotorLeader.configMotionAcceleration(
@@ -123,30 +110,29 @@ public class Arm extends SubsystemBase {
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle);
     }
 
+    public double getAngle() {
+        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
+        return result;
+    }
+
     public boolean isAtMaxAngle() {
-        return rotateMotorLeader.isFwdLimitSwitchClosed() == 1 * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec;
+        return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
     }
 
     public boolean isAtMinAngle() {
-        return rotateMotorLeader.isRevLimitSwitchClosed() == 1 * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec;
+        return rotateMotorLeader.isRevLimitSwitchClosed() == 1;
     }
 
-    public void startRotatingAtVelocty(double velocity) { // Velocity in degrees per second
+    public void startRotating(double velocity) { // Velocity in degrees per second
         rotateMotorLeader.set(TalonFXControlMode.Velocity,
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         rotateMotorLeader.set(TalonFXControlMode.Velocity,
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
-    public void setLength(double desiredLength, double velocity, double accelerationTime) {
-        // inches
-        // 0.0in is when arm is fully retracted
-
-        // if (Math.abs(getArmLength() - desiredLength) >
-        // Constants.ArmConstants.armLengthTolerance) {
-        // extendMotor.set(Constants.ArmConstants.armExtendSpeed);
-        // }
-
+    /* Extend Motor */
+    public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is
+                                                                                            // fully retracted
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
@@ -163,23 +149,25 @@ public class Arm extends SubsystemBase {
         return result;
     }
 
-    public boolean isAtMaxExtension() {
+    public boolean isAtMaxLength() {
         return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
     }
 
-    public boolean isAtMinExtension() {
+    public boolean isAtMinLength() {
         return rotateMotorLeader.isRevLimitSwitchClosed() == 1;
     }
 
-    public void startExtendingAtVelocty(double velocity) {
+    public void startExtending(double velocity) {
         extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
-    public void stopMoving() { // Make neutral mode for extaend and rotate motors to brake
+    /* Extend and Rotate */
+    public void stopMoving() {
         rotateMotorLeader.set(TalonFXControlMode.PercentOutput, 0.0);
         extendMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
+    /* States */
     public void setState(Position returnValue) {
         armState = returnValue;
     }
@@ -187,15 +175,4 @@ public class Arm extends SubsystemBase {
     public Position getState() {
         return armState;
     }
-
-    // public void startProfiles() {
-    // rotateMotorLeader.startMotionProfile(null, 0, ControlMode.MotionProfile); //
-    // Rotate profile
-    // extendMotor.startMotionProfile(null, 0, ControlMode.MotionProfile); // Extend
-    // profile
-    // }
-
-    // public boolean isProfileComplete() {
-    // return extendMotor.isMotionProfileFinished();
-    // }
 }

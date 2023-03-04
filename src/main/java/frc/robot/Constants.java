@@ -78,28 +78,31 @@ public final class Constants {
         public static final double RotateGearRatio = 40;
         public static final double ExtendGearRatio = 16;
 
-        public static final double MetersPerRevolution = 0 * ExtendGearRatio; // Need to change
+        public static final double ExtendSprocketDiameter = 1.751;
+        public static final double ExtendSprocketCircumference = ExtendSprocketDiameter * Math.PI;
+        
+        public static final double InchesPerRevolution = ExtendSprocketCircumference / ExtendGearRatio;
         public static final double RevolutionsPerDegree = 1.0 / 360; // Is this right?
 
         // add values when we figure out lengths
         public static final double CountsPerArmDegree = TalonFXEncoderResolution * RevolutionsPerDegree
                 * RotateGearRatio;
-        public static final double CountsPerArmInch = 0; // Need to change
+        public static final double CountsPerArmInch = TalonFXEncoderResolution / InchesPerRevolution; 
 
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
-        public static final double armRotateSpeed = 0; // Need to change this
+        public static final double armRotateSpeed = 55; // Degrees per second
         public static final double armExtendSpeed = 0; // Need to change this
 
         public static final double armRotateAcceleration = 0; // Need to change this
         public static final double armExtendAcceleration = 0; // Need to change this
 
-        public static final double ExtentionCalibrationVelocity = 0; // Should be very slow, measured in degrees/sec
-        public static final double RotationCalibrationVelocity = 0; // Need to change this
+        public static final double ExtentionCalibrationVelocity = 0; // Need to change this
+        public static final double RotationCalibrationVelocity = 10; // Degrees per second
 
-        public static final int ArmExtendMotorID = 12; // Need to change
-        public static final int ArmLeaderMotorID = 11; // Need to change
-        public static final int ArmFollowMotorID = 10; // Need to change
+        public static final int ArmExtendMotorID = 12;
+        public static final int ArmLeaderMotorID = 11;
+        public static final int ArmFollowMotorID = 10;
 
         public static final int AccelerationSmoothing = 2;
 
@@ -113,7 +116,7 @@ public final class Constants {
         public static final double RestingArmAngle = 0.0;
         public static final double RestingArmLength = 0.0;
 
-        public static final double RestingFromFloorArmAngle = 50.0; // ask angela
+        public static final double RestingFromFloorArmAngle = 50.0;
 
         public static final double FloorArmAngle = 30.0;
         public static final double FloorArmLength = 0.3;
@@ -158,7 +161,8 @@ public final class Constants {
         public static final double RotateClosedVoltageRampingConstant = 0.0;
         public static final double RotateManualVoltageRampingConstant = 0.0;
         public static final double RotateKF = 0.048;
-        public static final double RotateKP = 0.005;
+//        public static final double RotateKF = 0.1;
+        public static final double RotateKP = 0.01;
         public static final double RotateKI = 0.0001;
         public static final double RotateKD = 0.0;
         public static final int RotatePID_id = 0;
@@ -174,9 +178,9 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
-        public static final int ClawMotorID = 0; // change
-        public static final int ExtendSolenoidID = 0; // change
-        public static final int RetractSolenoidID = 0; // change
+        public static final int ClawMotorID = 15;
+        public static final int ExtendSolenoidID = 4;
+        public static final int RetractSolenoidID = 5;
 
         public static final double ClawClosedVoltageRampingConstant = 0.0;
         public static final double ClawManualVoltageRampingConstant = 0.0;
@@ -274,7 +278,7 @@ public final class Constants {
         public static final int StartButton = 8;
         public static final int LeftStick = 9;
         public static final int RightStick = 10;
-        public static final int WindowButton= 13;
+        public static final int WindowButton = 13;
 
         public static final double ForwardAxisAttenuation = -0.5;
         public static final double LateralAxisAttenuation = 0.5;

@@ -54,19 +54,23 @@ public class MoveArm extends CommandBase {
     @Override
     public void initialize() {
         armSub.setState(Arm.Position.Transition);
+        armSub.setAngle(angle, angleVelocity, angleAcceleration);
+//wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAcceleration);
-        armSub.setLength(length, extensionVelocity, extensionAcceleration);
+//wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        armSub.stopMoving();
+        if (interrupted) {
+            armSub.stopMoving();
+        }
     }
 
     // Returns true when the command should end.
@@ -75,6 +79,7 @@ public class MoveArm extends CommandBase {
         if (Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.ArmAngleTolerance
                 && Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.ArmLengthTolerance) {
             armSub.setState(state);
+            System.out.println("move command is finished");
             return true;
         } else {
             return false;

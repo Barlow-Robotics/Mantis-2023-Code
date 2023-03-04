@@ -18,7 +18,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -27,15 +26,19 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.LogitechDualActionConstants;
 import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.commands.AlignWithAprilTags;
 import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.MoveArm;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.commands.ToggleClaw;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
 
@@ -72,6 +75,7 @@ public class RobotContainer {
     private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton;
     private Trigger toggleClawButton;
+    private Trigger testingButton;
 
     private Command moveToBottom;
     private Command moveToMiddle;
@@ -155,47 +159,49 @@ public class RobotContainer {
                         },
                         driveSub));
 
-        armSub.setDefaultCommand(
-                // A split-stick arcade command, with forward/backward controlled by the left
-                // hand, and turning controlled by the right.
-                new RunCommand(
-                        () -> {
-                            /* Angle */
-                            double currentAngle = armSub.getAngle();
-                            double desiredAngle = currentAngle + operatorButtonController.getRawAxis(angleAxis) * ArmConstants.AngleMultiplier; 
+        // armSub.setDefaultCommand(
+        //         // A split-stick arcade command, with forward/backward controlled by the left
+        //         // hand, and turning controlled by the right.
+        //         new RunCommand(
+        //                 () -> {
+        //                     /* Angle */
+        //                     double currentAngle = armSub.getAngle();
+        //                     double desiredAngle = currentAngle + operatorButtonController.getRawAxis(angleAxis) * ArmConstants.AngleMultiplier; 
                             
-                            if (desiredAngle > ArmConstants.ArmMaxAngle) {
-                                desiredAngle = ArmConstants.ArmMaxAngle;
-                            } else if (desiredAngle < ArmConstants.ArmMinAngle) {
-                                desiredAngle = ArmConstants.ArmMinAngle;
-                            }
+        //                     if (desiredAngle > ArmConstants.ArmMaxAngle) {
+        //                         desiredAngle = ArmConstants.ArmMaxAngle;
+        //                     } else if (desiredAngle < ArmConstants.ArmMinAngle) {
+        //                         desiredAngle = ArmConstants.ArmMinAngle;
+        //                     }
 
-                            armSub.setAngle(desiredAngle, ArmConstants.AngleVel, ArmConstants.AngleAccelerationTime);
+        //                     armSub.setAngle(desiredAngle, ArmConstants.AngleVel, ArmConstants.AngleAccelerationTime);
 
-                            /* Extension */
-                            double currentLength = armSub.getLength();
-                            double desiredLength = currentLength + operatorButtonController.getRawAxis(extensionAxis) * ArmConstants.LengthMultiplier;
+        //                     /* Extension */
+        //                     double currentLength = armSub.getLength();
+        //                     double desiredLength = currentLength + operatorButtonController.getRawAxis(extensionAxis) * ArmConstants.LengthMultiplier;
                         
-                            if (desiredLength > ArmConstants.ArmMaxLength) {
-                                desiredLength = ArmConstants.ArmMaxLength;
-                            } else if (desiredLength < ArmConstants.ArmMinLength) {
-                                desiredLength = ArmConstants.ArmMinLength;
-                            }
+        //                     if (desiredLength > ArmConstants.ArmMaxLength) {
+        //                         desiredLength = ArmConstants.ArmMaxLength;
+        //                     } else if (desiredLength < ArmConstants.ArmMinLength) {
+        //                         desiredLength = ArmConstants.ArmMinLength;
+        //                     }
 
-                            armSub.setLength(desiredLength, ArmConstants.LengthVel, ArmConstants.LengthAccelTime);
+        //                     armSub.setLength(desiredLength, ArmConstants.LengthVel, ArmConstants.LengthAccelTime);
 
                             
-                            if (desiredLength*Math.cos(desiredAngle) <= 0) {
-                                desiredLength = currentLength;
-                            } 
-                        },
-                        armSub));
+        //                     if (desiredLength*Math.cos(desiredAngle) <= 0) {
+        //                         desiredLength = currentLength;
+        //                     } 
+        //                 },
+        //                 armSub));
     }
 
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
         operatorButtonController = new Joystick(2);
+        operatorAxisController = new Joystick(3);
+
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
@@ -394,6 +400,17 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendSpeed,
                         Constants.ArmConstants.armExtendAcceleration,
                         Position.PlayerStation));
+
+        testingButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
+        testingButton.onTrue(
+                new MoveArm(armSub,
+                        20,
+                        1.0,
+                        2.0,
+                        0,
+                        0,
+                        0,
+                        Position.Transition));
 
         /* * * * * * VISION BUTTONS * * * * * */
 

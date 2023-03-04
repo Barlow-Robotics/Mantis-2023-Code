@@ -32,7 +32,7 @@ public class Drive extends SubsystemBase {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    public final AHRS navX = new AHRS();
+    // public final AHRS navX = new AHRS();
 
     // private final DifferentialDriveKinematics kinematics = new
     // DifferentialDriveKinematics(
