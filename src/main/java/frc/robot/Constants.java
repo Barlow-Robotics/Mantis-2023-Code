@@ -80,11 +80,12 @@ public final class Constants {
 
         public static final double MetersPerRevolution = 0 * ExtendGearRatio; // Need to change
         public static final double RevolutionsPerDegree = 1.0 / 360; // Is this right?
+        public static final double RevolutionsPerInch = 0; // Need to change
 
         // add values when we figure out lengths
         public static final double CountsPerArmDegree = TalonFXEncoderResolution * RevolutionsPerDegree
                 * RotateGearRatio;
-        public static final double CountsPerArmInch = 0; // Need to change
+        public static final double CountsPerArmInch = TalonFXEncoderResolution /*  multiply by revolutions per inch*/; // Need to change
 
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
