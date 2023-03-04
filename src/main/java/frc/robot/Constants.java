@@ -98,9 +98,9 @@ public final class Constants {
         public static final double ExtentionCalibrationVelocity = 0; // Should be very slow, measured in degrees/sec
         public static final double RotationCalibrationVelocity = 0; // Need to change this
 
-        public static final int ArmExtendMotorID = 12; // Need to change
-        public static final int ArmLeaderMotorID = 11; // Need to change
-        public static final int ArmFollowMotorID = 10; // Need to change
+        public static final int ArmExtendMotorID = 12; 
+        public static final int ArmLeaderMotorID = 11; 
+        public static final int ArmFollowMotorID = 10; 
 
         public static final int AccelerationSmoothing = 2;
 
