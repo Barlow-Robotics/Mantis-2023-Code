@@ -29,6 +29,8 @@ public final class Constants {
 
     public final static double kNeutralDeadband = 0.001;
 
+    public static final double maxGravityFF = 0.07;
+
     // PID Gains may have to be adjusted based on the responsiveness of control loop
     // kP kI kD kF Iz PeakOut
     public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
@@ -174,6 +176,9 @@ public final class Constants {
         public static final double LengthKI = 0.0001;
         public static final double LengthKD = 0.0;
         public static final int LengthPID_id = 0;
+
+        public static final int kMeasuredPosHorizontal = 840; // ALH - this is supposed to be position measured when arm is horizontal, need to determine what that is.
+    
 
     }
 
