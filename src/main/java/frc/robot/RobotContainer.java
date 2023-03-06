@@ -404,9 +404,9 @@ public class RobotContainer {
         testingButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
         testingButton.onTrue(
                 new MoveArm(armSub,
-                        20,
-                        1.0,
-                        2.0,
+                        100,
+                        70.0,
+                        0.25,
                         0,
                         0,
                         0,

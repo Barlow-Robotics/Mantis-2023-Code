@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -106,8 +107,11 @@ public class Arm extends SubsystemBase {
         rotateMotorLeader.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
+        double currentAngle = getAngle() ;
+        double ff = Math.sin( Math.toRadians(currentAngle)) * 0.75 ;
+
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
-        rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle);
+        rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
     }
 
     public double getAngle() {

@@ -162,9 +162,9 @@ public final class Constants {
         public static final double RotateManualVoltageRampingConstant = 0.0;
         public static final double RotateKF = 0.048;
 //        public static final double RotateKF = 0.1;
-        public static final double RotateKP = 0.01;
+        public static final double RotateKP = 0.2;
         public static final double RotateKI = 0.0001;
-        public static final double RotateKD = 0.0;
+        public static final double RotateKD = 1.0;
         public static final int RotatePID_id = 0;
 
         public static final double LengthClosedVoltageRampingConstant = 0.0;
