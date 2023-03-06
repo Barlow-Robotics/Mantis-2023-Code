@@ -5,11 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -101,6 +98,13 @@ public class Arm extends SubsystemBase {
     public void periodic() {
     }
 
+    
+    private double rotationFeedForward() {
+        double ff = Constants.ArmConstants.ffRetracted + ((getLength() / Constants.ArmConstants.ArmMaxLength)
+                * (Constants.ArmConstants.ffExtracted - Constants.ArmConstants.ffRetracted));
+        return ff;
+    }
+
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
         // double currentPos = rotateMotorLeader.getSelectedSensorPosition();
@@ -115,15 +119,14 @@ public class Arm extends SubsystemBase {
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double currentAngle = getAngle();
-        double ff = Math.sin(Math.toRadians(currentAngle)) * 0.75;
+        double ff = Math.sin(Math.toRadians(currentAngle)) * rotationFeedForward();
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
         // rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle); //ALH -
         // Before accounting for gravity
         // rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle,
-        // DemandType.ArbitraryFeedForward,
-        // Constants.maxGravityFF * cosineScalar); // ALH -
+        // DemandType.ArbitraryFeedForward, Constants.maxGravityFF * cosineScalar); // ALH -
     }
 
     public double getAngle() {
