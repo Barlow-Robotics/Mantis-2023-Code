@@ -177,7 +177,10 @@ public final class Constants {
         public static final double LengthKD = 0.0;
         public static final int LengthPID_id = 0;
 
-        public static final int kMeasuredPosHorizontal = 840; // ALH - this is supposed to be position measured when arm is horizontal, need to determine what that is.
+        public static final double ffRetracted = 0.08; // Need to re-test to find this after claw is attached
+        public static final double ffExtracted = 0.16; // Need to re-test to find this after claw is attached
+
+        // public static final int kMeasuredPosHorizontal = 840; // ALH - this is supposed to be position measured when arm is horizontal, need to determine what that is.
     
 
     }

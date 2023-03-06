@@ -156,8 +156,13 @@ public class Arm extends SubsystemBase {
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
+        double deltaDistance = desiredLength - getLength();
+        double ff = Constants.ArmConstants.ffRetracted + ((deltaDistance / Constants.ArmConstants.ArmMaxLength)
+                * (Constants.ArmConstants.ffExtracted - Constants.ArmConstants.ffRetracted));
+        double feedForward = Math.sin(Math.toRadians(getAngle())) * ff;
+
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
+        extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, feedForward);
     }
 
     public double getLength() {
