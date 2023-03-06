@@ -101,6 +101,13 @@ public class Arm extends SubsystemBase {
     public void periodic() {
     }
 
+    
+    private double rotationFeedForward() {
+        double ff = Constants.ArmConstants.ffRetracted + ((getLength() / Constants.ArmConstants.ArmMaxLength)
+                * (Constants.ArmConstants.ffExtracted - Constants.ArmConstants.ffRetracted));
+        return ff;
+    }
+
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
         // double currentPos = rotateMotorLeader.getSelectedSensorPosition();
@@ -115,7 +122,7 @@ public class Arm extends SubsystemBase {
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double currentAngle = getAngle();
-        double ff = Math.sin(Math.toRadians(currentAngle)) * 0.75;
+        double ff = Math.sin(Math.toRadians(currentAngle)) * rotationFeedForward();
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
@@ -129,7 +136,7 @@ public class Arm extends SubsystemBase {
     public double getAngle() {
         double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
         return result;
-    } 
+    }
 
     public boolean isAtMaxAngle() {
         return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
@@ -146,14 +153,6 @@ public class Arm extends SubsystemBase {
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
     }
 
-    
-    private double rotationFeedForward (double desiredLength) {
-        double deltaDistance = desiredLength - getLength();
-        double ff = Constants.ArmConstants.ffRetracted + ((deltaDistance / Constants.ArmConstants.ArmMaxLength)
-                * (Constants.ArmConstants.ffExtracted - Constants.ArmConstants.ffRetracted));
-        return ff;
-    }
-
     /* Extend Motor */
     public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is
                                                                                             // fully retracted
@@ -164,10 +163,8 @@ public class Arm extends SubsystemBase {
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
-        double feedForward = Math.sin(Math.toRadians(getAngle())) * rotationFeedForward(desiredLength);
-
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, feedForward);
+        extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
     }
 
     public double getLength() {
