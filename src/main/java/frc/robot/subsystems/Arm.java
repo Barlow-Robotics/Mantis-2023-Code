@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -102,6 +103,12 @@ public class Arm extends SubsystemBase {
 
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
+        double currentPos = rotateMotorLeader.getSelectedSensorPosition();
+        double degrees = (currentPos - Constants.ArmConstants.kMeasuredPosHorizontal)
+                / Constants.ArmConstants.CountsPerArmDegree;
+        double radians = java.lang.Math.toRadians(degrees);
+        double cosineScalar = java.lang.Math.cos(radians);
+
         rotateMotorLeader
                 .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         rotateMotorLeader.configMotionAcceleration(
@@ -112,6 +119,9 @@ public class Arm extends SubsystemBase {
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
+        //rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle); //ALH - Before accounting for gravity 
+        rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward,
+                Constants.maxGravityFF * cosineScalar);
     }
 
     public double getAngle() {
