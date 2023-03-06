@@ -43,7 +43,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
 
     private final Drive driveSub = new Drive();
-    private final Arm armSub = new Arm();
+    public final Arm armSub = new Arm();
     private final Claw clawSub = new Claw(armSub);
     private final Vision visionSub = new Vision();
     // private final Underglow underglowSub = new Underglow();
