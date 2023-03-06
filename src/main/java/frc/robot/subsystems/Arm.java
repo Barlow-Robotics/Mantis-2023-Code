@@ -5,11 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -129,8 +126,7 @@ public class Arm extends SubsystemBase {
         // rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle); //ALH -
         // Before accounting for gravity
         // rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle,
-        // DemandType.ArbitraryFeedForward,
-        // Constants.maxGravityFF * cosineScalar); // ALH -
+        // DemandType.ArbitraryFeedForward, Constants.maxGravityFF * cosineScalar); // ALH -
     }
 
     public double getAngle() {

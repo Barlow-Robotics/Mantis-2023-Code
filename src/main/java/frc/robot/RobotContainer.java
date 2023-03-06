@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.LogitechDualActionConstants;
 import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
@@ -62,8 +61,8 @@ public class RobotContainer {
 
     private int xAxis;
     private int yawAxis;
-    private int angleAxis;
-    private int extensionAxis;
+//     private int angleAxis;
+//     private int extensionAxis;
 
     private Trigger moveToTopButton;
     private Trigger moveToMiddleButton;
@@ -207,8 +206,8 @@ public class RobotContainer {
 
         xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;
-        angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY; 
-        extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX; 
+        // angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY; 
+        // extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX; 
                 
         toggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
         toggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
@@ -415,13 +414,13 @@ public class RobotContainer {
         /* * * * * * VISION BUTTONS * * * * * */
 
         alignWithAprilTagsButton = new JoystickButton(driverController, 6);
-        moveToRestingPositionButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
+        alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
 
         alignWithGamePieceButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
-        moveToRestingPositionButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
+        alignWithGamePieceButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
 
         alignWithPoleButton = new JoystickButton(driverController, 8);
-        moveToRestingPositionButton.onTrue(new AlignWithPole(visionSub, driveSub));
+        alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
 
     public Command getAutonomousCommand() {
