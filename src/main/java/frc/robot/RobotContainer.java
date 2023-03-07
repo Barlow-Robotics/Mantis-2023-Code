@@ -64,16 +64,16 @@ public class RobotContainer {
 //     private int angleAxis;
 //     private int extensionAxis;
 
-    private Trigger moveToTopButton;
-    private Trigger moveToMiddleButton;
-    private Trigger moveToBottomButton;
-    private Trigger moveToRestingPositionButton;
-    private Trigger moveToPlayerStationButton;
+    private Trigger moveToTopButton; // left stick (blue button)
+    private Trigger moveToMiddleButton; // left bumper (green button)
+    private Trigger moveToBottomButton; // window button (red button)
+    private Trigger moveToRestingPositionButton; // left trigger (middle white button)
+    private Trigger moveToPlayerStationButton; // right stick (black button)
     private Trigger alignWithAprilTagsButton;
     private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
-    private Trigger moveToFloorButton;
-    private Trigger toggleClawButton;
+    private Trigger moveToFloorButton; // b button (far right white button)
+    private Trigger toggleClawButton; // y button (yellow button)
     private Trigger testRotateButton;
     private Trigger testRotateHomeButton;
     private Trigger extendTestButton;
@@ -342,7 +342,7 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendAcceleration,
                         Position.Floor));
 
-        moveToFloorButton = new JoystickButton(operatorButtonController, 14); //same as move to bottom?
+        moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonB);
         moveToFloorButton.onTrue(moveToFloor);
 
         if (armSub.armState == Position.Bottom || armSub.armState == Position.Floor) {
