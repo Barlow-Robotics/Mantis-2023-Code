@@ -15,7 +15,7 @@ public class MoveArm extends CommandBase {
 
     double angle;
     double angleVelocity;
-    double angleAcceleration;
+    double angleAccelerationTime;
     double length;
     double extensionVelocity;
     double extensionAcceleration;
@@ -40,7 +40,7 @@ public class MoveArm extends CommandBase {
         this.armSub = a;
         this.angle = angle;
         this.angleVelocity = angleVelocity;
-        this.angleAcceleration = angleAcceleration;
+        this.angleAccelerationTime = angleAcceleration;
         this.length = length;
         this.extensionVelocity = extensionVelocity;
         this.extensionAcceleration = extensionAcceleration;
@@ -54,14 +54,14 @@ public class MoveArm extends CommandBase {
     @Override
     public void initialize() {
         armSub.setState(Arm.Position.Transition);
-        armSub.setAngle(angle, angleVelocity, angleAcceleration);
+        armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
 //wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        armSub.setAngle(angle, angleVelocity, angleAcceleration);
+        armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
 //wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 

@@ -32,7 +32,7 @@ public class EngageChargingStation extends CommandBase {
     public void execute() {
         double error = 0 - navX.getPitch();
         // Does the navX need to be zeroed/reset/calibrated?
-        if (Math.abs(navX.getAngle()) >= Constants.DriveConstants.BalanceTolerance) {
+        if (Math.abs(navX.getPitch()) >= Constants.DriveConstants.BalanceTolerance) {
             driveSub.setSpeeds(Constants.DriveConstants.kP * error, Constants.DriveConstants.kP * error);
         }
     }
@@ -45,6 +45,6 @@ public class EngageChargingStation extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (Math.abs(navX.getAngle()) <= Constants.DriveConstants.BalanceTolerance);
+        return (Math.abs(navX.getPitch()) <= Constants.DriveConstants.BalanceTolerance);
     }
 }

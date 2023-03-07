@@ -23,6 +23,8 @@ import frc.robot.subsystems.Arm;
  * project.
  */
 public class Robot extends TimedRobot {
+    public final Arm armSub = new Arm();
+
     private Command autonomousCommand;
 
     private RobotContainer robotContainer;
@@ -58,7 +60,7 @@ public class Robot extends TimedRobot {
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
-        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
     }
 
     @Override
@@ -86,10 +88,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
+        // This makes sure that the autonomous stops running when teleop starts running.
+        // If you want the autonomous to continue until interrupted by another command,
+        // remove this line or comment it out.
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -130,7 +131,7 @@ public class Robot extends TimedRobot {
 
         /* fill our buffer object with the excel points */
         // initBuffer(MotionProfile.Points, MotionProfile.kNumPoints);
-        
+
     }
 
     @Override
@@ -144,7 +145,7 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
-        
+
     }
 
     /**
@@ -155,41 +156,48 @@ public class Robot extends TimedRobot {
      */
     // private void initBuffer(double[][] profile, int totalCnt) {
 
-    //     boolean forward = true; // set to false to drive in opposite direction of profile (not really needed
-    //                             // since you can use negative numbers in profile).
+    // boolean forward = true; // set to false to drive in opposite direction of
+    // profile (not really needed
+    // // since you can use negative numbers in profile).
 
-    //     TrajectoryPoint point = new TrajectoryPoint(); // temp for for loop, since unused params are initialized
-    //                                                    // automatically, you can alloc just one
+    // TrajectoryPoint point = new TrajectoryPoint(); // temp for for loop, since
+    // unused params are initialized
+    // // automatically, you can alloc just one
 
-    //     /* clear the buffer, in case it was used elsewhere */
-    //     bufferedStream.Clear();
+    // /* clear the buffer, in case it was used elsewhere */
+    // bufferedStream.Clear();
 
-    //     /* Insert every point into buffer, no limit on size */
-    //     for (int i = 0; i < totalCnt; ++i) {
+    // /* Insert every point into buffer, no limit on size */
+    // for (int i = 0; i < totalCnt; ++i) {
 
-    //         double direction = forward ? +1 : -1;
-    //         double positionRot = profile[i][0];
-    //         double velocityRPM = profile[i][1];
-    //         int durationMilliseconds = (int) profile[i][2];
+    // double direction = forward ? +1 : -1;
+    // double positionRot = profile[i][0];
+    // double velocityRPM = profile[i][1];
+    // int durationMilliseconds = (int) profile[i][2];
 
-    //         /* for each point, fill our structure and pass it to API */
-    //         point.timeDur = durationMilliseconds;
-    //         point.position = direction * positionRot * Constants.DriveConstants.countsPerRevolution; // Convert
-    //                                                                                                  // Revolutions to
-    //         // Units
-    //         point.velocity = direction * velocityRPM * Constants.DriveConstants.countsPerRevolution / 600.0; // Convert
-    //                                                                                                          // RPM to
-    //         // Units/100ms
-    //         point.auxiliaryPos = 0;
-    //         point.auxiliaryVel = 0;
-    //         point.profileSlotSelect0 = Constants.kPrimaryPIDSlot; /* which set of gains would you like to use [0,3]? */
-    //         point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
-    //         point.zeroPos = (i == 0); /* set this to true on the first point */
-    //         point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
-    //         point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
+    // /* for each point, fill our structure and pass it to API */
+    // point.timeDur = durationMilliseconds;
+    // point.position = direction * positionRot *
+    // Constants.DriveConstants.countsPerRevolution; // Convert
+    // // Revolutions to
+    // // Units
+    // point.velocity = direction * velocityRPM *
+    // Constants.DriveConstants.countsPerRevolution / 600.0; // Convert
+    // // RPM to
+    // // Units/100ms
+    // point.auxiliaryPos = 0;
+    // point.auxiliaryVel = 0;
+    // point.profileSlotSelect0 = Constants.kPrimaryPIDSlot; /* which set of gains
+    // would you like to use [0,3]? */
+    // point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
+    // point.zeroPos = (i == 0); /* set this to true on the first point */
+    // point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last
+    // point */
+    // point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0]
+    // output here */
 
-    //         bufferedStream.Write(point);
-    //     }
+    // bufferedStream.Write(point);
+    // }
     // }
 
 }
