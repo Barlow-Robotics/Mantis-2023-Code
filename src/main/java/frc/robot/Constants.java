@@ -93,6 +93,7 @@ public final class Constants {
 
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
+        public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
 
         public static final double armRotateSpeed = 55; // Degrees per second
         public static final double armRotateAccelerationTime = 0; // Need to change this (time in seconds for total motion)
@@ -144,14 +145,17 @@ public final class Constants {
         public static final double ArmMinAngle = 0.0;
         public static final double ArmMaxAngle = 120.0;
         public static final double ArmMinLength = 0.0;
-        public static final double ArmMaxLength = 32.0; // need to confirm (inches)
+        public static final double ArmMaxLength = 26.0; // need to confirm (inches)
 
         public static final double AngleVel = 0.5;
         public static final double AngleAcceleration = AngleVel * 4.0;
         public static final double AngleMultiplier = 0.5;
+        public static final double AngleVel = 50;
+        public static final double AngleAccelerationTime = 0.25;
+        public static final double AngleMultiplier = 1.0;
 
-        public static final double LengthVel = 0.5;
-        public static final double LengthAccelTime = LengthVel * 4.0;
+        public static final double LengthVel = 30.0;
+        public static final double LengthAccelTime = 0.25;
         public static final double LengthMultiplier = 0.5;
 
         // wpk will probably need to add constants for minimum angle before retracting
@@ -172,12 +176,12 @@ public final class Constants {
         public static final double LengthClosedVoltageRampingConstant = 0.0;
         public static final double LengthManualVoltageRampingConstant = 0.0;
         public static final double LengthKF = 0.048;
-        public static final double LengthKP = 0.005;
-        public static final double LengthKI = 0.0001;
-        public static final double LengthKD = 0.0;
+        public static final double LengthKP = 0.1;
+        public static final double LengthKI = 0.001;
+        public static final double LengthKD = 0.1;
         public static final int LengthPID_id = 0;
 
-        public static final double ffRetracted = 0.08; // Need to re-test to find this after claw is attached
+        public static final double ffRetracted = 0.09; // Need to re-test to find this after claw is attached
         public static final double ffExtracted = 0.16; // Need to re-test to find this after claw is attached
 
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is

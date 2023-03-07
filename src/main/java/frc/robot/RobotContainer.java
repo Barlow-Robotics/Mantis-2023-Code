@@ -75,7 +75,10 @@ public class RobotContainer {
     private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton;
     private Trigger toggleClawButton;
-    private Trigger testingButton;
+    private Trigger testRotateButton;
+    private Trigger testRotateHomeButton;
+    private Trigger extendTestButton;
+    private Trigger retractTestButton;
 
     private Command moveToBottom;
     private Command moveToMiddle;
@@ -192,6 +195,31 @@ public class RobotContainer {
                             if (desiredLength * Math.cos(desiredAngle) <= 0) {
                                 desiredLength = currentLength;
                             }
+                            double desiredAngle = currentAngle + operatorButtonController.getRawAxis(1) * Constants.ArmConstants.AngleMultiplier; 
+                            
+                            if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
+                                desiredAngle = Constants.ArmConstants.ArmMaxAngle;
+                            } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
+                                desiredAngle = Constants.ArmConstants.ArmMinAngle;
+                            }
+//wpk commented out until after gb repaired
+//                            armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel, Constants.ArmConstants.AngleAccelerationTime);
+
+                            /* Extension */
+                            double currentLength = armSub.getLength();
+                            double desiredLength = currentLength + operatorButtonController.getRawAxis(2) * Constants.ArmConstants.LengthMultiplier;
+                        
+                            if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
+                                desiredLength = Constants.ArmConstants.ArmMaxLength;
+                            } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
+                                desiredLength = Constants.ArmConstants.ArmMinLength;
+                            }
+                            armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel, Constants.ArmConstants.LengthAccelTime);
+
+                            
+                            if (desiredLength*Math.cos(desiredAngle) <= 0) {
+                                desiredLength = currentLength;
+                            } 
                         },
                         armSub));
     }
@@ -401,16 +429,53 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendAccelerationTime,
                         Position.PlayerStation));
 
-        testingButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
-        testingButton.onTrue(
+        testRotateButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
+        testRotateButton.onTrue(
                 new MoveArm(armSub,
-                        100,
+                        90.0,
                         70.0,
                         0.25,
                         0,
                         0,
                         0,
                         Position.Transition));
+
+        testRotateHomeButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonB);
+        testRotateHomeButton.onTrue(
+                new MoveArm(armSub,
+                        0.0,
+                        40.0,
+                        0.25,
+                        0,
+                        0,
+                        0,
+                        Position.Transition));
+                
+
+        extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
+        extendTestButton.onTrue(
+                new MoveArm(armSub,
+                        armSub.getAngle(),
+                        0.0,
+                        0.0,
+                        26,
+                        50,
+                        0.1,
+                        Position.Transition));
+        
+
+        retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
+        retractTestButton.onTrue(
+                new MoveArm(armSub,
+                        armSub.getAngle(),
+                        0.0,
+                        0.0,
+                        0,
+                        50,
+                        0.1,
+                        Position.Transition));
+                
+
 
         /* * * * * * VISION BUTTONS * * * * * */
 

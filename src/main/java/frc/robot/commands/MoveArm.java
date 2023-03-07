@@ -56,6 +56,7 @@ public class MoveArm extends CommandBase {
         armSub.setState(Arm.Position.Transition);
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
 //wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
+        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -63,6 +64,7 @@ public class MoveArm extends CommandBase {
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
 //wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
+        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called once the command ends or is interrupted.
