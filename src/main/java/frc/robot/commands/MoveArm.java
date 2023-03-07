@@ -55,14 +55,14 @@ public class MoveArm extends CommandBase {
     public void initialize() {
         armSub.setState(Arm.Position.Transition);
         armSub.setAngle(angle, angleVelocity, angleAcceleration);
-//wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
+        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAcceleration);
-//wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
+        armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
     // Called once the command ends or is interrupted.

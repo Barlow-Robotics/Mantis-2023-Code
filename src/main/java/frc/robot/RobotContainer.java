@@ -43,7 +43,7 @@ public class RobotContainer {
 
     private final Drive driveSub = new Drive();
     public final Arm armSub = new Arm();
-    private final Claw clawSub = new Claw(armSub);
+    public final Claw clawSub = new Claw(armSub);
     private final Vision visionSub = new Vision();
     // private final Underglow underglowSub = new Underglow();
     // private final Vision visionSub = new Vision();
@@ -74,7 +74,10 @@ public class RobotContainer {
     private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton;
     private Trigger toggleClawButton;
-    private Trigger testingButton;
+    private Trigger testRotateButton;
+    private Trigger testRotateHomeButton;
+    private Trigger extendTestButton;
+    private Trigger retractTestButton;
 
     private Command moveToBottom;
     private Command moveToMiddle;
@@ -158,41 +161,41 @@ public class RobotContainer {
                         },
                         driveSub));
 
-        // armSub.setDefaultCommand(
-        //         // A split-stick arcade command, with forward/backward controlled by the left
-        //         // hand, and turning controlled by the right.
-        //         new RunCommand(
-        //                 () -> {
-        //                     /* Angle */
-        //                     double currentAngle = armSub.getAngle();
-        //                     double desiredAngle = currentAngle + operatorButtonController.getRawAxis(angleAxis) * ArmConstants.AngleMultiplier; 
+        armSub.setDefaultCommand(
+                // A split-stick arcade command, with forward/backward controlled by the left
+                // hand, and turning controlled by the right.
+                new RunCommand(
+                        () -> {
+                            /* Angle */
+                            double currentAngle = armSub.getAngle();
+                            double desiredAngle = currentAngle + operatorButtonController.getRawAxis(1) * Constants.ArmConstants.AngleMultiplier; 
                             
-        //                     if (desiredAngle > ArmConstants.ArmMaxAngle) {
-        //                         desiredAngle = ArmConstants.ArmMaxAngle;
-        //                     } else if (desiredAngle < ArmConstants.ArmMinAngle) {
-        //                         desiredAngle = ArmConstants.ArmMinAngle;
-        //                     }
+                            if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
+                                desiredAngle = Constants.ArmConstants.ArmMaxAngle;
+                            } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
+                                desiredAngle = Constants.ArmConstants.ArmMinAngle;
+                            }
+//wpk commented out until after gb repaired
+//                            armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel, Constants.ArmConstants.AngleAccelerationTime);
 
-        //                     armSub.setAngle(desiredAngle, ArmConstants.AngleVel, ArmConstants.AngleAccelerationTime);
-
-        //                     /* Extension */
-        //                     double currentLength = armSub.getLength();
-        //                     double desiredLength = currentLength + operatorButtonController.getRawAxis(extensionAxis) * ArmConstants.LengthMultiplier;
+                            /* Extension */
+                            double currentLength = armSub.getLength();
+                            double desiredLength = currentLength + operatorButtonController.getRawAxis(2) * Constants.ArmConstants.LengthMultiplier;
                         
-        //                     if (desiredLength > ArmConstants.ArmMaxLength) {
-        //                         desiredLength = ArmConstants.ArmMaxLength;
-        //                     } else if (desiredLength < ArmConstants.ArmMinLength) {
-        //                         desiredLength = ArmConstants.ArmMinLength;
-        //                     }
+                            if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
+                                desiredLength = Constants.ArmConstants.ArmMaxLength;
+                            } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
+                                desiredLength = Constants.ArmConstants.ArmMinLength;
+                            }
 
-        //                     armSub.setLength(desiredLength, ArmConstants.LengthVel, ArmConstants.LengthAccelTime);
+                            armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel, Constants.ArmConstants.LengthAccelTime);
 
                             
-        //                     if (desiredLength*Math.cos(desiredAngle) <= 0) {
-        //                         desiredLength = currentLength;
-        //                     } 
-        //                 },
-        //                 armSub));
+                            if (desiredLength*Math.cos(desiredAngle) <= 0) {
+                                desiredLength = currentLength;
+                            } 
+                        },
+                        armSub));
     }
 
     private void configureButtonBindings() {
@@ -400,16 +403,53 @@ public class RobotContainer {
                         Constants.ArmConstants.armExtendAcceleration,
                         Position.PlayerStation));
 
-        testingButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
-        testingButton.onTrue(
+        testRotateButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
+        testRotateButton.onTrue(
                 new MoveArm(armSub,
-                        100,
+                        90.0,
                         70.0,
                         0.25,
                         0,
                         0,
                         0,
                         Position.Transition));
+
+        testRotateHomeButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonB);
+        testRotateHomeButton.onTrue(
+                new MoveArm(armSub,
+                        0.0,
+                        40.0,
+                        0.25,
+                        0,
+                        0,
+                        0,
+                        Position.Transition));
+                
+
+        extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
+        extendTestButton.onTrue(
+                new MoveArm(armSub,
+                        armSub.getAngle(),
+                        0.0,
+                        0.0,
+                        26,
+                        50,
+                        0.1,
+                        Position.Transition));
+        
+
+        retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
+        retractTestButton.onTrue(
+                new MoveArm(armSub,
+                        armSub.getAngle(),
+                        0.0,
+                        0.0,
+                        0,
+                        50,
+                        0.1,
+                        Position.Transition));
+                
+
 
         /* * * * * * VISION BUTTONS * * * * * */
 

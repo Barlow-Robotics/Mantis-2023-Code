@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -54,11 +56,12 @@ public class Arm extends SubsystemBase {
         rotateMotorLeader.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
 
         rotateMotorLeader.setSelectedSensorPosition(0);
-        // extendMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-        // LimitSwitchNormal.NormallyOpen);
-        // extendMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-        // LimitSwitchNormal.NormallyOpen);
-        // extendMotor.configClearPositionOnLimitR(true, 0);
+
+        extendMotor.setSelectedSensorPosition(0);
+
+        extendMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        extendMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        extendMotor.configClearPositionOnLimitR(true, 0);
 
         // rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         // LimitSwitchNormal.NormallyOpen);
@@ -152,10 +155,10 @@ public class Arm extends SubsystemBase {
     /* Extend Motor */
     public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is
                                                                                             // fully retracted
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
