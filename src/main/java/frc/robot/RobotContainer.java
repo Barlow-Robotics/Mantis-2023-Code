@@ -568,6 +568,7 @@ public class RobotContainer {
                         0,
                         Position.Transition));
 
+        extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
         extendTestButton.onTrue(
                 new MoveArm(armSub,
                         armSub.getAngle(),
