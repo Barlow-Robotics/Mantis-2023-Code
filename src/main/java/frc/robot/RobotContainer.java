@@ -398,17 +398,17 @@ public class RobotContainer {
                         0.0,
                         Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Transition),
-                new PrintCommand("Completed arm rotation") ,
-                new MoveArm(
-                        armSub,
-                        Constants.ArmConstants.FloorArmAngle,
-                        Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAccelerationTime,
-                        Constants.ArmConstants.FloorArmLength,
-                        Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAccelerationTime,
-                        Position.Floor),
-                new PrintCommand("Completed extending arm") 
+            new PrintCommand("Completed arm rotation") ,
+            new MoveArm(
+                    armSub,
+                    Constants.ArmConstants.FloorArmAngle,
+                    Constants.ArmConstants.armRotateSpeed,
+                    Constants.ArmConstants.armRotateAccelerationTime,
+                    Constants.ArmConstants.FloorArmLength,
+                    Constants.ArmConstants.armExtendSpeed,
+                    Constants.ArmConstants.armExtendAccelerationTime,
+                    Position.Floor),
+            new PrintCommand("Completed extending arm") 
                         );
 
         moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonB);
