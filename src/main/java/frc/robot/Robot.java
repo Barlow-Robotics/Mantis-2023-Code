@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
      */
     // @Override
     public void autonomousInit() {
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
         // This makes sure that the autonomous stops running when teleop starts running.
         // If you want the autonomous to continue until interrupted by another command,
         // remove this line or comment it out.
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
     }

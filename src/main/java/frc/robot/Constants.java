@@ -149,6 +149,9 @@ public final class Constants {
         public static final double AngleVel = 50;
         public static final double AngleAccelerationTime = 0.25;
         public static final double AngleMultiplier = 1.0;
+        // public static final double AngleVel = 0.5;
+        public static final double AngleAcceleration = AngleVel * 4.0;
+        // public static final double AngleMultiplier = 0.5;
 
         public static final double LengthVel = 30.0;
         public static final double LengthAccelTime = 0.25;
