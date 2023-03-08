@@ -73,7 +73,7 @@ public final class Constants {
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 
-        public static final double BalanceTolerance = 10; // Need to change
+        public static final double BalanceTolerance = 2.5; 
     }
 
     public static final class ArmConstants {
@@ -82,23 +82,23 @@ public final class Constants {
 
         public static final double ExtendSprocketDiameter = 1.751;
         public static final double ExtendSprocketCircumference = ExtendSprocketDiameter * Math.PI;
-        
+
         public static final double InchesPerRevolution = ExtendSprocketCircumference / ExtendGearRatio;
         public static final double RevolutionsPerDegree = 1.0 / 360; // Is this right?
 
         // add values when we figure out lengths
         public static final double CountsPerArmDegree = TalonFXEncoderResolution * RevolutionsPerDegree
                 * RotateGearRatio;
-        public static final double CountsPerArmInch = TalonFXEncoderResolution / InchesPerRevolution; 
+        public static final double CountsPerArmInch = TalonFXEncoderResolution / InchesPerRevolution;
 
+        public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
 
         public static final double armRotateSpeed = 55; // Degrees per second
+        public static final double armRotateAccelerationTime = 0; // Need to change this (time in seconds for total motion)
         public static final double armExtendSpeed = 0; // Need to change this
-
-        public static final double armRotateAcceleration = 0; // Need to change this
-        public static final double armExtendAcceleration = 0; // Need to change this
+        public static final double armExtendAccelerationTime = 0; // Need to change this (time in sceonds for total motion)
 
         public static final double ExtentionCalibrationVelocity = 0; // Need to change this
         public static final double RotationCalibrationVelocity = 10; // Degrees per second
@@ -147,6 +147,9 @@ public final class Constants {
         public static final double ArmMinLength = 0.0;
         public static final double ArmMaxLength = 26.0; // need to confirm (inches)
 
+        public static final double AngleVel = 0.5;
+        public static final double AngleAcceleration = AngleVel * 4.0;
+        public static final double AngleMultiplier = 0.5;
         public static final double AngleVel = 50;
         public static final double AngleAccelerationTime = 0.25;
         public static final double AngleMultiplier = 1.0;
@@ -164,7 +167,7 @@ public final class Constants {
         public static final double RotateClosedVoltageRampingConstant = 0.0;
         public static final double RotateManualVoltageRampingConstant = 0.0;
         public static final double RotateKF = 0.048;
-//        public static final double RotateKF = 0.1;
+        // public static final double RotateKF = 0.1;
         public static final double RotateKP = 0.2;
         public static final double RotateKI = 0.0001;
         public static final double RotateKD = 1.0;
@@ -181,8 +184,9 @@ public final class Constants {
         public static final double ffRetracted = 0.09; // Need to re-test to find this after claw is attached
         public static final double ffExtracted = 0.16; // Need to re-test to find this after claw is attached
 
-        // public static final int kMeasuredPosHorizontal = 840; // ALH - this is supposed to be position measured when arm is horizontal, need to determine what that is.
-    
+        // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
+        // supposed to be position measured when arm is horizontal, need to determine
+        // what that is.
 
     }
 
@@ -190,6 +194,10 @@ public final class Constants {
         public static final int ClawMotorID = 15;
         public static final int ExtendSolenoidID = 4;
         public static final int RetractSolenoidID = 5;
+
+        public static final double RotateGearRatio = 0; // Need to change
+
+        public static final double RevolutionsPerDegree = 1 / 360;
 
         public static final double ClawClosedVoltageRampingConstant = 0.0;
         public static final double ClawManualVoltageRampingConstant = 0.0;
@@ -199,7 +207,8 @@ public final class Constants {
         public static final double ClawKD = 0.0;
         public static final int ClawPID_id = 0;
 
-        public static final double CountsPerClawDegree = 0; // Need to change
+        public static final double CountsPerClawDegree = TalonFXEncoderResolution * RevolutionsPerDegree
+        * RotateGearRatio; // Need to change
 
         public static final int ClawAngleTolerance = 0; // Need to change
 

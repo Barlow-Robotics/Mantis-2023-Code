@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.LogitechDualActionConstants;
 import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
@@ -42,8 +43,8 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
 
     private final Drive driveSub = new Drive();
-    public final Arm armSub = new Arm();
-    public final Claw clawSub = new Claw(armSub);
+    private final Arm armSub = new Arm();
+    private final Claw clawSub = new Claw(armSub);
     private final Vision visionSub = new Vision();
     // private final Underglow underglowSub = new Underglow();
     // private final Vision visionSub = new Vision();
@@ -61,8 +62,8 @@ public class RobotContainer {
 
     private int xAxis;
     private int yawAxis;
-//     private int angleAxis;
-//     private int extensionAxis;
+    private int angleAxis;
+    private int extensionAxis;
 
     private Trigger moveToTopButton; // left stick (blue button)
     private Trigger moveToMiddleButton; // left bumper (green button)
@@ -88,7 +89,6 @@ public class RobotContainer {
     private float yawMultiplier = 1.0f;
 
     private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
-
 
     public RobotContainer() {
         configureButtonBindings();
@@ -168,6 +168,33 @@ public class RobotContainer {
                         () -> {
                             /* Angle */
                             double currentAngle = armSub.getAngle();
+                            double desiredAngle = currentAngle
+                                    + (operatorButtonController.getRawAxis(angleAxis) * ArmConstants.AngleMultiplier);
+
+                            if (desiredAngle > ArmConstants.ArmMaxAngle) {
+                                desiredAngle = ArmConstants.ArmMaxAngle;
+                            } else if (desiredAngle < ArmConstants.ArmMinAngle) {
+                                desiredAngle = ArmConstants.ArmMinAngle;
+                            }
+
+                            armSub.setAngle(desiredAngle, ArmConstants.AngleVel, ArmConstants.AngleAcceleration);
+
+                            /* Extension */
+                            double currentLength = armSub.getLength();
+                            double desiredLength = currentLength + operatorButtonController.getRawAxis(extensionAxis)
+                                    * ArmConstants.LengthMultiplier;
+
+                            if (desiredLength > ArmConstants.ArmMaxLength) {
+                                desiredLength = ArmConstants.ArmMaxLength;
+                            } else if (desiredLength < ArmConstants.ArmMinLength) {
+                                desiredLength = ArmConstants.ArmMinLength;
+                            }
+
+                            armSub.setLength(desiredLength, ArmConstants.LengthVel, ArmConstants.LengthAccelTime);
+
+                            if (desiredLength * Math.cos(desiredAngle) <= 0) {
+                                desiredLength = currentLength;
+                            }
                             double desiredAngle = currentAngle + operatorButtonController.getRawAxis(1) * Constants.ArmConstants.AngleMultiplier; 
                             
                             if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
@@ -187,7 +214,6 @@ public class RobotContainer {
                             } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
                                 desiredLength = Constants.ArmConstants.ArmMinLength;
                             }
-
                             armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel, Constants.ArmConstants.LengthAccelTime);
 
                             
@@ -209,9 +235,9 @@ public class RobotContainer {
 
         xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;
-        // angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY; 
-        // extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX; 
-                
+        angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
+        extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
+
         toggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
         toggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
         toggleClawButton.onTrue(toggleClaw);
@@ -223,19 +249,19 @@ public class RobotContainer {
                         armSub,
                         Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Transition),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.BottomArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.BottomArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Bottom));
 
         moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.WindowButton);
@@ -247,21 +273,21 @@ public class RobotContainer {
                             armSub,
                             Constants.ArmConstants.RestingFromFloorArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             0, // *** Need to change (says "armContronl.Extention" in sim) -
                                // Angela
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Transition),
 
                     new MoveArm(
                             armSub,
                             Constants.ArmConstants.RestingArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.RestingArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Resting));
         } else {
             moveToResting = new SequentialCommandGroup(
@@ -270,20 +296,20 @@ public class RobotContainer {
                             0, // *** Need to change (says "armContronl.Rotation()" in sim)
                                // - Angela
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.RestingArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Transition),
 
                     new MoveArm(
                             armSub,
                             Constants.ArmConstants.RestingArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.RestingArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Resting));
         }
 
@@ -295,19 +321,19 @@ public class RobotContainer {
                         armSub,
                         Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Transition),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.FloorArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Floor));
 
         moveToTopButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
@@ -316,10 +342,10 @@ public class RobotContainer {
                         armSub,
                         Constants.ArmConstants.TopArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.TopArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Top));
 
         moveToFloor = new SequentialCommandGroup(
@@ -327,19 +353,19 @@ public class RobotContainer {
                         armSub,
                         Constants.ArmConstants.AvoidChassisArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.AvoidChassisArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Transition),
                 new MoveArm(
                         armSub,
                         Constants.ArmConstants.FloorArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAcceleration,
+                        Constants.ArmConstants.armRotateAccelerationTime,
                         Constants.ArmConstants.FloorArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.Floor));
 
         moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonB);
@@ -351,20 +377,20 @@ public class RobotContainer {
                             armSub,
                             Constants.ArmConstants.MiddleFromBottomArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.MiddleFromBottomArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Transition),
 
                     new MoveArm(
                             armSub,
                             Constants.ArmConstants.MiddleArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.MiddleArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Middle));
         } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim
                  // - Angela
@@ -373,20 +399,20 @@ public class RobotContainer {
                             armSub,
                             Constants.ArmConstants.MiddleFromBottomArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.MiddleFromBottomArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Transition),
 
                     new MoveArm(
                             armSub,
                             Constants.ArmConstants.MiddleArmAngle,
                             Constants.ArmConstants.armRotateSpeed,
-                            Constants.ArmConstants.armRotateAcceleration,
+                            Constants.ArmConstants.armRotateAccelerationTime,
                             Constants.ArmConstants.MiddleArmLength,
                             Constants.ArmConstants.armExtendSpeed,
-                            Constants.ArmConstants.armExtendAcceleration,
+                            Constants.ArmConstants.armExtendAccelerationTime,
                             Position.Middle));
         }
 
@@ -397,10 +423,10 @@ public class RobotContainer {
         moveToPlayerStationButton.onTrue(
                 new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle,
                         Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Constants.ArmConstants.PlayerStationArmLength,
                         Constants.ArmConstants.armExtendSpeed,
-                        Constants.ArmConstants.armExtendAcceleration,
+                        Constants.ArmConstants.armExtendAccelerationTime,
                         Position.PlayerStation));
 
         testRotateButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
