@@ -123,10 +123,12 @@ public class Arm extends SubsystemBase {
             desiredAngle = ArmConstants.ArmMaxAngle;
         } else if (desiredAngle < ArmConstants.ArmMinAngle) {
             desiredAngle = ArmConstants.ArmMinAngle;
-        } else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
-                                        // the line from arm motor and the edge of the chasis
-            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.AngleAcceleration);
         }
+        // else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support
+        // (prependicular to ground) and the line from arm motor and the edge of the chasis
+        // setLength(0, Constants.ArmConstants.armRotateSpeed,
+        // Constants.ArmConstants.AngleAcceleration);
+        // }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
@@ -158,14 +160,16 @@ public class Arm extends SubsystemBase {
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
-        
+
         if (desiredLength > ArmConstants.ArmMaxLength) {
             desiredLength = ArmConstants.ArmMaxLength;
         } else if (desiredLength < ArmConstants.ArmMinLength) {
             desiredLength = ArmConstants.ArmMinLength;
-        } else if (getAngle() < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
-                                      // the line from rotation motor to the edge of the chasis
-            desiredLength = getLength(); }
+        }
+        // else if (getAngle() < 40) { // 40 degrees is the angle between the arm
+        // support (prependicular to ground) and
+        // // the line from rotation motor to the edge of the chasis
+        // desiredLength = getLength(); }
 
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
@@ -205,5 +209,14 @@ public class Arm extends SubsystemBase {
 
     public Position getState() {
         return armState;
+    }
+
+    public double lengthLim() {
+        double lengthLim; // Inches
+        if (getAngle() > 29) {
+            lengthLim = 0; 
+        } else {
+            lengthLim = 37; } // Rough estimate, need to change
+        return lengthLim;
     }
 }
