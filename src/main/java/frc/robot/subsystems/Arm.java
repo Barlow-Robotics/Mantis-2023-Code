@@ -14,7 +14,10 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -96,6 +99,13 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+        NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength()) ;
+        // System.out.println() ;
     }
 
     private double rotationFeedForward() {
@@ -125,7 +135,7 @@ public class Arm extends SubsystemBase {
             desiredAngle = ArmConstants.ArmMinAngle;
         } else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
                                         // the line from arm motor and the edge of the chasis
-            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.AngleAcceleration);
+            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.AngleAccelerationTime);
         }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
@@ -146,10 +156,9 @@ public class Arm extends SubsystemBase {
     }
 
     public void startRotating(double velocity) { // Velocity in degrees per second
-        rotateMotorLeader.set(TalonFXControlMode.Velocity,
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.set(TalonFXControlMode.Velocity,
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        // rotateMotorLeader.set(TalonFXControlMode.Velocity,
+        //         velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rotateMotorLeader.set(TalonFXControlMode.PercentOutput, -0.07 ) ;
     }
 
     /* Extend Motor */
@@ -167,7 +176,6 @@ public class Arm extends SubsystemBase {
                                       // the line from rotation motor to the edge of the chasis
             desiredLength = getLength();
         }
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
@@ -186,11 +194,12 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean isAtMinLength() {
-        return rotateMotorLeader.isRevLimitSwitchClosed() == 1;
+        return extendMotor.isRevLimitSwitchClosed() == 1 ;
     }
 
     public void startExtending(double velocity) {
-        extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+//        extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
+        extendMotor.set(TalonFXControlMode.PercentOutput, -0.1);  // wpk fix magic number
     }
 
     /* Extend and Rotate */

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
@@ -63,8 +64,10 @@ public class MoveArm extends CommandBase {
     @Override
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
-//wpk        armSub.setLength(length, extensionVelocity, extensionAcceleration);
         armSub.setLength(length, extensionVelocity, extensionAcceleration);
+        NetworkTableInstance.getDefault().getEntry("move_arm/angle").setDouble(angle) ;
+        NetworkTableInstance.getDefault().getEntry("move_arm/length").setDouble(length) ;
+
     }
 
     // Called once the command ends or is interrupted.
@@ -78,8 +81,10 @@ public class MoveArm extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.ArmAngleTolerance
-                && Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.ArmLengthTolerance) {
+        if (
+           ( angleVelocity == 0.0 || Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.ArmAngleTolerance )
+           && ( extensionVelocity == 0.0 ||  Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.ArmLengthTolerance)
+         ) {
             armSub.setState(state);
             System.out.println("move command is finished");
             return true;

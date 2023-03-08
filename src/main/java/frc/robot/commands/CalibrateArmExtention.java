@@ -15,7 +15,7 @@ public class CalibrateArmExtention extends CommandBase {
 
   public CalibrateArmExtention(Arm a) {
     // Use addRequirements() here to declare subsystem dependencies.
-    a = armSub;
+    armSub = a;
     addRequirements(armSub);
   }
 
@@ -28,18 +28,19 @@ public class CalibrateArmExtention extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // armSub.StartExtendingAtVelocty(Constants.ArmConstants.ExtentionCalibrationVelocity);
+    armSub.startExtending(Constants.ArmConstants.ExtentionCalibrationVelocity);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    armSub.startExtending(0);
+    armSub.stopMoving();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    System.out.println("is at min length is " + armSub.isAtMinLength()) ;
     return armSub.isAtMinLength();
   }
 }

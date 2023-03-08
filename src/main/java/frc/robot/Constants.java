@@ -93,14 +93,13 @@ public final class Constants {
 
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
-        public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
 
         public static final double armRotateSpeed = 55; // Degrees per second
-        public static final double armRotateAccelerationTime = 0; // Need to change this (time in seconds for total motion)
-        public static final double armExtendSpeed = 0; // Need to change this
-        public static final double armExtendAccelerationTime = 0; // Need to change this (time in sceonds for total motion)
+        public static final double armRotateAccelerationTime = 0.25; 
+        public static final double armExtendSpeed = 25; // Inches per second
+        public static final double armExtendAccelerationTime = 0.25; // Need to change this (time in sceonds for total motion)
 
-        public static final double ExtentionCalibrationVelocity = 0; // Need to change this
+        public static final double ExtentionCalibrationVelocity = -1.0; 
         public static final double RotationCalibrationVelocity = 10; // Degrees per second
 
         public static final int ArmExtendMotorID = 12;
@@ -109,8 +108,8 @@ public final class Constants {
 
         public static final int AccelerationSmoothing = 2;
 
-        public static final int ArmAngleTolerance = 2; // Need to change this
-        public static final int ArmLengthTolerance = 2; // Need to change this
+        public static final double ArmAngleTolerance = 1; 
+        public static final double ArmLengthTolerance = 0.5; 
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
@@ -122,7 +121,7 @@ public final class Constants {
         public static final double RestingFromFloorArmAngle = 50.0;
 
         public static final double FloorArmAngle = 30.0;
-        public static final double FloorArmLength = 0.3;
+        public static final double FloorArmLength = 6.0;  // inches
 
         public static final double PlayerStationArmAngle = 93.0;
         public static final double PlayerStationArmLength = 0.0;
@@ -147,9 +146,6 @@ public final class Constants {
         public static final double ArmMinLength = 0.0;
         public static final double ArmMaxLength = 26.0; // need to confirm (inches)
 
-        public static final double AngleVel = 0.5;
-        public static final double AngleAcceleration = AngleVel * 4.0;
-        public static final double AngleMultiplier = 0.5;
         public static final double AngleVel = 50;
         public static final double AngleAccelerationTime = 0.25;
         public static final double AngleMultiplier = 1.0;
@@ -168,9 +164,9 @@ public final class Constants {
         public static final double RotateManualVoltageRampingConstant = 0.0;
         public static final double RotateKF = 0.048;
         // public static final double RotateKF = 0.1;
-        public static final double RotateKP = 0.2;
+        public static final double RotateKP = 0.22;
         public static final double RotateKI = 0.0001;
-        public static final double RotateKD = 1.0;
+        public static final double RotateKD = 1.2;
         public static final int RotatePID_id = 0;
 
         public static final double LengthClosedVoltageRampingConstant = 0.0;
@@ -181,7 +177,7 @@ public final class Constants {
         public static final double LengthKD = 0.1;
         public static final int LengthPID_id = 0;
 
-        public static final double ffRetracted = 0.09; // Need to re-test to find this after claw is attached
+        public static final double ffRetracted = 0.05; // Need to re-test to find this after claw is attached
         public static final double ffExtracted = 0.16; // Need to re-test to find this after claw is attached
 
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is

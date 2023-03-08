@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CalibrateArmExtention;
+import frc.robot.commands.CalibrateArmRotations;
 import frc.robot.subsystems.Arm;
 
 /**
@@ -97,6 +102,18 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+        Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
+        Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
+        Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
+
+        SequentialCommandGroup calbrationSequence 
+        = new SequentialCommandGroup(
+            calibrateLength, 
+            calibrateRotation,
+            setState,
+            new PrintCommand("Calibration Complete") 
+            ) ; 
+        CommandScheduler.getInstance().schedule(calbrationSequence) ;
     }
 
     /** This function is called periodically during operator control. */
