@@ -165,9 +165,8 @@ public class Arm extends SubsystemBase {
             desiredLength = ArmConstants.ArmMinLength;
         } else if (getAngle() < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
                                       // the line from rotation motor to the edge of the chasis
-            desiredLength = getLength();
-        }
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+            desiredLength = getLength(); }
+
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);

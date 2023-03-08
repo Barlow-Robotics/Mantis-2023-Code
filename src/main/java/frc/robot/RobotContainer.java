@@ -195,31 +195,36 @@ public class RobotContainer {
                             if (desiredLength * Math.cos(desiredAngle) <= 0) {
                                 desiredLength = currentLength;
                             }
-                            double desiredAngle = currentAngle + operatorButtonController.getRawAxis(1) * Constants.ArmConstants.AngleMultiplier; 
-                            
+
                             if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
                                 desiredAngle = Constants.ArmConstants.ArmMaxAngle;
                             } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
                                 desiredAngle = Constants.ArmConstants.ArmMinAngle;
                             }
-//wpk commented out until after gb repaired
-//                            armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel, Constants.ArmConstants.AngleAccelerationTime);
+                            // wpk commented out until after gb repaired
+                            // armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel,
+                            // Constants.ArmConstants.AngleAccelerationTime);
 
-                            /* Extension */
-                            double currentLength = armSub.getLength();
-                            double desiredLength = currentLength + operatorButtonController.getRawAxis(2) * Constants.ArmConstants.LengthMultiplier;
-                        
-                            if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
-                                desiredLength = Constants.ArmConstants.ArmMaxLength;
-                            } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
-                                desiredLength = Constants.ArmConstants.ArmMinLength;
-                            }
-                            armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel, Constants.ArmConstants.LengthAccelTime);
+            // ************************************************************************************* //
+            // *************** PRETTY SURE THIS IS ALL DUPLICATE STUFF FROM MERGING: *************** //
+            // ************************************************************************************* //
 
-                            
-                            if (desiredLength*Math.cos(desiredAngle) <= 0) {
-                                desiredLength = currentLength;
-                            } 
+                            // /* Extension */
+                            // double currentLength = armSub.getLength();
+                            // double desiredLength = currentLength
+                            //         + operatorButtonController.getRawAxis(2) * Constants.ArmConstants.LengthMultiplier;
+
+                            // if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
+                            //     desiredLength = Constants.ArmConstants.ArmMaxLength;
+                            // } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
+                            //     desiredLength = Constants.ArmConstants.ArmMinLength;
+                            // }
+                            // armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel,
+                            //         Constants.ArmConstants.LengthAccelTime);
+
+                            // if (desiredLength * Math.cos(desiredAngle) <= 0) {
+                            //     desiredLength = currentLength;
+                            // }
                         },
                         armSub));
     }
@@ -450,7 +455,6 @@ public class RobotContainer {
                         0,
                         0,
                         Position.Transition));
-                
 
         extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
         extendTestButton.onTrue(
@@ -462,7 +466,6 @@ public class RobotContainer {
                         50,
                         0.1,
                         Position.Transition));
-        
 
         retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
         retractTestButton.onTrue(
@@ -474,8 +477,6 @@ public class RobotContainer {
                         50,
                         0.1,
                         Position.Transition));
-                
-
 
         /* * * * * * VISION BUTTONS * * * * * */
 
