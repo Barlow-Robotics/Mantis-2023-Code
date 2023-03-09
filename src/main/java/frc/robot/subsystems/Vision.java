@@ -74,11 +74,11 @@ public class Vision extends SubsystemBase {
   }
 
   public double bbGamePieceHeight() {
-    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_game_piece_height").getDouble(0.0);
+    return NetworkTableInstance.getDefault().getEntry("vision/game_piece_bb_height").getDouble(0.0);
   }
 
   public double bbGamePieceWidth() {
-    return NetworkTableInstance.getDefault().getEntry("vision/target_bb_game_piece_width").getDouble(0.0);
+    return NetworkTableInstance.getDefault().getEntry("vision/game_piece_bb_width").getDouble(0.0);
   }
 
   public double bbPoleHeight() {
