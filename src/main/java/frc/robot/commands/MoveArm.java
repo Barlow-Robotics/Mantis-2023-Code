@@ -26,8 +26,8 @@ public class MoveArm extends CommandBase {
     public MoveArm(
             Arm a,
             double angle,
-            double angleVelocity,
-            double angleAcceleration,
+            double rotationVelocity,
+            double rotationAcceleration,
             double length,
             double extensionVelocity,
             double extensionAcceleration,
@@ -40,8 +40,8 @@ public class MoveArm extends CommandBase {
 
         this.armSub = a;
         this.angle = angle;
-        this.angleVelocity = angleVelocity;
-        this.angleAccelerationTime = angleAcceleration;
+        this.angleVelocity = rotationVelocity;
+        this.angleAccelerationTime = rotationAcceleration;
         this.length = length;
         this.extensionVelocity = extensionVelocity;
         this.extensionAcceleration = extensionAcceleration;
