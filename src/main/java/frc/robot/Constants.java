@@ -120,7 +120,7 @@ public final class Constants {
 
         public static final double RestingFromFloorArmAngle = 50.0;
 
-        public static final double FloorArmAngle = 30.0;
+        public static final double FloorArmAngle = 40.0;
         public static final double FloorArmLength = 6.0;  // inches
 
         public static final double PlayerStationArmAngle = 93.0;
@@ -180,8 +180,8 @@ public final class Constants {
         public static final double LengthKD = 0.1;
         public static final int LengthPID_id = 0;
 
-        public static final double ffRetracted = 0.05; // Need to re-test to find this after claw is attached
-        public static final double ffExtracted = 0.16; // Need to re-test to find this after claw is attached
+        public static final double ffRetracted = 0.09; // Need to re-test to find this after claw is attached
+        public static final double ffExtracted = 0.20; // Need to re-test to find this after claw is attached
 
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine

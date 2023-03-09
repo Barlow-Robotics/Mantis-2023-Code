@@ -7,9 +7,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.playingwithfusion.TimeOfFlight;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,13 +42,15 @@ public class Claw extends SubsystemBase {
         setClawMotorConfig(clawMotor);
     }
 
-    private void setClawMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+    private void setClawMotorConfig(WPI_TalonFX motor) { 
         motor.configClosedloopRamp(Constants.ClawConstants.ClawClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.ClawConstants.ClawManualVoltageRampingConstant);
         motor.config_kF(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKF);
         motor.config_kP(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKP);
         motor.config_kI(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKI);
         motor.config_kD(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKD);
+
+        motor.setInverted(TalonFXInvertType.Clockwise);
 
         // wpk add something for soft limits.
 
@@ -56,17 +60,20 @@ public class Claw extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // // This method will be called once per scheduler run
-        // // 0.0 is perpendicular to arm bar
-        // setAngle( - armSub.getAngle()); // Probably doesn't work (?)
+        // 0.0 is perpendicular to arm bar
+        setAngle( -armSub.getAngle()); 
         
-        // if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-        //     close();
-        //     disableAutoClose();
-        // }
-        // else if (isOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
-        //     enableAutoClose();
-        // }
+        if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+            close();
+            disableAutoClose();
+        }
+        else if (isOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
+            enableAutoClose();
+        }
+
+        NetworkTableInstance.getDefault().getEntry("claw/actualAngle").setDouble(this.getAngle()) ;
+        NetworkTableInstance.getDefault().getEntry("claw/isOpen").setBoolean(this.isOpen()) ;
+
     }
 
     public double getAngle() {
@@ -76,7 +83,8 @@ public class Claw extends SubsystemBase {
 
     public void setAngle(double desiredAngle) {
         double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; 
-        clawMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
+        NetworkTableInstance.getDefault().getEntry("claw/desiredAngle").setDouble(this.getAngle()) ;
+        // clawMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
     }
 
     public void open() {

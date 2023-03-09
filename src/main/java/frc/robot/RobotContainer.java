@@ -257,7 +257,7 @@ public class RobotContainer {
 
         /* * * * * * ARM BUTTONS * * * * * */
 
-        moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftTrigger);
+        moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonX);
         moveToRestingPositionButton.onTrue( new ArmPathGenerator(Arm.Position.Resting, armSub));
 
         moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.WindowButton);

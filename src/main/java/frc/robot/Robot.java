@@ -45,6 +45,8 @@ public class Robot extends TimedRobot {
 
     public boolean currentProfileButton;
 
+    private boolean calibrationPerformed = false ;
+
     /*
      * This function is run when the robot is first started up and should be used
      * for any
@@ -81,12 +83,29 @@ public class Robot extends TimedRobot {
     // @Override
     public void autonomousInit() {
         armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
-        autonomousCommand = robotContainer.getAutonomousCommand();
 
+        SequentialCommandGroup cg = new SequentialCommandGroup() ;
+
+        if ( !calibrationPerformed) {
+            Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
+            Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
+            Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
+    
+            cg.addCommands( 
+                calibrateLength, 
+                calibrateRotation,
+                setState,
+                new InstantCommand( () -> this.calibrationPerformed = true ) ,
+                new PrintCommand("Calibration Complete")
+            ); 
+        }
+
+        autonomousCommand = robotContainer.getAutonomousCommand();
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
-            autonomousCommand.schedule();
+            cg.addCommands( autonomousCommand) ;
         }
+        cg.schedule();
     }
 
     // /** This function is called periodically during autonomous. */
@@ -103,18 +122,31 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-        Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
-        Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
-        Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
 
-        SequentialCommandGroup calbrationSequence 
-        = new SequentialCommandGroup(
-            calibrateLength, 
-            calibrateRotation,
-            setState,
-            new PrintCommand("Calibration Complete") 
-            ) ; 
-        CommandScheduler.getInstance().schedule(calbrationSequence) ;
+        // if ( !calibrationPerformed) {
+            Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
+            Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
+            // wpk might want to change this to a move command.
+            Command setArmLength = new InstantCommand( 
+                ()-> armSub.setLength(0.0, Constants.ArmConstants.LengthVel, Constants.ArmConstants.LengthAccelTime)
+                ) ;
+            Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
+    
+            SequentialCommandGroup calbrationSequence 
+            = new SequentialCommandGroup(
+                calibrateLength, 
+                calibrateRotation,
+                setArmLength ,
+                setState,
+                new InstantCommand( () 
+                   -> {
+                    armSub.setState(Arm.Position.Resting) ;
+                    this.calibrationPerformed = true;
+                } ) ,
+                new PrintCommand("Calibration Complete") 
+                ) ; 
+            calbrationSequence.schedule();
+        // }
 
     }
 
