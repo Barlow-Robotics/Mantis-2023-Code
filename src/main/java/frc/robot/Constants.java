@@ -108,8 +108,8 @@ public final class Constants {
 
         public static final int AccelerationSmoothing = 2;
 
-        public static final double ArmAngleTolerance = 1; 
-        public static final double ArmLengthTolerance = 0.5; 
+        public static final double ArmAngleTolerance = 2.0; 
+        public static final double ArmLengthTolerance = 1.0; 
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
@@ -120,8 +120,8 @@ public final class Constants {
 
         public static final double RestingFromFloorArmAngle = 50.0;
 
-        public static final double FloorArmAngle = 40.0;
-        public static final double FloorArmLength = 6.0;  // inches
+        public static final double FloorArmAngle = 35.0;
+        public static final double FloorArmLength = 11.0;  // inches
 
         public static final double PlayerStationArmAngle = 93.0;
         public static final double PlayerStationArmLength = 0.0;
@@ -129,8 +129,8 @@ public final class Constants {
         public static final double TopArmAngle = 110.0;
         public static final double TopArmLength = 0.7;
 
-        public static final double MiddleArmAngle = 100.0;
-        public static final double MiddleArmLength = 0.05;
+        public static final double MiddleArmAngle = 90.0;
+        public static final double MiddleArmLength = 15.0;
 
         public static final double MiddleFromBottomArmAngle = 100.0;
         public static final double MiddleFromBottomArmLength = 0.0;
@@ -153,7 +153,7 @@ public final class Constants {
         public static final double AngleAcceleration = AngleVel * 4.0;
         // public static final double AngleMultiplier = 0.5;
 
-        public static final double LengthVel = 30.0;
+        public static final double LengthVel = 20.0;
         public static final double LengthAccelTime = 0.25;
         public static final double LengthMultiplier = 0.5;
 
@@ -180,8 +180,8 @@ public final class Constants {
         public static final double LengthKD = 0.1;
         public static final int LengthPID_id = 0;
 
-        public static final double ffRetracted = 0.09; // Need to re-test to find this after claw is attached
-        public static final double ffExtracted = 0.20; // Need to re-test to find this after claw is attached
+        public static final double ffRetracted = 0.15; // Need to re-test to find this after claw is attached
+        public static final double ffExtracted = 0.50; // Need to re-test to find this after claw is attached
 
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
@@ -192,8 +192,8 @@ public final class Constants {
     public static final class ClawConstants {
         
         public static final int ClawMotorID = 15;
-        public static final int ExtendSolenoidID = 4;
-        public static final int RetractSolenoidID = 5;
+        public static final int OpenSolenoidID = 5;
+        public static final int CloseSolenoidID = 4;
 
         public static final double RotateGearRatio = 32.861; // Need to change
 
@@ -202,19 +202,24 @@ public final class Constants {
         public static final double ClawClosedVoltageRampingConstant = 0.0;
         public static final double ClawManualVoltageRampingConstant = 0.0;
         public static final double ClawKF = 0.048;
-        public static final double ClawKP = 0.005;
+        public static final double ClawKP = 0.5;
         public static final double ClawKI = 0.0000;
-        public static final double ClawKD = 0.0;
+        public static final double ClawKD = 0.1;
         public static final int ClawPID_id = 0;
         public static final double ff = 0.0 ;
 
         public static final double CountsPerClawDegree = TalonFXEncoderResolution * RevolutionsPerDegree
             * RotateGearRatio; // Need to change
 
+        public static final double DegreesPerSecToCountsPer100MSec = CountsPerClawDegree * SecondsTo100MSec;
+
+
         public static final double ClawAngleTolerance = 1.0 ; 
 
-        public static final double ClawSpeed = 30.0 ; // Needs tuning
+        public static final double ClawSpeed = 100.0 ; // Needs tuning
         public static final int DistanceSensorID = 0; // Need to change
+        public static final int AccelerationSmoothing = 2;
+
 
         public static final double InchesForAutoClosing = 3;
         public static final double ClawLengthInches = 9;

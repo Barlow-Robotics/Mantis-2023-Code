@@ -76,7 +76,9 @@ public class RobotContainer {
     private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton; // b button (far right white button)
-    private Trigger toggleClawButton; // y button (yellow button)
+    private Trigger driverToggleClawButton; // y button (yellow button)
+    private Trigger operatorToggleClawButton; // y button (yellow button)
+
     private Trigger testRotateButton;
     private Trigger testRotateHomeButton;
     private Trigger extendTestButton;
@@ -250,9 +252,11 @@ public class RobotContainer {
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
 
-        toggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
-        toggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
-        toggleClawButton.onTrue(toggleClaw);
+        driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
+        driverToggleClawButton.onTrue(toggleClaw);
+
+        operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
+        operatorToggleClawButton.onTrue(toggleClaw);
 
 
         /* * * * * * ARM BUTTONS * * * * * */
@@ -264,7 +268,7 @@ public class RobotContainer {
         moveToBottomButton.onTrue( new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
         moveToMiddleButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftBumper);
-        moveToMiddleButton.onTrue( new ArmPathGenerator(Arm.Position.Bottom, armSub));
+        moveToMiddleButton.onTrue( new ArmPathGenerator(Arm.Position.Middle, armSub));
 
         moveToTopButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
         moveToTopButton.onTrue( new ArmPathGenerator(Arm.Position.Top, armSub));

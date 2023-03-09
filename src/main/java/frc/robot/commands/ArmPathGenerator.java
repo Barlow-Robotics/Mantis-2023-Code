@@ -44,10 +44,22 @@ public class ArmPathGenerator extends CommandBase {
 
             case Middle:
                 g.addCommands(
-                    new MoveArm( armSub,40.0, Constants.ArmConstants.AngleVel,Constants.ArmConstants.AngleAccelerationTime,                    
-                        0.0,0.0,0.25,Position.Transition) ,
-                    new MoveArm(armSub, 40.0,Constants.ArmConstants.AngleVel,Constants.ArmConstants.AngleAccelerationTime,                    
-                        0.0,0.0,0.25,Position.Transition) 
+                    new MoveArm( armSub,
+                        Constants.ArmConstants.MiddleArmAngle, 
+                        Constants.ArmConstants.AngleVel,
+                        Constants.ArmConstants.AngleAccelerationTime,                    
+                        0.0,
+                        0.0,
+                        0.25,
+                        Position.Transition) ,
+                    new MoveArm(armSub, 
+                        Constants.ArmConstants.MiddleArmAngle, 
+                        Constants.ArmConstants.AngleVel,
+                        Constants.ArmConstants.AngleAccelerationTime, 
+                        Constants.ArmConstants.MiddleArmLength,                    
+                        Constants.ArmConstants.LengthVel, 
+                        Constants.ArmConstants.LengthAccelTime, 
+                        to) 
                 ) ;
                 break ;
 
@@ -109,9 +121,9 @@ public class ArmPathGenerator extends CommandBase {
                         Constants.ArmConstants.AngleVel, 
                         Constants.ArmConstants.AngleAccelerationTime,                    
                         Constants.ArmConstants.RestingArmLength, 
-                        Constants.ArmConstants.LengthVel, 
+                        0.0, 
                         Constants.ArmConstants.LengthAccelTime, 
-                        to) 
+                        Arm.Position.Resting) 
                 ) ;
              break ;  
             
@@ -173,7 +185,25 @@ public class ArmPathGenerator extends CommandBase {
         
         switch ( to ) {
             case Resting:
-                break ;  
+                g.addCommands(
+                    new MoveArm(armSub, 
+                        Constants.ArmConstants.MiddleArmAngle, 
+                        Constants.ArmConstants.AngleVel,
+                        Constants.ArmConstants.AngleAccelerationTime, 
+                        Constants.ArmConstants.RestingArmLength,                    
+                        Constants.ArmConstants.LengthVel, 
+                        Constants.ArmConstants.LengthAccelTime, 
+                        Position.Transition) ,
+                    new MoveArm( armSub,
+                        Constants.ArmConstants.RestingArmAngle, 
+                        Constants.ArmConstants.AngleVel,
+                        Constants.ArmConstants.AngleAccelerationTime,                    
+                        Constants.ArmConstants.RestingArmLength,                    
+                        Constants.ArmConstants.LengthVel, 
+                        Constants.ArmConstants.LengthAccelTime, 
+                        to) 
+                );
+            break ;  
             
             case Bottom:
                 break ; // todo

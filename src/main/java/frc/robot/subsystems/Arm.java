@@ -105,6 +105,10 @@ public class Arm extends SubsystemBase {
         NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle()) ;
         NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle()) ;
         NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent").setDouble(rotateMotorLeader.getStatorCurrent()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent").setDouble(rotateMotorLeader.getSupplyCurrent()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent").setDouble(rotateMotorFollower.getStatorCurrent()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent").setDouble(rotateMotorFollower.getSupplyCurrent()) ;
         // System.out.println() ;
     }
 
