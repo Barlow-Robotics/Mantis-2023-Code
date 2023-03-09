@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 // import java.util.HashMap;
 
@@ -32,6 +33,7 @@ import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.commands.AlignWithAprilTags;
 import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
+import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.MoveArm;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
@@ -80,10 +82,10 @@ public class RobotContainer {
     private Trigger extendTestButton;
     private Trigger retractTestButton;
 
-    private Command moveToBottom;
-    private Command moveToMiddle;
-    private Command moveToResting;
-    private Command moveToFloor;
+    // private Command moveToBottom;
+    // private Command moveToMiddle;
+    // private Command moveToResting;
+    // private Command moveToFloor;
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -220,43 +222,20 @@ public class RobotContainer {
         //                     } 
         //                 },
         //                 armSub));
-                            if (desiredLength * Math.cos(desiredAngle) <= 0) {
-                                desiredLength = currentLength;
-                            }
-
-                            if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
-                                desiredAngle = Constants.ArmConstants.ArmMaxAngle;
-                            } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
-                                desiredAngle = Constants.ArmConstants.ArmMinAngle;
-                            }
-                            // wpk commented out until after gb repaired
-                            // armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel,
-                            // Constants.ArmConstants.AngleAccelerationTime);
-
-            // ************************************************************************************* //
-            // *************** PRETTY SURE THIS IS ALL DUPLICATE STUFF FROM MERGING: *************** //
-            // ************************************************************************************* //
-
-                            // /* Extension */
-                            // double currentLength = armSub.getLength();
-                            // double desiredLength = currentLength
-                            //         + operatorButtonController.getRawAxis(2) * Constants.ArmConstants.LengthMultiplier;
-
-                            // if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
-                            //     desiredLength = Constants.ArmConstants.ArmMaxLength;
-                            // } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
-                            //     desiredLength = Constants.ArmConstants.ArmMinLength;
-                            // }
-                            // armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel,
-                            //         Constants.ArmConstants.LengthAccelTime);
-
                             // if (desiredLength * Math.cos(desiredAngle) <= 0) {
                             //     desiredLength = currentLength;
                             // }
-                        },
-                        armSub));
-    }
 
+                            // if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
+                            //     desiredAngle = Constants.ArmConstants.ArmMaxAngle;
+                            // } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
+                            //     desiredAngle = Constants.ArmConstants.ArmMinAngle;
+                            // }
+                            // wpk commented out until after gb repaired
+                            // armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel,
+                            // Constants.ArmConstants.AngleAccelerationTime);  
+    }
+    
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
@@ -275,321 +254,74 @@ public class RobotContainer {
         toggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
         toggleClawButton.onTrue(toggleClaw);
 
+
         /* * * * * * ARM BUTTONS * * * * * */
 
-        // //////////////////////
-        // // move to bottom
-        // //////////////////////
+        moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftTrigger);
+        moveToRestingPositionButton.onTrue( new ArmPathGenerator(Arm.Position.Resting, armSub));
 
-        // moveToBottom = new SequentialCommandGroup(
-        //         new MoveArm(
-        //                 armSub,
-        //                 Constants.ArmConstants.AvoidChassisArmAngle,
-        //                 Constants.ArmConstants.armRotateSpeed,
-        //                 Constants.ArmConstants.armRotateAccelerationTime,
-        //                 Constants.ArmConstants.AvoidChassisArmLength,
-        //                 Constants.ArmConstants.armExtendSpeed,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Position.Transition),
-        //         new MoveArm(
-        //                 armSub,
-        //                 Constants.ArmConstants.BottomArmAngle,
-        //                 Constants.ArmConstants.armRotateSpeed,
-        //                 Constants.ArmConstants.armRotateAccelerationTime,
-        //                 Constants.ArmConstants.BottomArmLength,
-        //                 Constants.ArmConstants.armExtendSpeed,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Position.Bottom));
+        moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.WindowButton);
+        moveToBottomButton.onTrue( new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
-        // moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.WindowButton);
-        // moveToBottomButton.onTrue(moveToBottom);
+        moveToMiddleButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftBumper);
+        moveToMiddleButton.onTrue( new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
-
-
-        
-        // if (armSub.armState == Position.Bottom || armSub.armState == Position.Floor) {
-        //     moveToResting = new SequentialCommandGroup(
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.RestingFromFloorArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     0, // *** Need to change (says "armContronl.Extention" in sim) -
-        //                        // Angela
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Transition),
-
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.RestingArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.RestingArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Resting));
-        // } else {
-        //     moveToResting = new SequentialCommandGroup(
-        //             new MoveArm(
-        //                     armSub,
-        //                     0, // *** Need to change (says "armContronl.Rotation()" in sim)
-        //                        // - Angela
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.RestingArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Transition),
-
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.RestingArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.RestingArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Resting));
-        // }
-
-
-        // //////////////////////
-        // // move to resting
-        // //////////////////////
-
-
-        // moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftTrigger);
-        // moveToRestingPositionButton.onTrue(moveToResting);
-
-        // // moveToFloor = new SequentialCommandGroup(
-        // //         new MoveArm(
-        // //                 armSub,
-        // //                 Constants.ArmConstants.AvoidChassisArmAngle,
-        // //                 Constants.ArmConstants.armRotateSpeed,
-        // //                 Constants.ArmConstants.armRotateAccelerationTime,
-        // //                 Constants.ArmConstants.AvoidChassisArmLength,
-        // //                 0.0,
-        // //                 Constants.ArmConstants.armExtendAccelerationTime,
-        // //                 Position.Transition),
-        // //         new MoveArm(
-        // //                 armSub,
-        // //                 Constants.ArmConstants.FloorArmAngle,
-        // //                 Constants.ArmConstants.armRotateSpeed,
-        // //                 Constants.ArmConstants.armRotateAccelerationTime,
-        // //                 Constants.ArmConstants.FloorArmLength,
-        // //                 Constants.ArmConstants.armExtendSpeed,
-        // //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 // Position.Floor));
-
-        //     moveToFloor = new SequentialCommandGroup(
-        //         new MoveArm(
-        //                 armSub,
-        //                 Constants.ArmConstants.AvoidChassisArmAngle,
-        //                 Constants.ArmConstants.armRotateSpeed,
-        //                 Constants.ArmConstants.armRotateAccelerationTime,
-        //                 armSub.getLength(),  // just use the current length since we don't want it any longer
-        //                 0.0,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Position.Transition),
-        //         new MoveArm(
-        //                 armSub,
-        //                 Constants.ArmConstants.FloorArmAngle,
-        //                 Constants.ArmConstants.armRotateSpeed,
-        //                 Constants.ArmConstants.armRotateAccelerationTime,
-        //                 Constants.ArmConstants.FloorArmLength,
-        //                 Constants.ArmConstants.armExtendSpeed,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Position.Floor));
-            
-        // //////////////////////
-        // // move to top
-        // //////////////////////
-
-        // moveToTopButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
-        // moveToTopButton.onTrue(
-        //         new MoveArm(
-        //                 armSub,
-        //                 Constants.ArmConstants.TopArmAngle,
-        //                 Constants.ArmConstants.armRotateSpeed,
-        //                 Constants.ArmConstants.armRotateAccelerationTime,
-        //                 Constants.ArmConstants.TopArmLength,
-        //                 Constants.ArmConstants.armExtendSpeed,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Position.Top));
-
-        //////////////////////
-        // move to floor
-        //////////////////////
-
-        moveToFloor = new SequentialCommandGroup(
-            new PrintCommand("Started arm rotation") ,
-            new MoveArm(
-                        armSub,
-                        Constants.ArmConstants.FloorArmAngle,
-                        Constants.ArmConstants.armRotateSpeed,
-                        Constants.ArmConstants.armRotateAccelerationTime,
-                        Constants.ArmConstants.AvoidChassisArmLength,
-                        0.0,
-                        Constants.ArmConstants.armExtendAccelerationTime,
-                        Position.Transition),
-            new PrintCommand("Completed arm rotation") ,
-            new MoveArm(
-                    armSub,
-                    Constants.ArmConstants.FloorArmAngle,
-                    Constants.ArmConstants.armRotateSpeed,
-                    Constants.ArmConstants.armRotateAccelerationTime,
-                    Constants.ArmConstants.FloorArmLength,
-                    Constants.ArmConstants.armExtendSpeed,
-                    Constants.ArmConstants.armExtendAccelerationTime,
-                    Position.Floor),
-            new PrintCommand("Completed extending arm") 
-                        );
+        moveToTopButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
+        moveToTopButton.onTrue( new ArmPathGenerator(Arm.Position.Top, armSub));
 
         moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonB);
-        moveToFloorButton.onTrue(moveToFloor);
+        moveToFloorButton.onTrue( new ArmPathGenerator(Arm.Position.Floor, armSub));
+
+        moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
+        moveToPlayerStationButton.onTrue( new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
 
 
+        // testRotateButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
+        // testRotateButton.onTrue(
+        //         new MoveArm(armSub,
+        //                 90.0,
+        //                 70.0,
+        //                 0.25,
+        //                 0,
+        //                 0,
+        //                 0,
+        //                 Position.Transition));
 
-
-
-        // if (armSub.armState == Position.Bottom || armSub.armState == Position.Floor) {
-        //     moveToMiddle = new SequentialCommandGroup(
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.MiddleFromBottomArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.MiddleFromBottomArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Transition),
-
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.MiddleArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.MiddleArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Middle));
-        // } else { // *** Need to fix: right now these are the same b/c that's how it is in the sim
-        //          // - Angela
-        //     moveToMiddle = new SequentialCommandGroup(
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.MiddleFromBottomArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.MiddleFromBottomArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Transition),
-
-        //             new MoveArm(
-        //                     armSub,
-        //                     Constants.ArmConstants.MiddleArmAngle,
-        //                     Constants.ArmConstants.armRotateSpeed,
-        //                     Constants.ArmConstants.armRotateAccelerationTime,
-        //                     Constants.ArmConstants.MiddleArmLength,
-        //                     Constants.ArmConstants.armExtendSpeed,
-        //                     Constants.ArmConstants.armExtendAccelerationTime,
-        //                     Position.Middle));
-        // }
-
-        // moveToMiddleButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftBumper);
-        // moveToMiddleButton.onTrue(moveToMiddle);
-
-        // moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
-        // moveToPlayerStationButton.onTrue(
-        //         new MoveArm(armSub, Constants.ArmConstants.PlayerStationArmAngle,
-        //                 Constants.ArmConstants.armRotateSpeed,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Constants.ArmConstants.PlayerStationArmLength,
-        //                 Constants.ArmConstants.armExtendSpeed,
-        //                 Constants.ArmConstants.armExtendAccelerationTime,
-        //                 Position.PlayerStation));
-
-        // // testRotateButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
-        // // testRotateButton.onTrue(
-        // //         new MoveArm(armSub,
-        // //                 90.0,
-        // //                 70.0,
-        // //                 0.25,
-        // //                 0,
-        // //                 0,
-        // //                 0,
-        // //                 Position.Transition));
-
-        // // testRotateHomeButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonB);
-        // // testRotateHomeButton.onTrue(
-        // //         new MoveArm(armSub,
-        // //                 0.0,
-        // //                 70.0,
-        // //                 0.25,
-        // //                 0,
-        // //                 0,
-        // //                 0,
-        // //                 Position.Transition));
+        // testRotateHomeButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonB);
+        // testRotateHomeButton.onTrue(
+        //         new MoveArm(armSub,
+        //                 0.0,
+        //                 70.0,
+        //                 0.25,
+        //                 0,
+        //                 0,
+        //                 0,
+        //                 Position.Transition));
                 
 
-        // // extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
-        // // extendTestButton.onTrue(
-        // //         new MoveArm(armSub,
-        // //                 armSub.getAngle(),
-        // //                 0.0,
-        // //                 0.0,
-        // //                 8,
-        // //                 25,
-        // //                 0.1,
-        // //                 Position.Transition));
+        // extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
+        // extendTestButton.onTrue(
+        //         new MoveArm(armSub,
+        //                 armSub.getAngle(),
+        //                 0.0,
+        //                 0.0,
+        //                 8,
+        //                 25,
+        //                 0.1,
+        //                 Position.Transition));
         
 
-        // // retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
-        // // retractTestButton.onTrue(
-        // //         new MoveArm(armSub,
-        // //                 armSub.getAngle(),
-        // //                 0.0,
-        // //                 0.0,
-        // //                 0,
-        // //                 25,
-        // //                 0.1,
-        // //                 Position.Transition));
+        // retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
+        // retractTestButton.onTrue(
+        //         new MoveArm(armSub,
+        //                 armSub.getAngle(),
+        //                 0.0,
+        //                 0.0,
+        //                 0,
+        //                 25,
+        //                 0.1,
+        //                 Position.Transition));
                 
-
-        testRotateHomeButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonB);
-        testRotateHomeButton.onTrue(
-                new MoveArm(armSub,
-                        40.0,
-                        0.25,
-                        0,
-                        0,
-                        0,
-                        Position.Transition));
-
-        extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
-        extendTestButton.onTrue(
-                new MoveArm(armSub,
-                        armSub.getAngle(),
-                        0.0,
-                        0.0,
-                        26,
-                        50,
-                        0.1,
-                        Position.Transition));
-
-        retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
-        retractTestButton.onTrue(
-                new MoveArm(armSub,
-                        armSub.getAngle(),
-                        0.0,
-                        0.0,
-                        0,
-                        50,
-                        0.1,
-                        Position.Transition));
-
         /* * * * * * VISION BUTTONS * * * * * */
 
         alignWithAprilTagsButton = new JoystickButton(driverController, 6);
@@ -601,6 +333,8 @@ public class RobotContainer {
         alignWithPoleButton = new JoystickButton(driverController, 8);
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
+
+
 
     public Command getAutonomousCommand() {
         HashMap<String, Command> eventMap = new HashMap<>();

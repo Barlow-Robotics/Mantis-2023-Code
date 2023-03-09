@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -47,23 +48,25 @@ public class Claw extends SubsystemBase {
         motor.config_kI(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKI);
         motor.config_kD(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKD);
 
+        // wpk add something for soft limits.
+
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-        // 0.0 is perpendicular to arm bar
-        setAngle(90 - armSub.getAngle()); // Probably doesnt work (?)
+        // // This method will be called once per scheduler run
+        // // 0.0 is perpendicular to arm bar
+        // setAngle( - armSub.getAngle()); // Probably doesn't work (?)
         
-        if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-            close();
-            disableAutoClose();
-        }
-        else if (isOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
-            enableAutoClose();
-        }
+        // if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+        //     close();
+        //     disableAutoClose();
+        // }
+        // else if (isOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
+        //     enableAutoClose();
+        // }
     }
 
     public double getAngle() {
@@ -73,7 +76,7 @@ public class Claw extends SubsystemBase {
 
     public void setAngle(double desiredAngle) {
         double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; 
-        clawMotor.set(TalonFXControlMode.MotionMagic, setAngle);
+        clawMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
     }
 
     public void open() {

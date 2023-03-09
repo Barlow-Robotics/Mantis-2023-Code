@@ -190,29 +190,32 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
+        
         public static final int ClawMotorID = 15;
         public static final int ExtendSolenoidID = 4;
         public static final int RetractSolenoidID = 5;
 
-        public static final double RotateGearRatio = 0; // Need to change
+        public static final double RotateGearRatio = 32.861; // Need to change
 
-        public static final double RevolutionsPerDegree = 1 / 360;
+        public static final double RevolutionsPerDegree = 1.0 / 360.0;
 
         public static final double ClawClosedVoltageRampingConstant = 0.0;
         public static final double ClawManualVoltageRampingConstant = 0.0;
         public static final double ClawKF = 0.048;
         public static final double ClawKP = 0.005;
-        public static final double ClawKI = 0.0001;
+        public static final double ClawKI = 0.0000;
         public static final double ClawKD = 0.0;
         public static final int ClawPID_id = 0;
+        public static final double ff = 0.0 ;
 
         public static final double CountsPerClawDegree = TalonFXEncoderResolution * RevolutionsPerDegree
-        * RotateGearRatio; // Need to change
+            * RotateGearRatio; // Need to change
 
-        public static final int ClawAngleTolerance = 0; // Need to change
+        public static final double ClawAngleTolerance = 1.0 ; 
 
-        public static final double ClawSpeed = 0; // Need to change
+        public static final double ClawSpeed = 30.0 ; // Needs tuning
         public static final int DistanceSensorID = 0; // Need to change
+
         public static final double InchesForAutoClosing = 3;
         public static final double ClawLengthInches = 9;
     }
