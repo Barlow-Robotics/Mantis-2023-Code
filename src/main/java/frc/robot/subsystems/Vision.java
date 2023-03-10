@@ -9,7 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.json.JSONObject;
+// import org.json.JSONObject;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,13 +34,13 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        try {
-            socket.receive(packet);
-            String received = new String( packet.getData(), 0, packet.getLength());
+        // DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        // try {
+        //     socket.receive(packet);
+        //     String received = new String( packet.getData(), 0, packet.getLength());
 
-        var Vision_Info = new JSONObject(received);
-        } catch (Exception ex) {}
+        // // var Vision_Info = new JSONObject(received);
+        // } catch (Exception ex) {}
     }
 
     public void turnOnVisionLight() {
@@ -60,8 +60,9 @@ public class Vision extends SubsystemBase {
 
     public boolean aprilTagIsVisible() {
         // The data for this will come from the Jetson Nano via network tables.
-        return NetworkTableInstance.getDefault().getEntry("vision/april_tag_detected").getBoolean(false);
-        return Vision_Info.get("vision/april_tag_detected");
+        // return NetworkTableInstance.getDefault().getEntry("vision/april_tag_detected").getBoolean(false);
+        // return Vision_Info.get("vision/april_tag_detected");
+        return false ;
     }
 
     public double aprilTagDistanceFromCenter() {

@@ -175,8 +175,8 @@ public final class Constants {
         public static final double LengthKD = 0.1;
         public static final int LengthPID_id = 0;
 
-        public static final double ffRetracted = 0.15 /2; // Need to re-test to find this after claw is attached
-        public static final double ffExtracted = 0.50 /2; // Need to re-test to find this after claw is attached
+        public static final double ffRetracted = 0.11; // Need to re-test to find this after claw is attached
+        public static final double ffExtracted = 0.25; // Need to re-test to find this after claw is attached
 
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
@@ -187,8 +187,8 @@ public final class Constants {
     public static final class ClawConstants {
         
         public static final int ClawMotorID = 15;
-        public static final int OpenSolenoidID = 5;
-        public static final int CloseSolenoidID = 4;
+        public static final int OpenSolenoidID = 3;
+        public static final int CloseSolenoidID = 2;
 
         public static final double RotateGearRatio = 32.861; // Need to change
 

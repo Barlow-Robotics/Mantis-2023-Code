@@ -70,13 +70,13 @@ public class RobotContainer {
     private Trigger moveToTopButton; // left stick (blue button)
     private Trigger moveToMiddleButton; // left bumper (green button)
     private Trigger moveToBottomButton; // window button (red button)
-    private Trigger moveToRestingPositionButton; // left trigger (middle white button)
+    private Trigger moveToRestingPositionButton; // button x (middle white button)
     private Trigger moveToPlayerStationButton; // right stick (black button)
     private Trigger alignWithAprilTagsButton;
     private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
-    private Trigger moveToFloorButton; // b button (far right white button)
-    private Trigger driverToggleClawButton; // y button (yellow button)
+    private Trigger moveToFloorButton; // b button (far left white button)
+    private Trigger driverToggleClawButton; // EHP
     private Trigger operatorToggleClawButton; // y button (yellow button)
 
     private Trigger testRotateButton;
@@ -105,7 +105,7 @@ public class RobotContainer {
 
                             boolean autoSteer = alignWithGamePieceButton.getAsBoolean();
 
-                            double x = -driverController.getRawAxis(xAxis);
+                            double x = driverController.getRawAxis(xAxis);
                             if (Math.abs(x) < 0.01) {
                                 x = 0.0;
                             }
@@ -247,8 +247,10 @@ public class RobotContainer {
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
 
-        xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
-        yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;
+        // xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
+        // yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;
+        xAxis = Constants.RadioMasterConstants.LeftGimbalY;
+        yawAxis = Constants.RadioMasterConstants.RightGimbalX;
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
 
@@ -337,8 +339,6 @@ public class RobotContainer {
         alignWithPoleButton = new JoystickButton(driverController, 8);
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
-
-
 
     public Command getAutonomousCommand() {
         HashMap<String, Command> eventMap = new HashMap<>();
