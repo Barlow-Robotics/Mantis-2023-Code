@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
+import frc.robot.sim.PhysicsSim;
 
 public class Claw extends SubsystemBase {
     /** Creates a new Claw. */
@@ -131,4 +132,13 @@ public class Claw extends SubsystemBase {
     public void disableAutoClose() {
         autoCloseEnabled = false;
     }
+
+
+
+    // Simulation Support
+
+    public void simulationInit() {
+        PhysicsSim.getInstance().addTalonFX(clawMotor, 0.1, 6800 );
+    }
+
 }

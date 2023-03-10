@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.CalibrateArmExtention;
 import frc.robot.commands.CalibrateArmRotations;
+import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Arm;
 
 /**
@@ -69,7 +70,8 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
-        // robotContainer.clawSub
+        robotContainer.clawSub.stopMoving();
+        this.calibrationPerformed = false ;
     }
 
     @Override
@@ -123,7 +125,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
-        // if ( !calibrationPerformed) {
+        if ( !calibrationPerformed && !this.isSimulation()) {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
             // wpk might want to change this to a move command.
@@ -146,7 +148,7 @@ public class Robot extends TimedRobot {
                 new PrintCommand("Calibration Complete") 
                 ) ; 
             calbrationSequence.schedule();
-        // }
+        }
 
     }
 
@@ -170,12 +172,19 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot is first started up. */
     @Override
     public void simulationInit() {
+        armSub.simulationInit();
     }
 
     /** This function is called periodically whilst in simulation. */
-    @Override
+     @Override
     public void simulationPeriodic() {
+        // if (!simulationInitialized) {
+        //     simulationInit();
+        //     simulationInitialized = true;
+        // }
+        PhysicsSim.getInstance().run();
     }
+
 
     public void robotInit() {
 

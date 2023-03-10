@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.sim.PhysicsSim;
 
 public class Arm extends SubsystemBase {
     /** Creates a new Arm. */
@@ -192,7 +193,8 @@ public class Arm extends SubsystemBase {
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        extendMotor.set(TalonFXControlMode.MotionMagic, setLength);
+        double ff = Constants.ArmConstants.extendFF * Math.cos( Math.toRadians(this.getAngle())) ;
+        extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, ff);
     }
 
     public double getLength() {
@@ -236,4 +238,13 @@ public class Arm extends SubsystemBase {
             lengthLim = 37; } // Rough estimate, need to change
         return lengthLim;
     }
+
+    // Simulation Support
+
+    public void simulationInit() {
+        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 6800 );
+        PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 6800 );
+        PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 6800 );
+    }
+
 }

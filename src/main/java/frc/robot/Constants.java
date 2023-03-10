@@ -77,7 +77,7 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
-        public static final double RotateGearRatio = 100;
+        public static final double RotateGearRatio = 120;
         public static final double ExtendGearRatio = 16;
 
         public static final double ExtendSprocketDiameter = 1.751;
@@ -116,7 +116,7 @@ public final class Constants {
         /* Automatic Arm Positioning Constants */
 
         public static final double RestingArmAngle = 0.0;
-        public static final double RestingArmLength = 0.0;
+        public static final double RestingArmLength = 0.5;
 
         public static final double FloorArmAngle = 35.0;
         public static final double FloorArmLength = 11.0;  // inches
@@ -125,7 +125,7 @@ public final class Constants {
         public static final double PlayerStationArmLength = 0.0;
 
         public static final double TopArmAngle = 110.0;
-        public static final double TopArmLength = 27.6; // inches
+        public static final double TopArmLength = 26.0; // inches
 
         public static final double MiddleArmAngle = 95.0;
         public static final double MiddleArmLength = 15.0; // inches
@@ -176,8 +176,9 @@ public final class Constants {
         public static final int LengthPID_id = 0;
 
         public static final double ffRetracted = 0.11; // Need to re-test to find this after claw is attached
-        public static final double ffExtracted = 0.25; // Need to re-test to find this after claw is attached
+        public static final double ffExtracted = 0.30; // Need to re-test to find this after claw is attached
 
+        public static final double extendFF = -0.05 ;
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
         // what that is.
@@ -294,11 +295,11 @@ public final class Constants {
         public static final int ButtonY = 4;
         public static final int LeftBumper = 5;
         public static final int RightBumper = 6;
-        public static final int BackButton = 7;
+        // public static final int BackButton = 7;
         public static final int StartButton = 8;
         public static final int LeftStick = 9;
         public static final int RightStick = 10;
-        public static final int WindowButton = 13;
+        public static final int WindowButton = 7;
 
         public static final double ForwardAxisAttenuation = -0.5;
         public static final double LateralAxisAttenuation = 0.5;
