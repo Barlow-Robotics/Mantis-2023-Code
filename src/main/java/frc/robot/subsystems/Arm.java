@@ -139,7 +139,7 @@ public class Arm extends SubsystemBase {
             desiredAngle = ArmConstants.ArmMinAngle;
         } else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
                                         // the line from arm motor and the edge of the chasis
-            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.AngleAccel);
+            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.RotateAccel);
         }
         // else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support
         // (prependicular to ground) and the line from arm motor and the edge of the chasis

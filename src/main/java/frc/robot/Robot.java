@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
             // wpk might want to change this to a move command.
             Command setArmLength = new InstantCommand( 
-                ()-> armSub.setLength(0.0, Constants.ArmConstants.LengthVel, Constants.ArmConstants.LengthAccel)
+                ()-> armSub.setLength(0.0, Constants.ArmConstants.ExtendVel, Constants.ArmConstants.ExtendAccel)
                 ) ;
             Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
     

@@ -118,8 +118,6 @@ public final class Constants {
         public static final double RestingArmAngle = 0.0;
         public static final double RestingArmLength = 0.0;
 
-        public static final double RestingFromFloorArmAngle = 50.0;
-
         public static final double FloorArmAngle = 35.0;
         public static final double FloorArmLength = 11.0;  // inches
 
@@ -129,14 +127,12 @@ public final class Constants {
         public static final double TopArmAngle = 110.0;
         public static final double TopArmLength = 27.6; // inches
 
-        public static final double MiddleArmAngle = 90.0;
+        public static final double MiddleArmAngle = 95.0;
         public static final double MiddleArmLength = 15.0; // inches
 
         public static final double BottomArmAngle = 40.0;
         public static final double BottomArmLength = 11.8; // inches 
         
-        public static final double NoMovementVel = 0.0;
-
         public static final double AvoidChassisArmAngle = 30.0;
         public static final double AvoidChassisArmLength = 0.0;
 
@@ -145,15 +141,15 @@ public final class Constants {
         public static final double ArmMinLength = 0.0;
         public static final double ArmMaxLength = 26.0; // need to confirm (inches)
 
-        public static final double AngleVel = 50;
-        public static final double AngleAccel = 0.25;
+        public static final double RotateVel = 50;
+        public static final double RotateAccel = 0.25;
         public static final double AngleMultiplier = 1.0;
         // public static final double AngleVel = 0.5;
-        public static final double AngleAcceleration = AngleVel * 4.0;
+        public static final double AngleAcceleration = RotateVel * 4.0;
         // public static final double AngleMultiplier = 0.5;
 
-        public static final double LengthVel = 20.0;
-        public static final double LengthAccel = 0.25;
+        public static final double ExtendVel = 20.0;
+        public static final double ExtendAccel = 0.25;
         public static final double LengthMultiplier = 0.5;
 
         // wpk will probably need to add constants for minimum angle before retracting

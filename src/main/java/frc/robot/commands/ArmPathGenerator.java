@@ -37,20 +37,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.NoMovementVel,
-                                Constants.ArmConstants.NoMovementVel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 Constants.ArmConstants.BottomArmLength,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -59,20 +59,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.NoMovementVel,
-                                Constants.ArmConstants.NoMovementVel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 Constants.ArmConstants.MiddleArmLength,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -81,20 +81,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.NoMovementVel,
-                                Constants.ArmConstants.NoMovementVel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 Constants.ArmConstants.TopArmLength,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -103,20 +103,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.NoMovementVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 Constants.ArmConstants.FloorArmLength,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -124,12 +124,12 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.PlayerStationArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 Constants.ArmConstants.PlayerStationArmLength,
                                 0.0,
-                                0.25,
+                                0.0,
                                 Position.Transition));
                 break;
 
@@ -140,6 +140,8 @@ public class ArmPathGenerator extends CommandBase {
         return g;
     }
 
+    /* * * * * * FROM FLOOR * * * * * */
+
     private SequentialCommandGroup getPathFromFloor() {
         SequentialCommandGroup g = new SequentialCommandGroup();
 
@@ -148,21 +150,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
                                 Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.RestingArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
                                 to));
                 break;
 
@@ -170,12 +172,12 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                50,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.FloorArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
                                 to));
                 break;
 
@@ -185,19 +187,19 @@ public class ArmPathGenerator extends CommandBase {
                                 armSub,
                                 armSub.getAngle(),
                                 0.0,
-                                Constants.ArmConstants.AngleAccel,
-                                0.05 / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                Constants.ArmConstants.MiddleArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                100.0,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.MiddleArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
                                 to));
                 break;
 
@@ -205,21 +207,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                110.0,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.TopArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.7 / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.TopArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -231,20 +233,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.PlayerStationArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                93,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.PlayerStationArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -254,16 +256,36 @@ public class ArmPathGenerator extends CommandBase {
 
         return g;
     }
+
+    /* * * * * * FROM BOTTOM * * * * * */
 
     private SequentialCommandGroup getPathFromBottom() {
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
             case Resting:
-                break; // Brea
+                g.addCommands(
+                        new MoveArm(
+                                armSub,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
+                                Position.Transition),
+                        new MoveArm(
+                                armSub,
+                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
+                                to));
+                break;
 
             case Bottom:
-
                 break;
 
             case Middle:
@@ -271,20 +293,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.05 / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.MiddleArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                100,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.MiddleArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
                                 to));
                 break;
 
@@ -293,20 +315,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                27.6 / Constants.InchesToMeters,
+                                armSub.getAngle(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                Constants.ArmConstants.TopArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -314,55 +336,45 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                35,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                armSub.getLength(),
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
                                 Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
                                 0.0,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
                                 to));
-
-                // "1) angle down (-->35 deg)
-                // 2) no extension?"
-                break; // todo
+                break;
 
             case PlayerStation:
                 g.addCommands(
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.PlayerStationArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                93,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.PlayerStationArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
             case Transition:
-                break;// todo
+                break; // todo
         }
 
         return g;
     }
+
+    /* * * * * * FROM MIDDLE * * * * * */
 
     private SequentialCommandGroup getPathFromMiddle() {
         SequentialCommandGroup g = new SequentialCommandGroup();
@@ -370,21 +382,23 @@ public class ArmPathGenerator extends CommandBase {
         switch (to) {
             case Resting:
                 g.addCommands(
-                        new MoveArm(armSub,
+                        new MoveArm(
+                                armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
                                 0.0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
-                        new MoveArm(armSub,
-                                0.0,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                        new MoveArm(
+                                armSub,
+                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -392,21 +406,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                40,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                Constants.ArmConstants.MiddleArmLength / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.BottomArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                40,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.BottomArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -417,21 +431,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                110,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                Constants.ArmConstants.MiddleArmLength / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.TopArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                110,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                27.6 / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.TopArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -440,20 +454,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.FloorArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                35,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.FloorArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -462,20 +476,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.PlayerStationArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                93,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.PlayerStationArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -485,6 +499,8 @@ public class ArmPathGenerator extends CommandBase {
 
         return g;
     }
+
+    /* * * * * * FROM TOP * * * * * */
 
     private SequentialCommandGroup getPathFromTop() {
         SequentialCommandGroup g = new SequentialCommandGroup();
@@ -498,20 +514,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.BottomArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                40,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.BottomArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -520,20 +536,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.05,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.MiddleArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                100,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.05,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.MiddleArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -545,20 +561,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.FloorArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                93,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.FloorArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -567,20 +583,20 @@ public class ArmPathGenerator extends CommandBase {
                         new MoveArm(
                                 armSub,
                                 armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.PlayerStationArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                93,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.PlayerStationArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 to));
                 break;
 
@@ -591,32 +607,44 @@ public class ArmPathGenerator extends CommandBase {
         return g;
     }
 
+    /* * * * * * FROM PLAYER STATION * * * * * */
+
     private SequentialCommandGroup getPathFromPlayerStation() {
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
             case Resting:
+                g.addCommands(
+                        new MoveArm(
+                                armSub,
+                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
+                                to));
                 break;
 
             case Bottom:
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.BottomArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                armSub.getLength(),
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                35,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.BottomArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -624,21 +652,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                90,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.MiddleArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                90,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                15 / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.MiddleArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -646,21 +674,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                110,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
+                                Constants.ArmConstants.TopArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
                                 armSub.getLength(),
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                110,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                27.6 / Constants.InchesToMeters,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.TopArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -668,21 +696,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                armSub.getAngle(),
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                Constants.ArmConstants.FloorArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                Constants.ArmConstants.FloorArmLength,
+                                0.0,
+                                0.0,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                35,
-                                Constants.ArmConstants.AngleVel,
-                                Constants.ArmConstants.AngleAccel,
-                                0.3,
-                                Constants.ArmConstants.LengthVel,
-                                Constants.ArmConstants.LengthAccel,
+                                armSub.getAngle(),
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.FloorArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
