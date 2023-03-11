@@ -116,7 +116,7 @@ public final class Constants {
         /* Automatic Arm Positioning Constants */
 
         public static final double RestingArmAngle = 0.0;
-        public static final double RestingArmLength = 0.5;
+        public static final double RestingArmLength = 0.25;
 
         public static final double FloorArmAngle = 35.0;
         public static final double FloorArmLength = 11.0;  // inches
@@ -191,7 +191,8 @@ public final class Constants {
         public static final int OpenSolenoidID = 3;
         public static final int CloseSolenoidID = 2;
 
-        public static final double RotateGearRatio = 32.861; // Need to change
+        // public static final double RotateGearRatio = 32.861; 
+        public static final double RotateGearRatio = 32.85; 
 
         public static final double RevolutionsPerDegree = 1.0 / 360.0;
 

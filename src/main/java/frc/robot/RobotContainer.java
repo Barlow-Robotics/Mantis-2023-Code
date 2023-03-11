@@ -75,8 +75,8 @@ public class RobotContainer {
     private Trigger alignWithAprilTagsButton;
     private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
-    private Trigger moveToFloorButton; // b button (yellow button)
-    private Trigger driverToggleClawButton; // EHP
+    private Trigger moveToFloorButton; // right bumper (yellow button)
+    private Trigger driverToggleClawButton; 
     private Trigger operatorToggleClawButton; // y button (right white button)
 
     private Trigger testRotateButton;
@@ -263,19 +263,19 @@ public class RobotContainer {
 
         /* * * * * * ARM BUTTONS * * * * * */
 
-        moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonX);
+        moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonA);
         moveToRestingPositionButton.onTrue( new ArmPathGenerator(Arm.Position.Resting, armSub));
 
-        moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonA);
+        moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
         moveToBottomButton.onTrue( new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
         moveToMiddleButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftBumper);
         moveToMiddleButton.onTrue( new ArmPathGenerator(Arm.Position.Middle, armSub));
 
-        moveToTopButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
+        moveToTopButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonX);
         moveToTopButton.onTrue( new ArmPathGenerator(Arm.Position.Top, armSub));
 
-        moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonB);
+        moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightBumper);
         moveToFloorButton.onTrue( new ArmPathGenerator(Arm.Position.Floor, armSub));
 
         moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
