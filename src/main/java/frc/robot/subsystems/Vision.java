@@ -45,8 +45,7 @@ public class Vision extends SubsystemBase {
 
         var Vision_Info = new JSONObject(received);
 
-        double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
-        ;
+        // double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
         } catch (Exception ex) {}
     }
 
