@@ -185,12 +185,17 @@ public class Drive extends SubsystemBase {
      */
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
+        if ( xSpeed < -0.2) {
+            int wpk = 1 ;
+        }
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
         setSpeeds(speeds.left * Constants.DriveConstants.MaxSpeed, speeds.right * Constants.DriveConstants.MaxSpeed);
         // *** need to reduce max speed when arm is extended??
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
+        NetworkTableInstance.getDefault().getEntry("drive/ik_left_speed").setDouble(speeds.left);
+        NetworkTableInstance.getDefault().getEntry("drive/ik_right_speed").setDouble(speeds.right);
     }
 
     public Pose2d getPose() {

@@ -20,6 +20,11 @@ import frc.robot.commands.CalibrateArmRotations;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Arm;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -47,6 +52,11 @@ public class Robot extends TimedRobot {
     public boolean currentProfileButton;
 
     private boolean calibrationPerformed = false ;
+
+
+    private DatagramSocket socket = null;
+    private byte[] buf = new byte[256];
+
 
     /*
      * This function is run when the robot is first started up and should be used

@@ -109,7 +109,8 @@ public class Claw extends SubsystemBase {
         clawMotor.set( TalonFXControlMode.PercentOutput, 0.0) ;
     }
 
-    public void open() {
+    public void 
+    open() {
         openSolenoid.set(true);
         closeSolenoid.set(false);
         open = true ;

@@ -65,8 +65,8 @@ public final class Constants {
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
-        public static final double ClosedVoltageRampingConstant = 0.0;
-        public static final double ManualVoltageRampingConstant = 0.0;
+        public static final double ClosedVoltageRampingConstant = 0.2;
+        public static final double ManualVoltageRampingConstant = 0.2;
         public static final double kF = 0.048;
         public static final double kP = 0.005;
         public static final double kI = 0.0001;
@@ -130,7 +130,7 @@ public final class Constants {
         public static final double MiddleArmAngle = 95.0;
         public static final double MiddleArmLength = 15.0; // inches
 
-        public static final double BottomArmAngle = 40.0;
+        public static final double BottomArmAngle = 60.0;
         public static final double BottomArmLength = 11.8; // inches 
         
         public static final double AvoidChassisArmAngle = 30.0;

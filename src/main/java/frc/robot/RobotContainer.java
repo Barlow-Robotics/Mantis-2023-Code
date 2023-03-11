@@ -18,6 +18,7 @@ import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,6 +36,7 @@ import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.MoveArm;
+import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
@@ -79,11 +81,6 @@ public class RobotContainer {
     private Trigger driverToggleClawButton; 
     private Trigger operatorToggleClawButton; // y button (right white button)
 
-    private Trigger testRotateButton;
-    private Trigger testRotateHomeButton;
-    private Trigger extendTestButton;
-    private Trigger retractTestButton;
-
     // private Command moveToBottom;
     // private Command moveToMiddle;
     // private Command moveToResting;
@@ -93,6 +90,9 @@ public class RobotContainer {
     private float yawMultiplier = 1.0f;
 
     private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
+
+
+    private String autoPath = "" ;
 
     public RobotContainer() {
         configureButtonBindings();
@@ -117,11 +117,13 @@ public class RobotContainer {
                             // be flat when
                             // only pressed a little, and ramp up as stick pushed more.
                             double speed = 0.0;
-                            if (x != 0) {
-                                speed = (Math.abs(x) / x) * (Math
-                                        .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
-                                        + (-Math.abs(x) / x);
-                            }
+                            speed = -x ;
+                            // if (x != 0) {
+                            //     speed = (Math.abs(x) / x) * (Math
+                            //             .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
+                            //             + (-Math.abs(x) / x);
+                            // }
+                            // speed = speed * 0.5 ;
                             double turn = -yaw;
 
                             // double turn = 0.0;
@@ -143,11 +145,17 @@ public class RobotContainer {
                             if (!autoSteer || !clawSub.isOpen()) {
                                 yaw = -turn;
 
-                                yawMultiplier = (float) (0.6 + Math.abs(speed) * 0.2f);
+                                // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
 
-                                yaw = (Math.abs(yaw) / yaw) * (yaw * yaw)
+                                yawMultiplier =  0.5f;
+
+                                double yawSign = 1.0 ;
+                                if ( yaw < 0.0 ) {
+                                    yawSign = -1.0 ;
+                                }
+                                yaw = yawSign * (yaw * yaw)
                                         * yawMultiplier;
-                                if (Math.abs(yaw) < 0.05f) {
+                                if (Math.abs(yaw) < 0.02f) {
                                     yaw = 0.0f;
                                 }
                                 lastAutoSteer = false;
@@ -159,8 +167,10 @@ public class RobotContainer {
                                         .gamePieceDistanceFromCenter());
                                 lastAutoSteer = true;
                             }
+                            NetworkTableInstance.getDefault().getEntry("drive/speed").setDouble(-speed) ;
+                            NetworkTableInstance.getDefault().getEntry("drive/yaw").setDouble(yaw) ;
 
-                            driveSub.drive(-speed, -turn * 0.4, false);
+                            driveSub.drive(-speed, yaw * 0.4, false);
 
                         },
                         driveSub));
@@ -280,54 +290,7 @@ public class RobotContainer {
 
         moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
         moveToPlayerStationButton.onTrue( new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
-
-
-        // testRotateButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonX);
-        // testRotateButton.onTrue(
-        //         new MoveArm(armSub,
-        //                 90.0,
-        //                 70.0,
-        //                 0.25,
-        //                 0,
-        //                 0,
-        //                 0,
-        //                 Position.Transition));
-
-        // testRotateHomeButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonB);
-        // testRotateHomeButton.onTrue(
-        //         new MoveArm(armSub,
-        //                 0.0,
-        //                 70.0,
-        //                 0.25,
-        //                 0,
-        //                 0,
-        //                 0,
-        //                 Position.Transition));
-                
-
-        // extendTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonY);
-        // extendTestButton.onTrue(
-        //         new MoveArm(armSub,
-        //                 armSub.getAngle(),
-        //                 0.0,
-        //                 0.0,
-        //                 8,
-        //                 25,
-        //                 0.1,
-        //                 Position.Transition));
-        
-
-        // retractTestButton = new JoystickButton(operatorAxisController, LogitechDualActionConstants.ButtonA);
-        // retractTestButton.onTrue(
-        //         new MoveArm(armSub,
-        //                 armSub.getAngle(),
-        //                 0.0,
-        //                 0.0,
-        //                 0,
-        //                 25,
-        //                 0.1,
-        //                 Position.Transition));
-                
+               
         /* * * * * * VISION BUTTONS * * * * * */
 
         alignWithAprilTagsButton = new JoystickButton(driverController, 6);
@@ -340,36 +303,67 @@ public class RobotContainer {
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
 
-    public Command getAutonomousCommand() {
-        HashMap<String, Command> eventMap = new HashMap<>();
+//     public Command getAutonomousCommand() {
+//         HashMap<String, Command> eventMap = new HashMap<>();
 
-        eventMap.put("event1", new PrintCommand("\t\t\t*** PASSED FIRST LEG ***"));
-        eventMap.put("event2", new PrintCommand("\t\t\t*** HALF WAY THERE (living on a prayer) ***"));
-        eventMap.put("event3", new PrintCommand("\t\t\t*** ALMOST, I SWEAR ***"));
-        eventMap.put("event4", new PrintCommand("\t\t\t*** ARRIVED AT DESTINATION ***"));
+//         eventMap.put("MoveToTop", new PrintCommand("\t\t\t*** PASSED FIRST LEG ***"));
+//         eventMap.put("OpenClaw", new PrintCommand("\t\t\t*** HALF WAY THERE (living on a prayer) ***"));
+//         eventMap.put("MoveToResting", new PrintCommand("\t\t\t*** ALMOST, I SWEAR ***"));
 
-        PathPlannerTrajectory traj = PathPlanner.loadPath("Test", new PathConstraints(1, 4));
+//         // eventMap.put("MoveToTop", new ArmPathGenerator(Arm.Position.Top, armSub));
+//         // eventMap.put("OpenClaw", new ToggleClaw(clawSub));
+//         // eventMap.put("MoveToResting", new ArmPathGenerator(Arm.Position.Resting, armSub));
 
-        RamseteController controller = new RamseteController();
+// //        PathPlannerTrajectory traj = PathPlanner.loadPath(autoPath, new PathConstraints(1, 4));
+//         PathPlannerTrajectory traj = PathPlanner.loadPath("Charging_Station_Only", new PathConstraints(1, 4), true);
 
-        Command ic = new InstantCommand(() -> {
-            // driveSub.resetEncoders();
-            driveSub.resetOdometry(traj.getInitialPose());
-        });
 
-        Command pathFollowingCommand = new PPRamseteCommand(
-                traj,
-                driveSub::getPose,
-                controller,
-                new DifferentialDriveKinematics(0.75),
-                driveSub::setSpeeds,
-                true,
-                driveSub);
 
-        Command followPathWithEvents = new FollowPathWithEvents(pathFollowingCommand, traj.getMarkers(),
-                eventMap);
+//         RamseteController controller = new RamseteController();
 
-        // return new SequentialCommandGroup(ic, pathFollowingCommand);
-        return new SequentialCommandGroup(ic, followPathWithEvents);
+//         Command ic = new InstantCommand(() -> {
+//             // driveSub.resetEncoders();
+//             driveSub.resetOdometry(traj.getInitialPose());
+//         });
+
+//         Command pathFollowingCommand = new PPRamseteCommand(
+//                 traj,
+//                 driveSub::getPose,
+//                 controller,
+//                 new DifferentialDriveKinematics(0.75),
+//                 driveSub::setSpeeds,
+//                 true,
+//                 driveSub);
+
+//         Command followPathWithEvents = new FollowPathWithEvents(pathFollowingCommand, traj.getMarkers(),
+//                 eventMap);
+
+//         // return new SequentialCommandGroup(ic, pathFollowingCommand);
+//         return new SequentialCommandGroup(ic, followPathWithEvents);
+//     }
+
+
+public Command getAutonomousCommand() {
+
+    SequentialCommandGroup g = new SequentialCommandGroup() ;
+
+    g.addCommands(
+        new ArmPathGenerator(Arm.Position.Bottom, armSub),
+        new OpenClaw(clawSub),
+        new ArmPathGenerator(Arm.Position.Resting, armSub)
+    );
+
+    g.addRequirements(armSub, clawSub);
+
+    return null;
+}
+
+
+    public String getAutoPath() {
+        return this.autoPath ;
+    }
+
+    public void setAutoPath( String p) {
+        this.autoPath = p ;
     }
 }

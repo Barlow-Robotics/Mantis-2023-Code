@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Arm;
@@ -786,15 +787,18 @@ public class ArmPathGenerator extends CommandBase {
         // because if we're in transition, we don't realy know where we are.
         // In the future, maybe replace this with something smarter.
 
-        g.addCommands(new MoveArm(
+        Command first = new MoveArm(
             armSub,
-            armSub.getAngle(),
+            Constants.ArmConstants.MiddleArmAngle,
             0.0,
             0.0,
             Constants.ArmConstants.RestingArmAngle,
             Constants.ArmConstants.ExtendVel,
             Constants.ArmConstants.ExtendAccel,
-            Position.Transition )
+            Position.Transition).withTimeout(4.0);
+
+        g.addCommands( 
+            first
         );
 
         g.addCommands( getPathFromResting() );
