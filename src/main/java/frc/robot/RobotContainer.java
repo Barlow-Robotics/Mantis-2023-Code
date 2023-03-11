@@ -69,15 +69,15 @@ public class RobotContainer {
 
     private Trigger moveToTopButton; // left stick (blue button)
     private Trigger moveToMiddleButton; // left bumper (green button)
-    private Trigger moveToBottomButton; // window button (red button)
+    private Trigger moveToBottomButton; // button a (left white button)
     private Trigger moveToRestingPositionButton; // button x (middle white button)
     private Trigger moveToPlayerStationButton; // right stick (black button)
     private Trigger alignWithAprilTagsButton;
     private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
-    private Trigger moveToFloorButton; // b button (far left white button)
+    private Trigger moveToFloorButton; // b button (yellow button)
     private Trigger driverToggleClawButton; // EHP
-    private Trigger operatorToggleClawButton; // y button (yellow button)
+    private Trigger operatorToggleClawButton; // y button (right white button)
 
     private Trigger testRotateButton;
     private Trigger testRotateHomeButton;
@@ -266,7 +266,7 @@ public class RobotContainer {
         moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonX);
         moveToRestingPositionButton.onTrue( new ArmPathGenerator(Arm.Position.Resting, armSub));
 
-        moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.WindowButton);
+        moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonA);
         moveToBottomButton.onTrue( new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
         moveToMiddleButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftBumper);
