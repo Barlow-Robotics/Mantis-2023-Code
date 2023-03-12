@@ -314,67 +314,62 @@ public class RobotContainer {
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
 
-    // public Command getAutonomousCommand() {
-    // HashMap<String, Command> eventMap = new HashMap<>();
-
-    // // eventMap.put("MoveToTop", new PrintCommand("\t\t\t*** PASSED FIRST
-    // LEG***"));
-    // // eventMap.put("OpenClaw", new PrintCommand("\t\t\t*** HALF WAY THERE
-    // (living
-    // // on a prayer) ***"));
-    // // eventMap.put("MoveToResting", new PrintCommand("\t\t\t*** ALMOST, I
-    // // SWEAR***"));
-
-    // // eventMap.put("MoveToTop", new ArmPathGenerator(Arm.Position.Top, armSub));
-    // // eventMap.put("OpenClaw", new ToggleClaw(clawSub));
-    // // eventMap.put("MoveToResting", new ArmPathGenerator(Arm.Position.Resting,
-    // // armSub));
-
-    // PathPlannerTrajectory traj = PathPlanner.loadPath(
-    // "Test",
-    // new PathConstraints(1, 4),
-    // true);
-
-    // RamseteController controller = new RamseteController();
-
-    // Command ic = new InstantCommand(() -> {
-    // // driveSub.resetEncoders();
-    // driveSub.resetOdometry(traj.getInitialPose());
-    // });
-
-    // Command pathFollowingCommand = new PPRamseteCommand(
-    // traj,
-    // driveSub::getPose,
-    // controller,
-    // new DifferentialDriveKinematics(0.75),
-    // driveSub::setSpeeds,
-    // true,
-    // driveSub);
-
-    // Command followPathWithEvents = new FollowPathWithEvents(
-    // pathFollowingCommand,
-    // traj.getMarkers(),
-    // eventMap);
-
-    // return new SequentialCommandGroup(ic, pathFollowingCommand);
-    // // return new SequentialCommandGroup(ic, followPathWithEvents);
-    // }
-
     public Command getAutonomousCommand() {
-
         ArmPathGenerator toBottomApg = new ArmPathGenerator(Position.Bottom, armSub);
         ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
         OpenClaw openClaw = new OpenClaw(clawSub);
+        EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
+        
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("MoveArm", toBottomApg.getPathFromResting());
+        eventMap.put("OpenClaw", openClaw);
+        eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
+        eventMap.put("AutoBalance", autoBalance);
 
-        SequentialCommandGroup g = new SequentialCommandGroup() ;
-        g.addCommands(toBottomApg.getPathFromResting());
-        g.addCommands(openClaw);
-        g.addCommands(toRestingApg.getPathFromBottom());
+        PathPlannerTrajectory traj = PathPlanner.loadPath(
+                "Reverse_Only",
+                new PathConstraints(1, 4),
+                true);
 
-        g.addRequirements(armSub, clawSub);
+        RamseteController controller = new RamseteController();
 
-        return g;
+        Command ic = new InstantCommand(() -> {
+            // driveSub.resetEncoders();
+            driveSub.resetOdometry(traj.getInitialPose());
+        });
+
+        Command pathFollowingCommand = new PPRamseteCommand(
+                traj,
+                driveSub::getPose,
+                controller,
+                new DifferentialDriveKinematics(0.75),
+                driveSub::setSpeeds,
+                true,
+                driveSub);
+
+        Command followPathWithEvents = new FollowPathWithEvents(
+                pathFollowingCommand,
+                traj.getMarkers(),
+                eventMap);
+
+        return new SequentialCommandGroup(ic, followPathWithEvents);
     }
+
+    // public Command getAutonomousCommand() {
+
+    // ArmPathGenerator toBottomApg = new ArmPathGenerator(Position.Bottom, armSub);
+    // ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
+    // OpenClaw openClaw = new OpenClaw(clawSub);
+
+    // SequentialCommandGroup g = new SequentialCommandGroup() ;
+    // g.addCommands(toBottomApg.getPathFromResting());
+    // g.addCommands(openClaw);
+    // g.addCommands(toRestingApg.getPathFromBottom());
+
+    // g.addRequirements(armSub, clawSub);
+
+    // return g;
+    // }
 
     public String getAutoPath() {
         return this.autoPath;
