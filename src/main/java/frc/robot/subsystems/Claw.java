@@ -77,7 +77,7 @@ public class Claw extends SubsystemBase {
     @Override
     public void periodic() {
         // 0.0 is perpendicular to arm bar
-        setAngle( -armSub.getAngle()); 
+        setAngle( -armSub.getAngle()+2.0); 
         
         // if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
         //     close();

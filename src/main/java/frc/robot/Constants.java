@@ -66,7 +66,7 @@ public final class Constants {
         public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
         public static final double ClosedVoltageRampingConstant = 0.2;
-        public static final double ManualVoltageRampingConstant = 0.2;
+        public static final double ManualVoltageRampingConstant = 0.0;
         public static final double kF = 0.048;
         public static final double kP = 0.005;
         public static final double kI = 0.0001;
@@ -94,7 +94,7 @@ public final class Constants {
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
-        public static final double armRotateSpeed = 55; // Degrees per second
+        public static final double armRotateSpeed = 70; // Degrees per second
         public static final double armRotateAccelerationTime = 0.25; 
         public static final double armExtendSpeed = 25; // Inches per second
         public static final double armExtendAccelerationTime = 0.25; // Need to change this (time in sceonds for total motion)
@@ -124,11 +124,12 @@ public final class Constants {
         public static final double PlayerStationArmAngle = 93.0;
         public static final double PlayerStationArmLength = 0.0;
 
-        public static final double TopArmAngle = 110.0;
-        public static final double TopArmLength = 26.0; // inches
+        public static final double TopArmAngle = 115.0;
+        public static final double TopArmLength = 26.75; // inches
 
-        public static final double MiddleArmAngle = 95.0;
-        public static final double MiddleArmLength = 15.0; // inches
+
+        public static final double MiddleArmAngle = 105.0;
+        public static final double MiddleArmLength = 10.0; // inches
 
         public static final double BottomArmAngle = 60.0;
         public static final double BottomArmLength = 11.8; // inches 
@@ -192,7 +193,7 @@ public final class Constants {
         public static final int CloseSolenoidID = 2;
 
         // public static final double RotateGearRatio = 32.861; 
-        public static final double RotateGearRatio = 32.85; 
+        public static final double RotateGearRatio = 31.00; 
 
         public static final double RevolutionsPerDegree = 1.0 / 360.0;
 

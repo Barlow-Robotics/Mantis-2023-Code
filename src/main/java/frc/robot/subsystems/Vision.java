@@ -9,7 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.json.JSONObject;
+// import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.util.*;
 // import org.json.JSONObject;
@@ -38,15 +38,15 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
     //    ObjectMapper
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        try {
-            socket.receive(packet);
-            String received = new String(packet.getData(), 0, packet.getLength());
+        // DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        // try {
+        //     socket.receive(packet);
+        //     String received = new String(packet.getData(), 0, packet.getLength());
 
-        var Vision_Info = new JSONObject(received);
+        // var Vision_Info = new JSONObject(received);
 
-        // double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
-        } catch (Exception ex) {}
+        // // double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
+        // } catch (Exception ex) {}
     }
 
     public void turnOnVisionLight() {
