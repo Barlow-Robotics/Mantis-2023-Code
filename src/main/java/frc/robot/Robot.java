@@ -6,7 +6,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.playingwithfusion.TimeOfFlight;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,7 +25,6 @@ import frc.robot.subsystems.Arm;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -45,18 +46,18 @@ public class Robot extends TimedRobot {
 
     Joystick opp = new Joystick(0);
 
+    TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.DistanceSensorID);
+
     int state = 0; // O
 
     BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream(); // O
 
     public boolean currentProfileButton;
 
-    private boolean calibrationPerformed = false ;
-
+    private boolean calibrationPerformed = false;
 
     private DatagramSocket socket = null;
     private byte[] buf = new byte[256];
-
 
     /*
      * This function is run when the robot is first started up and should be used
@@ -81,7 +82,7 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
         armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
         robotContainer.clawSub.stopMoving();
-        this.calibrationPerformed = false ;
+        this.calibrationPerformed = false;
     }
 
     @Override
@@ -94,28 +95,28 @@ public class Robot extends TimedRobot {
      */
     // @Override
     public void autonomousInit() {
-        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
+                             // claw) to zero
 
-        SequentialCommandGroup cg = new SequentialCommandGroup() ;
+        SequentialCommandGroup cg = new SequentialCommandGroup();
 
-        if ( !calibrationPerformed) {
-            Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
-            Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
-            Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
-    
-            cg.addCommands( 
-                calibrateLength, 
-                calibrateRotation,
-                setState,
-                new InstantCommand( () -> this.calibrationPerformed = true ) ,
-                new PrintCommand("Calibration Complete")
-            ); 
+        if (!calibrationPerformed) {
+            Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
+            Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
+            Command setState = new InstantCommand(() -> armSub.setState(Arm.Position.Resting));
+
+            cg.addCommands(
+                    calibrateLength,
+                    calibrateRotation,
+                    setState,
+                    new InstantCommand(() -> this.calibrationPerformed = true),
+                    new PrintCommand("Calibration Complete"));
         }
 
         autonomousCommand = robotContainer.getAutonomousCommand();
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
-            cg.addCommands( autonomousCommand) ;
+            cg.addCommands(autonomousCommand);
         }
         cg.schedule();
     }
@@ -130,33 +131,30 @@ public class Robot extends TimedRobot {
         // This makes sure that the autonomous stops running when teleop starts running.
         // If you want the autonomous to continue until interrupted by another command,
         // remove this line or comment it out.
-        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
+                             // claw) to zero
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
 
-        if ( !calibrationPerformed && !this.isSimulation()) {
-            Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub) ;
-            Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub) ;
+        if (!calibrationPerformed && !this.isSimulation()) {
+            Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
+            Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
             // wpk might want to change this to a move command.
-            Command setArmLength = new InstantCommand( 
-                ()-> armSub.setLength(0.0, Constants.ArmConstants.ExtendVel, Constants.ArmConstants.ExtendAccel)
-                ) ;
-            Command setState = new InstantCommand( () -> armSub.setState( Arm.Position.Resting)) ;
-    
-            SequentialCommandGroup calbrationSequence 
-            = new SequentialCommandGroup(
-                calibrateLength, 
-                calibrateRotation,
-                setArmLength ,
-                setState,
-                new InstantCommand( () 
-                   -> {
-                    armSub.setState(Arm.Position.Resting) ;
-                    this.calibrationPerformed = true;
-                } ) ,
-                new PrintCommand("Calibration Complete") 
-                ) ; 
+            Command setArmLength = new InstantCommand(
+                    () -> armSub.setLength(0.0, Constants.ArmConstants.ExtendVel, Constants.ArmConstants.ExtendAccel));
+            Command setState = new InstantCommand(() -> armSub.setState(Arm.Position.Resting));
+
+            SequentialCommandGroup calbrationSequence = new SequentialCommandGroup(
+                    calibrateLength,
+                    calibrateRotation,
+                    setArmLength,
+                    setState,
+                    new InstantCommand(() -> {
+                        armSub.setState(Arm.Position.Resting);
+                        this.calibrationPerformed = true;
+                    }),
+                    new PrintCommand("Calibration Complete"));
             calbrationSequence.schedule();
         }
 
@@ -169,7 +167,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend, claw) to zero
+        armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
+                             // claw) to zero
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
     }
@@ -177,6 +176,7 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
+        NetworkTableInstance.getDefault().getEntry("claw/sensorDistance").setDouble(distanceSensor.getRange());
     }
 
     /** This function is called once when the robot is first started up. */
@@ -186,15 +186,14 @@ public class Robot extends TimedRobot {
     }
 
     /** This function is called periodically whilst in simulation. */
-     @Override
+    @Override
     public void simulationPeriodic() {
         // if (!simulationInitialized) {
-        //     simulationInit();
-        //     simulationInitialized = true;
+        // simulationInit();
+        // simulationInitialized = true;
         // }
         PhysicsSim.getInstance().run();
     }
-
 
     public void robotInit() {
 
@@ -219,9 +218,9 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        if ( this.isDisabled()) {
+        if (this.isDisabled()) {
             robotContainer.armSub.stopMoving();
-            robotContainer.clawSub.stopMoving() ;
+            robotContainer.clawSub.stopMoving();
         }
         CommandScheduler.getInstance().run();
 

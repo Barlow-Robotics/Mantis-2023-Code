@@ -22,7 +22,7 @@ public class Claw extends SubsystemBase {
 
     WPI_TalonFX clawMotor; // For adjusting angle
 
-    //Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+    // Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
     Solenoid closeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
             Constants.ClawConstants.CloseSolenoidID);
@@ -35,21 +35,21 @@ public class Claw extends SubsystemBase {
 
     Arm armSub;
     // private final Timer timer = new Timer();
-    
+
     boolean autoCloseEnabled = true;
-    boolean open = false ;
+    boolean open = false;
 
     public Claw(Arm a) { // add arm to constructors
         armSub = a;
         clawMotor = new WPI_TalonFX(Constants.ClawConstants.ClawMotorID); // needs config
 
         setClawMotorConfig(clawMotor);
-        clawMotor.setSelectedSensorPosition(0) ;
+        clawMotor.setSelectedSensorPosition(0);
 
-        this.close() ;
+        this.close();
     }
 
-    private void setClawMotorConfig(WPI_TalonFX motor) { 
+    private void setClawMotorConfig(WPI_TalonFX motor) {
         motor.configClosedloopRamp(Constants.ClawConstants.ClawClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.ClawConstants.ClawManualVoltageRampingConstant);
         motor.config_kF(Constants.ClawConstants.ClawPID_id, Constants.ClawConstants.ClawKF);
@@ -59,11 +59,13 @@ public class Claw extends SubsystemBase {
 
         motor.setInverted(TalonFXInvertType.Clockwise);
 
-        motor.configMotionCruiseVelocity(Constants.ClawConstants.ClawSpeed * Constants.ClawConstants.DegreesPerSecToCountsPer100MSec );
-        motor.configMotionAcceleration( Constants.ClawConstants.DegreesPerSecToCountsPer100MSec / 0.1);  // wpk add a constant for this one
+        motor.configMotionCruiseVelocity(
+                Constants.ClawConstants.ClawSpeed * Constants.ClawConstants.DegreesPerSecToCountsPer100MSec);
+        motor.configMotionAcceleration(Constants.ClawConstants.DegreesPerSecToCountsPer100MSec / 0.1); // wpk add a
+                                                                                                       // constant for
+                                                                                                       // this one
 
         motor.configMotionSCurveStrength(Constants.ClawConstants.AccelerationSmoothing);
-
 
         // wpk add something for soft limits.
 
@@ -74,18 +76,20 @@ public class Claw extends SubsystemBase {
     @Override
     public void periodic() {
         // 0.0 is perpendicular to arm bar
-        setAngle( -armSub.getAngle()+2.0); 
-        
-        // if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-        //     close();
-        //     disableAutoClose();
+        setAngle(-armSub.getAngle() + 2.0);
+
+        // if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <=
+        // (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+        // close();
+        // disableAutoClose();
         // }
-        // else if (isOpen() && distanceSensor.getRange() >= (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
-        //     enableAutoClose();
+        // else if (isOpen() && distanceSensor.getRange() >=
+        // (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
+        // enableAutoClose();
         // }
 
-        NetworkTableInstance.getDefault().getEntry("claw/actualAngle").setDouble(this.getAngle()) ;
-        NetworkTableInstance.getDefault().getEntry("claw/isOpen").setBoolean(this.isOpen()) ;
+        NetworkTableInstance.getDefault().getEntry("claw/actualAngle").setDouble(this.getAngle());
+        NetworkTableInstance.getDefault().getEntry("claw/isOpen").setBoolean(this.isOpen());
 
     }
 
@@ -95,28 +99,27 @@ public class Claw extends SubsystemBase {
     }
 
     public void setAngle(double desiredAngle) {
-        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree; 
-//        clawMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
-        clawMotor.set(TalonFXControlMode.Position, setAngle );
-        NetworkTableInstance.getDefault().getEntry("claw/desiredAngle").setDouble(desiredAngle) ;
+        double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree;
+        // clawMotor.set(TalonFXControlMode.MotionMagic, setAngle,
+        // DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
+        clawMotor.set(TalonFXControlMode.Position, setAngle);
+        NetworkTableInstance.getDefault().getEntry("claw/desiredAngle").setDouble(desiredAngle);
     }
-
 
     public void stopMoving() {
-        clawMotor.set( TalonFXControlMode.PercentOutput, 0.0) ;
+        clawMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
-    public void 
-    open() {
+    public void open() {
         openSolenoid.set(true);
         closeSolenoid.set(false);
-        open = true ;
+        open = true;
     }
 
     public void close() {
         openSolenoid.set(false);
         closeSolenoid.set(true);
-        open = false ;
+        open = false;
     }
 
     public boolean isOpen() {
@@ -131,12 +134,10 @@ public class Claw extends SubsystemBase {
         autoCloseEnabled = false;
     }
 
-
-
     // Simulation Support
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(clawMotor, 0.1, 6800 );
+        PhysicsSim.getInstance().addTalonFX(clawMotor, 0.1, 6800);
     }
 
 }

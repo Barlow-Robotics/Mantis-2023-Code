@@ -215,7 +215,7 @@ public final class Constants {
         public static final double ClawAngleTolerance = 1.0 ; 
 
         public static final double ClawSpeed = 100.0 ; // Needs tuning
-        public static final int DistanceSensorID = 0; // Need to change
+        public static final int DistanceSensorID = 50; // Need to change
         public static final int AccelerationSmoothing = 2;
 
 

@@ -324,7 +324,7 @@ public class RobotContainer {
         eventMap.put("MoveArm", toBottomApg.getPathFromResting());
         eventMap.put("OpenClaw", openClaw);
         eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
-        eventMap.put("AutoBalance", autoBalance);
+        // eventMap.put("AutoBalance", autoBalance);
 
         PathPlannerTrajectory traj = PathPlanner.loadPath(
                 "Reverse_Only",
