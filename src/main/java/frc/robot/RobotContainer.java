@@ -315,16 +315,16 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        ArmPathGenerator toBottomApg = new ArmPathGenerator(Position.Bottom, armSub);
+        ArmPathGenerator toTopApg = new ArmPathGenerator(Position.Top, armSub);
         ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
         OpenClaw openClaw = new OpenClaw(clawSub);
-        EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
-        
+        // EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
+
         HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("MoveArm", toBottomApg.getPathFromResting());
-        eventMap.put("OpenClaw", openClaw);
-        eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
-        // eventMap.put("AutoBalance", autoBalance);
+        // eventMap.put("MoveArm", toBottomApg.getPathFromResting());
+        // eventMap.put("OpenClaw", openClaw);
+        // eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
+        // // eventMap.put("AutoBalance", autoBalance);
 
         PathPlannerTrajectory traj = PathPlanner.loadPath(
                 "Reverse_Only",
@@ -333,7 +333,7 @@ public class RobotContainer {
 
         RamseteController controller = new RamseteController();
 
-        Command ic = new InstantCommand(() -> {
+        Command resetOdometry = new InstantCommand(() -> {
             // driveSub.resetEncoders();
             driveSub.resetOdometry(traj.getInitialPose());
         });
@@ -352,24 +352,18 @@ public class RobotContainer {
                 traj.getMarkers(),
                 eventMap);
 
-        return new SequentialCommandGroup(ic, followPathWithEvents);
+        SequentialCommandGroup auto = new SequentialCommandGroup();
+        auto.addCommands(new InstantCommand (()->clawSub.disableAutoClose()));
+        auto.addCommands(toTopApg.getPathFromResting());
+        auto.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        auto.addCommands(openClaw);
+        auto.addCommands(toRestingApg.getPathFromTop());
+        auto.addCommands(new InstantCommand (()->clawSub.enableAutoClose()));
+        // auto.addCommands(resetOdometry);
+        // auto.addCommands(pathFollowingCommand);
+
+        return auto;
     }
-
-    // public Command getAutonomousCommand() {
-
-    // ArmPathGenerator toBottomApg = new ArmPathGenerator(Position.Bottom, armSub);
-    // ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
-    // OpenClaw openClaw = new OpenClaw(clawSub);
-
-    // SequentialCommandGroup g = new SequentialCommandGroup() ;
-    // g.addCommands(toBottomApg.getPathFromResting());
-    // g.addCommands(openClaw);
-    // g.addCommands(toRestingApg.getPathFromBottom());
-
-    // g.addRequirements(armSub, clawSub);
-
-    // return g;
-    // }
 
     public String getAutoPath() {
         return this.autoPath;

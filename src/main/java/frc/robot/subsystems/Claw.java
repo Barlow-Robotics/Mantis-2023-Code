@@ -9,6 +9,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -46,6 +48,8 @@ public class Claw extends SubsystemBase {
         setClawMotorConfig(clawMotor);
         clawMotor.setSelectedSensorPosition(0);
 
+        distanceSensor.setRangingMode(RangingMode.Short, 24);
+
         this.close();
     }
 
@@ -78,19 +82,18 @@ public class Claw extends SubsystemBase {
         // 0.0 is perpendicular to arm bar
         setAngle(-armSub.getAngle() + 2.0);
 
-        // if (isOpen() && autoCloseEnabled && distanceSensor.getRange() <=
-        // (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
-        // close();
-        // disableAutoClose();
-        // }
-        // else if (isOpen() && distanceSensor.getRange() >=
-        // (ClawConstants.ClawLengthInches) * Constants.InchesToMillimeters) {
-        // enableAutoClose();
-        // }
+        if (isOpen() && autoCloseEnabled
+                && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
+            close();
+            disableAutoClose();
+        } else if (distanceSensor.isRangeValid() && distanceSensor.getRange() >= 15 * Constants.InchesToMillimeters)
+                     {
+            enableAutoClose();
+        }
 
         NetworkTableInstance.getDefault().getEntry("claw/actualAngle").setDouble(this.getAngle());
         NetworkTableInstance.getDefault().getEntry("claw/isOpen").setBoolean(this.isOpen());
-
+        NetworkTableInstance.getDefault().getEntry("claw/autoCloseEnabled").setBoolean(this.autoCloseEnabled);
     }
 
     public double getAngle() {
@@ -138,6 +141,14 @@ public class Claw extends SubsystemBase {
 
     public void simulationInit() {
         PhysicsSim.getInstance().addTalonFX(clawMotor, 0.1, 6800);
+    }
+
+    public double getDistanceInches() {
+        return (distanceSensor.getRange() / Constants.InchesToMillimeters);
+    }
+
+    public TimeOfFlight getRangeSensor() {
+        return this.distanceSensor;
     }
 
 }

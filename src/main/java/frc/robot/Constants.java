@@ -121,7 +121,7 @@ public final class Constants {
         public static final double FloorArmAngle = 35.0;
         public static final double FloorArmLength = 11.0;  // inches
 
-        public static final double PlayerStationArmAngle = 93.0;
+        public static final double PlayerStationArmAngle = 105.0;
         public static final double PlayerStationArmLength = 0.0;
 
         public static final double TopArmAngle = 115.0;
@@ -142,15 +142,15 @@ public final class Constants {
         public static final double ArmMinLength = 0.0;
         public static final double ArmMaxLength = 26.0; // need to confirm (inches)
 
-        public static final double RotateVel = 50;
-        public static final double RotateAccel = 0.25;
+        public static final double RotateVel = 75;
+        public static final double RotateAccel = 0.15;
         public static final double AngleMultiplier = 1.0;
         // public static final double AngleVel = 0.5;
         public static final double AngleAcceleration = RotateVel * 4.0;
         // public static final double AngleMultiplier = 0.5;
 
-        public static final double ExtendVel = 20.0;
-        public static final double ExtendAccel = 0.25;
+        public static final double ExtendVel = 26.0;
+        public static final double ExtendAccel = 0.1;
         public static final double LengthMultiplier = 0.5;
 
         // wpk will probably need to add constants for minimum angle before retracting
@@ -219,7 +219,7 @@ public final class Constants {
         public static final int AccelerationSmoothing = 2;
 
 
-        public static final double InchesForAutoClosing = 3;
+        public static final double InchesForAutoClosing = 6;
         public static final double ClawLengthInches = 9;
     }
 

@@ -521,7 +521,7 @@ public class ArmPathGenerator extends CommandBase {
 
     /* * * * * * FROM TOP * * * * * */
 
-    private SequentialCommandGroup getPathFromTop() {
+    public SequentialCommandGroup getPathFromTop() {
         System.out.println("***** getPathFromTop") ;
 
         SequentialCommandGroup g = new SequentialCommandGroup();
