@@ -19,6 +19,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -113,44 +114,25 @@ public class RobotContainer {
                             if (Math.abs(yaw) < 0.01) {
                                 yaw = 0.0;
                             }
-                            // fancy exponential formulas to shape the controller inputs to
-                            // be flat when
-                            // only pressed a little, and ramp up as stick pushed more.
-                            double speed = 0.0;
-                            speed = -x;
+                            double speed = -x ;
                             // if (x != 0) {
                             // speed = (Math.abs(x) / x) * (Math
                             // .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
                             // + (-Math.abs(x) / x);
                             // }
+                            // If we're going forward, use "full" speed
                             if (speed > 0.0) {
                                 speed = speed * 0.5;
                             } else {
+                                // we're going backward, so use slower speed
                                 speed = speed * 0.75;
                             }
                             double turn = -yaw;
-
-                            // double turn = 0.0;
-                            // if (yaw != 0) {
-                            // turn = (Math.abs(yaw) / yaw) * (Math.exp(-400.0 *
-                            // Math.pow(yaw / 3.0, 4.0)))
-                            // + (-Math.abs(yaw) / yaw);
-                            // }
-
-                            // The turn input results in really quick movement of the bot,
-                            // so let's reduce
-                            // the turn input and make it even less if we are going faster.
-                            // This is a simple
-                            // y = mx + b equation to adjust the turn input based on the
-                            // speed.
-
-                            // turn = turn * (-0.4 * Math.abs(speed) + 0.5);
 
                             if (!autoSteer || !clawSub.isOpen()) {
                                 yaw = -turn;
 
                                 // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
-
                                 yawMultiplier = 0.5f;
 
                                 double yawSign = 1.0;
@@ -260,6 +242,11 @@ public class RobotContainer {
         // Constants.ArmConstants.AngleAccelerationTime);
     }
 
+
+    public void setAutoPlan(String planName) {
+        this.autoPath = planName ;
+    }
+
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
@@ -268,6 +255,7 @@ public class RobotContainer {
 
         String controllerType = driverController.getName();
         System.out.println("The controller name is " + controllerType);
+        System.out.println("The controller name is " + DriverStation.getJoystickName(1));
 
         // xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         // yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;

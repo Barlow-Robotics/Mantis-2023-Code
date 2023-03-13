@@ -8,11 +8,21 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.json.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 // import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.util.*;
 // import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,29 +34,63 @@ public class Vision extends SubsystemBase {
 
     DigitalOutput cameraLight;
 
-    private DatagramSocket socket = null;
-    private byte[] buf = new byte[256];
+    boolean gamePieceDetected ;
+    double gamePieceDistanceFromCenter ;
+    double gamePieceHeight ;
+    double gamePieceWidth ;
+
+    private DatagramChannel visionChannel = null ;
+    ByteBuffer buffer = ByteBuffer.allocate(1024);
+
 
     public Vision() {
         cameraLight = new DigitalOutput(Constants.VisionConstants.CameraLightID);
         try {
-            socket = new DatagramSocket(4445);
+            visionChannel = DatagramChannel.open() ;
+            InetSocketAddress sAddr = new InetSocketAddress(5800);
+            visionChannel.bind(sAddr);
+            visionChannel.configureBlocking(false) ;
         } catch (Exception ex) {
         }
     }
 
     @Override
     public void periodic() {
-    //    ObjectMapper
-        // DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        // try {
-        //     socket.receive(packet);
-        //     String received = new String(packet.getData(), 0, packet.getLength());
 
-        // var Vision_Info = new JSONObject(received);
+        try {
+            boolean done = false ;
+            String message = "" ;
+            while (!done) {
+                SocketAddress sender = visionChannel.receive(buffer);
+                buffer.flip();
+                int limits = buffer.limit();
+                if ( limits > 0 ) {
+                    byte bytes[] = new byte[limits];
+                    buffer.get(bytes, 0, limits);
+                    message = new String(bytes);
+                } else { 
+                    done = true ;
+                }
+                buffer.clear() ;
+            }
 
-        // // double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
-        // } catch (Exception ex) {}
+            if (message.length() > 0) {
+                Map<String,String> myMap = new HashMap<String, String>();
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                myMap = objectMapper.readValue(message, new TypeReference<HashMap<String,String>>() {});
+                this.gamePieceDetected = Boolean.parseBoolean(myMap.get("detected")) ;
+                this.gamePieceDistanceFromCenter = Double.parseDouble(myMap.get("distance_from_center")) ;
+                this.gamePieceHeight = Double.parseDouble(myMap.get("bb_height")) ;
+                this.gamePieceWidth = Double.parseDouble(myMap.get("bb_width")) ;
+            }
+    
+            // var Vision_Info = new JSONObject(received);
+
+        // double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
+        } catch (Exception ex) {
+            System.out.println("Exception reading data") ;
+        }
     }
 
     public void turnOnVisionLight() {
@@ -79,14 +123,12 @@ public class Vision extends SubsystemBase {
     }
 
     public boolean gamePieceIsVisible() {
-        // The data for this will come from the Jetson Nano via network tables.
-        return NetworkTableInstance.getDefault().getEntry("vision/game_piece_detected").getBoolean(false);
+        return this.gamePieceDetected ;
     }
 
     public double gamePieceDistanceFromCenter() {
         // tell how many pixels the gamePiece is from the center of the screen.
-        // The data for this will come from the Jetson Nano via network tables.
-        return NetworkTableInstance.getDefault().getEntry("vision/game_piece_distance_from_center").getDouble(0.0);
+        return this.gamePieceDistanceFromCenter ;
     }
 
     public boolean poleIsVisible() {
@@ -101,11 +143,11 @@ public class Vision extends SubsystemBase {
     }
 
     public double bbGamePieceHeight() {
-        return NetworkTableInstance.getDefault().getEntry("vision/game_piece_bb_height").getDouble(0.0);
+        return this.gamePieceHeight ;
     }
 
     public double bbGamePieceWidth() {
-        return NetworkTableInstance.getDefault().getEntry("vision/game_piece_bb_width").getDouble(0.0);
+        return this.gamePieceWidth ;
     }
 
     public double bbPoleHeight() {
