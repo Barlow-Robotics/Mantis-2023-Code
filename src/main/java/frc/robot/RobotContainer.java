@@ -21,6 +21,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -83,17 +85,12 @@ public class RobotContainer {
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
 
-    // private Command moveToBottom;
-    // private Command moveToMiddle;
-    // private Command moveToResting;
-    // private Command moveToFloor;
-
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
 
-    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
+    SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-    private String autoPath = "";
+    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
 
     public RobotContainer() {
         configureButtonBindings();
@@ -242,11 +239,6 @@ public class RobotContainer {
         // Constants.ArmConstants.AngleAccelerationTime);
     }
 
-
-    public void setAutoPlan(String planName) {
-        this.autoPath = planName ;
-    }
-
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
@@ -350,14 +342,11 @@ public class RobotContainer {
         // auto.addCommands(resetOdometry);
         // auto.addCommands(pathFollowingCommand);
 
-        return auto;
-    }
+        autoChooser.setDefaultOption("Simple Auto", m_simpleAuto);
+        autoChooser.addOption("Complex Auto", m_complexAuto);
+    
+        SmartDashboard.putData(autoChooser);
 
-    public String getAutoPath() {
-        return this.autoPath;
-    }
-
-    public void setAutoPath(String p) {
-        this.autoPath = p;
-    }
+        // return auto;
+        return autoChooser.getSelected();    }
 }
