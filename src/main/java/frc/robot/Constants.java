@@ -48,6 +48,9 @@ public final class Constants {
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
 
+        public static final double maxAccelerationRate = 0.01; // percentage of acceloration
+        public static final double maxDeltaSpeed = MaxSpeed*maxAccelerationRate;
+
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
         public static final double DriveGearRatio = 9.8;
