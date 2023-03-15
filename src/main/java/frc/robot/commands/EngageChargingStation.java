@@ -12,8 +12,6 @@ import frc.robot.subsystems.Drive;
 
 public class EngageChargingStation extends CommandBase {
     /** Creates a new Engage. */
-    public final AHRS navX = new AHRS();
-
     private Drive driveSub;
 
     public EngageChargingStation(Drive d) {
@@ -30,10 +28,10 @@ public class EngageChargingStation extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double error = 0 - navX.getPitch();
+        double error = driveSub.getPitch();
         // Does the navX need to be zeroed/reset/calibrated?
-        if (Math.abs(navX.getPitch()) >= Constants.DriveConstants.BalanceTolerance) {
-            driveSub.setSpeeds(Constants.DriveConstants.kP * error, Constants.DriveConstants.kP * error);
+        if (Math.abs(error) >= Constants.DriveConstants.BalanceTolerance) {
+            driveSub.setSpeeds(Constants.DriveConstants.AutoBalanceSpeed * error, Constants.DriveConstants.AutoBalanceSpeed * error);
         }
     }
 
@@ -45,6 +43,6 @@ public class EngageChargingStation extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (Math.abs(navX.getPitch()) <= Constants.DriveConstants.BalanceTolerance);
+        return false;
     }
 }

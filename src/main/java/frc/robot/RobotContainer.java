@@ -256,7 +256,7 @@ public class RobotContainer {
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
 
-        driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
+        driverToggleClawButton = new JoystickButton(driverController,RadioMasterConstants.ButtonA);
         driverToggleClawButton.onTrue(toggleClaw);
 
         operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
@@ -303,15 +303,15 @@ public class RobotContainer {
         ArmPathGenerator toTopApg = new ArmPathGenerator(Position.Top, armSub);
         ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
         OpenClaw openClaw = new OpenClaw(clawSub);
-        // EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
+         EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
 
         HashMap<String, Command> eventMap = new HashMap<>();
         // eventMap.put("MoveArm", toBottomApg.getPathFromResting());
         // eventMap.put("OpenClaw", openClaw);
         // eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
-        // // eventMap.put("AutoBalance", autoBalance);
+        // // eventMap.put("AutoBalance", autoBalance); 
 
-        PathPlannerTrajectory traj = PathPlanner.loadPath(
+        PathPlannerTrajectory traj = PathPlanner.loadPath( 
                 "Reverse_Only",
                 new PathConstraints(1, 4),
                 true);
