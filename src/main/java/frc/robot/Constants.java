@@ -48,6 +48,9 @@ public final class Constants {
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
 
+        public static final double maxAccelerationRate = 0.01; // percentage of acceloration
+        public static final double maxDeltaSpeed = MaxSpeed*maxAccelerationRate;
+
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
         public static final double DriveGearRatio = 9.8;
@@ -96,11 +99,12 @@ public final class Constants {
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
         public static final double armRotateSpeed = 70; // Degrees per second
-        public static final double armRotateAccelerationTime = 0.25; 
+        public static final double armRotateAccelerationTime = 0.25;
         public static final double armExtendSpeed = 25; // Inches per second
-        public static final double armExtendAccelerationTime = 0.25; // Need to change this (time in sceonds for total motion)
+        public static final double armExtendAccelerationTime = 0.25; // Need to change this (time in sceonds for total
+                                                                     // motion)
 
-        public static final double ExtentionCalibrationVelocity = -1.0; 
+        public static final double ExtentionCalibrationVelocity = -1.0;
         public static final double RotationCalibrationVelocity = 10; // Degrees per second
 
         public static final int ArmExtendMotorID = 12;
@@ -109,8 +113,8 @@ public final class Constants {
 
         public static final int AccelerationSmoothing = 2;
 
-        public static final double ArmAngleTolerance = 2.0; 
-        public static final double ArmLengthTolerance = 1.0; 
+        public static final double ArmAngleTolerance = 2.0;
+        public static final double ArmLengthTolerance = 1.0;
 
         // wpk need to add constants for slow and fast velocities for moving the arm.
 
@@ -120,7 +124,7 @@ public final class Constants {
         public static final double RestingArmLength = 0.25;
 
         public static final double FloorArmAngle = 35.0;
-        public static final double FloorArmLength = 11.0;  // inches
+        public static final double FloorArmLength = 11.0; // inches
 
         public static final double PlayerStationArmAngle = 105.0;
         public static final double PlayerStationArmLength = 0.0;
@@ -128,13 +132,12 @@ public final class Constants {
         public static final double TopArmAngle = 115.0;
         public static final double TopArmLength = 26.75; // inches
 
-
         public static final double MiddleArmAngle = 105.0;
         public static final double MiddleArmLength = 10.0; // inches
 
         public static final double BottomArmAngle = 60.0;
-        public static final double BottomArmLength = 11.8; // inches 
-        
+        public static final double BottomArmLength = 11.8; // inches
+
         public static final double AvoidChassisArmAngle = 30.0;
         public static final double AvoidChassisArmLength = 0.0;
 
@@ -180,7 +183,7 @@ public final class Constants {
         public static final double ffRetracted = 0.11; // Need to re-test to find this after claw is attached
         public static final double ffExtracted = 0.30; // Need to re-test to find this after claw is attached
 
-        public static final double extendFF = -0.05 ;
+        public static final double extendFF = -0.05;
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
         // what that is.
@@ -188,13 +191,13 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
-        
+
         public static final int ClawMotorID = 15;
         public static final int OpenSolenoidID = 3;
         public static final int CloseSolenoidID = 2;
 
-        // public static final double RotateGearRatio = 32.861; 
-        public static final double RotateGearRatio = 31.00; 
+        // public static final double RotateGearRatio = 32.861;
+        public static final double RotateGearRatio = 31.00;
 
         public static final double RevolutionsPerDegree = 1.0 / 360.0;
 
@@ -205,20 +208,18 @@ public final class Constants {
         public static final double ClawKI = 0.0000;
         public static final double ClawKD = 0.1;
         public static final int ClawPID_id = 0;
-        public static final double ff = 0.0 ;
+        public static final double ff = 0.0;
 
         public static final double CountsPerClawDegree = TalonFXEncoderResolution * RevolutionsPerDegree
-            * RotateGearRatio; // Need to change
+                * RotateGearRatio; // Need to change
 
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerClawDegree * SecondsTo100MSec;
 
+        public static final double ClawAngleTolerance = 1.0;
 
-        public static final double ClawAngleTolerance = 1.0 ; 
-
-        public static final double ClawSpeed = 100.0 ; // Needs tuning
+        public static final double ClawSpeed = 100.0; // Needs tuning
         public static final int DistanceSensorID = 50; // Need to change
         public static final int AccelerationSmoothing = 2;
-
 
         public static final double InchesForAutoClosing = 6;
         public static final double ClawLengthInches = 9;

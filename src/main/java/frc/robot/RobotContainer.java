@@ -38,7 +38,7 @@ import frc.robot.commands.AlignWithAprilTags;
 import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
-import frc.robot.commands.EngageChargingStation;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
@@ -83,6 +83,7 @@ public class RobotContainer {
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
+    private Trigger balanceButton;
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -110,7 +111,7 @@ public class RobotContainer {
                             if (Math.abs(yaw) < 0.01) {
                                 yaw = 0.0;
                             }
-                            double speed = -x ;
+                            double speed = -x;
                             // if (x != 0) {
                             // speed = (Math.abs(x) / x) * (Math
                             // .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
@@ -238,7 +239,6 @@ public class RobotContainer {
         // Constants.ArmConstants.AngleAccelerationTime);
     }
 
-
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
@@ -255,12 +255,15 @@ public class RobotContainer {
         yawAxis = Constants.RadioMasterConstants.RightGimbalX;
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
-
-        driverToggleClawButton = new JoystickButton(driverController,RadioMasterConstants.ButtonA);
-        driverToggleClawButton.onTrue(toggleClaw);
-
-        operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
-        operatorToggleClawButton.onTrue(toggleClaw);
+        
+                balanceButton = new JoystickButton(driverController, RadioMasterConstants.YawAxisAttenuation); // Changed from ButtonA but may be wrong
+                balanceButton.onTrue(new AutoBalance(driveSub));
+        
+                /* * * * * * CLAW BUTTONS * * * * * */
+        
+                driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
+                driverToggleClawButton.onTrue(toggleClaw);
+        
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -293,10 +296,6 @@ public class RobotContainer {
         alignWithPoleButton = new JoystickButton(driverController, 8);
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
-
-
-
-
 
     public Command getAutonomousCommand() {
 
@@ -338,20 +337,21 @@ public class RobotContainer {
                 eventMap);
 
         SequentialCommandGroup auto = new SequentialCommandGroup();
-        auto.addCommands(new InstantCommand (()->clawSub.disableAutoClose()));
+        auto.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         auto.addCommands(toTopApg.getPathFromResting());
         auto.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
         auto.addCommands(openClaw);
         auto.addCommands(toRestingApg.getPathFromTop());
-        auto.addCommands(new InstantCommand (()->clawSub.enableAutoClose()));
+        auto.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         // auto.addCommands(resetOdometry);
         // auto.addCommands(pathFollowingCommand);
 
         // autoChooser.setDefaultOption("Simple Auto", m_simpleAuto);
         // autoChooser.addOption("Complex Auto", m_complexAuto);
-    
+
         SmartDashboard.putData(autoChooser);
 
         // return auto;
-        return autoChooser.getSelected();    }
+        return autoChooser.getSelected();
+    }
 }

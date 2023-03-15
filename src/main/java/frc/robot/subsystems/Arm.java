@@ -98,16 +98,20 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent").setDouble(rotateMotorLeader.getStatorCurrent()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent").setDouble(rotateMotorLeader.getSupplyCurrent()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent").setDouble(rotateMotorFollower.getStatorCurrent()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent").setDouble(rotateMotorFollower.getSupplyCurrent()) ;
+        NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString());
+        NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength());
+        NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength());
+        NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle());
+        NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle());
+        NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength());
+        NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent")
+                .setDouble(rotateMotorLeader.getStatorCurrent());
+        NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent")
+                .setDouble(rotateMotorLeader.getSupplyCurrent());
+        NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent")
+                .setDouble(rotateMotorFollower.getStatorCurrent());
+        NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent")
+                .setDouble(rotateMotorFollower.getSupplyCurrent());
         // System.out.println() ;
     }
 
@@ -140,8 +144,10 @@ public class Arm extends SubsystemBase {
                                         // the line from arm motor and the edge of the chasis
             setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.RotateAccel);
         }
-        // else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support
-        // (prependicular to ground) and the line from arm motor and the edge of the chasis
+        // else if (desiredAngle < 40) { // 40 degrees is the angle between the arm
+        // support
+        // (prependicular to ground) and the line from arm motor and the edge of the
+        // chasis
         // setLength(0, Constants.ArmConstants.armRotateSpeed,
         // Constants.ArmConstants.AngleAcceleration);
         // }
@@ -165,8 +171,8 @@ public class Arm extends SubsystemBase {
 
     public void startRotating(double velocity) { // Velocity in degrees per second
         // rotateMotorLeader.set(TalonFXControlMode.Velocity,
-        //         velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.set(TalonFXControlMode.PercentOutput, -0.07 ) ;
+        // velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rotateMotorLeader.set(TalonFXControlMode.PercentOutput, -0.07);
     }
 
     /* Extend Motor */
@@ -191,7 +197,7 @@ public class Arm extends SubsystemBase {
                 velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        double ff = Constants.ArmConstants.extendFF * Math.cos( Math.toRadians(this.getAngle())) ;
+        double ff = Constants.ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, ff);
     }
 
@@ -205,12 +211,13 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean isAtMinLength() {
-        return extendMotor.isRevLimitSwitchClosed() == 1 ;
+        return extendMotor.isRevLimitSwitchClosed() == 1;
     }
 
     public void startExtending(double velocity) {
-//        extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.set(TalonFXControlMode.PercentOutput, -0.1);  // wpk fix magic number
+        // extendMotor.set(TalonFXControlMode.Velocity, velocity *
+        // Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
+        extendMotor.set(TalonFXControlMode.PercentOutput, -0.1); // wpk fix magic number
     }
 
     /* Extend and Rotate */
@@ -231,18 +238,19 @@ public class Arm extends SubsystemBase {
     public double lengthLim() {
         double lengthLim; // Inches
         if (getAngle() > 29) {
-            lengthLim = 0; 
+            lengthLim = 0;
         } else {
-            lengthLim = 37; } // Rough estimate, need to change
+            lengthLim = 37;
+        } // Rough estimate, need to change
         return lengthLim;
     }
 
     // Simulation Support
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 6800 );
-        PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 6800 );
-        PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 6800 );
+        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 6800);
+        PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 6800);
+        PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 6800);
     }
 
 }
