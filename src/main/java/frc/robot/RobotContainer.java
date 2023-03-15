@@ -84,17 +84,12 @@ public class RobotContainer {
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
 
-    // private Command moveToBottom;
-    // private Command moveToMiddle;
-    // private Command moveToResting;
-    // private Command moveToFloor;
-
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
 
-    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
+    SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-    private String autoPath = "";
+    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
 
     public RobotContainer() {
         configureButtonBindings();
@@ -352,14 +347,11 @@ public class RobotContainer {
         // auto.addCommands(resetOdometry);
         // auto.addCommands(pathFollowingCommand);
 
-        return auto;
-    }
+        autoChooser.setDefaultOption("Simple Auto", m_simpleAuto);
+        autoChooser.addOption("Complex Auto", m_complexAuto);
+    
+        SmartDashboard.putData(autoChooser);
 
-    public String getAutoPath() {
-        return this.autoPath;
-    }
-
-    public void setAutoPath(String p) {
-        this.autoPath = p;
-    }
+        // return auto;
+        return autoChooser.getSelected();    }
 }
