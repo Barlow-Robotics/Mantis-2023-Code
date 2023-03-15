@@ -187,25 +187,31 @@ public class Drive extends SubsystemBase {
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
+            // *** need to reduce max speed when arm is extended??
 
-        for (double i = Constants.DriveConstants.maxDeltaSpeed; i <= Constants.DriveConstants.MaxSpeed; i += Constants.DriveConstants.maxDeltaSpeed){
+
             double currentLeftSpeed = speeds.left * Constants.DriveConstants.MaxSpeed;
             double currentRightSpeed = speeds.right * Constants.DriveConstants.MaxSpeed;
-            
-            // *** need to reduce max speed when arm is extended??
-            double DesiredDeltaLeftSpeed = Constants.DriveConstants.MaxSpeed - currentLeftSpeed;
-            double DesiredDeltaRightSpeed = Constants.DriveConstants.MaxSpeed - currentRightSpeed;
+            double DesiredDeltaLeftSpeed = Constants.DriveConstants.MaxSpeed - currentLeftSpeed; // replace currentLeftSpeed with speeds.left if it doesn't work
+            double DesiredDeltaRightSpeed = Constants.DriveConstants.MaxSpeed - currentRightSpeed; // replace currentRightSpeed with speeds.right if it doesn't work
+
+            // finds desired speed to get to MaxSpeed 
             double DeltaVRight = Math.min(Constants.DriveConstants.maxDeltaSpeed, DesiredDeltaRightSpeed);
             double DeltaVLeft = Math.min(Constants.DriveConstants.maxDeltaSpeed, DesiredDeltaLeftSpeed);
-            
-            
-            setSpeeds(currentLeftSpeed + DeltaVLeft, currentRightSpeed + DeltaVRight);
-        }
 
-        NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
-        NetworkTableInstance.getDefault().getEntry("drive/ik_left_speed").setDouble(speeds.left);
-        NetworkTableInstance.getDefault().getEntry("drive/ik_right_speed").setDouble(speeds.right);
+        for (double right = DeltaVRight, left = DeltaVLeft; right <= DeltaVRight && left <= DeltaVLeft; 
+            left += Constants.DriveConstants.maxDeltaSpeed, right += Constants.DriveConstants.maxDeltaSpeed) { 
+            if (right > DeltaVRight) {
+                setSpeeds(left + speeds.left, speeds.right);
+            } 
+            else if (left > DeltaVLeft) {
+                setSpeeds(speeds.left, right + speeds.right);
+            }
+            NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
+            NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
+            NetworkTableInstance.getDefault().getEntry("drive/ik_left_speed").setDouble(speeds.left);
+            NetworkTableInstance.getDefault().getEntry("drive/ik_right_speed").setDouble(speeds.right);
+        }
     }
 
     public Pose2d getPose() {

@@ -47,8 +47,9 @@ public final class Constants {
         public static final double MaxSpeed = 4.0; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
-
-        public static final double maxAccelerationRate = 0.01; // percentage of acceloration
+        public static final double timeToReachMaxAcceleration = 1; // CHANGE this one
+        
+        public static final double maxAccelerationRate = MaxSpeed/(50*timeToReachMaxAcceleration); // percentage of acceloration
         public static final double maxDeltaSpeed = MaxSpeed*maxAccelerationRate;
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
