@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
+import java.lang.Math;
 
 /** Represents a differential drive style drivetrain. */
 public class Drive extends SubsystemBase {
@@ -185,12 +186,21 @@ public class Drive extends SubsystemBase {
      */
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
-        if ( xSpeed < -0.2) {
-            int wpk = 1 ;
-        }
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
-        setSpeeds(speeds.left * Constants.DriveConstants.MaxSpeed, speeds.right * Constants.DriveConstants.MaxSpeed);
-        // *** need to reduce max speed when arm is extended??
+
+        for (double i = Constants.DriveConstants.maxDeltaSpeed; i <= Constants.DriveConstants.MaxSpeed; i += Constants.DriveConstants.maxDeltaSpeed){
+            double currentLeftSpeed = speeds.left * Constants.DriveConstants.MaxSpeed;
+            double currentRightSpeed = speeds.right * Constants.DriveConstants.MaxSpeed;
+            
+            // *** need to reduce max speed when arm is extended??
+            double DesiredDeltaLeftSpeed = Constants.DriveConstants.MaxSpeed - currentLeftSpeed;
+            double DesiredDeltaRightSpeed = Constants.DriveConstants.MaxSpeed - currentRightSpeed;
+            double DeltaVRight = Math.min(Constants.DriveConstants.maxDeltaSpeed, DesiredDeltaRightSpeed);
+            double DeltaVLeft = Math.min(Constants.DriveConstants.maxDeltaSpeed, DesiredDeltaLeftSpeed);
+            
+            
+            setSpeeds(currentLeftSpeed + DeltaVLeft, currentRightSpeed + DeltaVRight);
+        }
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
