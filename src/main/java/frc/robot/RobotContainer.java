@@ -347,8 +347,8 @@ public class RobotContainer {
         // auto.addCommands(resetOdometry);
         // auto.addCommands(pathFollowingCommand);
 
-        autoChooser.setDefaultOption("Simple Auto", m_simpleAuto);
-        autoChooser.addOption("Complex Auto", m_complexAuto);
+        // autoChooser.setDefaultOption("Simple Auto", m_simpleAuto);
+        // autoChooser.addOption("Complex Auto", m_complexAuto);
     
         SmartDashboard.putData(autoChooser);
 
