@@ -10,39 +10,33 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
-public class EngageChargingStation extends CommandBase {
+public class AutoBalance extends CommandBase {
     /** Creates a new Engage. */
     public final AHRS navX = new AHRS();
 
     private Drive driveSub;
 
-    public EngageChargingStation(Drive d) {
+    public AutoBalance(Drive d) {
         driveSub = d;
         addRequirements(driveSub);
-        // Use addRequirements() here to declare subsystem dependencies.
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         double error = 0 - navX.getPitch();
-        // Does the navX need to be zeroed/reset/calibrated?
         if (Math.abs(navX.getPitch()) >= Constants.DriveConstants.BalanceTolerance) {
             driveSub.setSpeeds(Constants.DriveConstants.kP * error, Constants.DriveConstants.kP * error);
         }
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return (Math.abs(navX.getPitch()) <= Constants.DriveConstants.BalanceTolerance);
