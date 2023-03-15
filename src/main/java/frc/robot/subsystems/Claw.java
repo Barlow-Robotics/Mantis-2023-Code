@@ -14,6 +14,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
@@ -92,6 +93,7 @@ public class Claw extends SubsystemBase {
         }
 
         NetworkTableInstance.getDefault().getEntry("claw/actualAngle").setDouble(this.getAngle());
+        SmartDashboard.putBoolean("Claw Open", this.isOpen());        
         NetworkTableInstance.getDefault().getEntry("claw/isOpen").setBoolean(this.isOpen());
         NetworkTableInstance.getDefault().getEntry("claw/autoCloseEnabled").setBoolean(this.autoCloseEnabled);
     }

@@ -25,11 +25,13 @@ import com.fasterxml.jackson.core.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.Constants;
 
-public class Vision extends SubsystemBase {
+public class Vision extends SubsystemBase implements Sendable {
     /** Creates a new Vision. */
 
     DigitalOutput cameraLight;
@@ -165,5 +167,16 @@ public class Vision extends SubsystemBase {
     public double bbAprilTagWidth() {
         return NetworkTableInstance.getDefault().getEntry("vision/target_bb_april_tag_width").getDouble(0.0);
     }
+
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("BangBangController");
+        builder.addBooleanProperty("Game piece detected", this::gamePieceIsVisible, null);
+        builder.addDoubleProperty("Game piece distance from center", this::gamePieceDistanceFromCenter, null);
+        builder.addDoubleProperty("Game piece height", this::bbGamePieceHeight, null);
+        builder.addDoubleProperty("Game piece width", this::bbGamePieceWidth, null);
+    }
+  
 
 }

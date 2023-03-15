@@ -21,6 +21,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -51,9 +53,8 @@ public class RobotContainer {
     private final Drive driveSub = new Drive();
     public final Arm armSub = new Arm();
     public final Claw clawSub = new Claw(armSub);
-    private final Vision visionSub = new Vision();
+    public final Vision visionSub = new Vision();
     // private final Underglow underglowSub = new Underglow();
-    // private final Vision visionSub = new Vision();
 
     // private final TurnOffUnderglow turnOffUnderGlowCom = new
     // TurnOffUnderglow(underglowSub);
@@ -243,10 +244,6 @@ public class RobotContainer {
     }
 
 
-    public void setAutoPlan(String planName) {
-        this.autoPath = planName ;
-    }
-
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
@@ -302,7 +299,12 @@ public class RobotContainer {
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
 
+
+
+
+
     public Command getAutonomousCommand() {
+
         ArmPathGenerator toTopApg = new ArmPathGenerator(Position.Top, armSub);
         ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
         OpenClaw openClaw = new OpenClaw(clawSub);

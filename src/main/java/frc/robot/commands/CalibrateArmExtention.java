@@ -40,7 +40,6 @@ public class CalibrateArmExtention extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("is at min length is " + armSub.isAtMinLength()) ;
     return armSub.isAtMinLength();
   }
 }
