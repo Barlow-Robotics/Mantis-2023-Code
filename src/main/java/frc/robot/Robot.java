@@ -4,11 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,18 +18,12 @@ import frc.robot.commands.CalibrateArmRotations;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Arm;
 
-
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
- * project.
- */
+/* The VM is configured to automatically run this class, and to call the functions
+corresponding to each mode, as described in the TimedRobot documentation. If you change
+the name of this class or the package after creating this project, you must also update
+the build.gradle file in the project. */
 public class Robot extends TimedRobot {
-//    public final Arm armSub = new Arm();
+    // public final Arm armSub = new Arm();
 
     private Command autonomousCommand;
 
@@ -40,8 +31,8 @@ public class Robot extends TimedRobot {
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings // O
 
-
-    // BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream(); // O
+    // BufferedTrajectoryPointStream bufferedStream = new
+    // BufferedTrajectoryPointStream(); // O
     // public boolean currentProfileButton;
 
     private boolean calibrationPerformed = false;
@@ -82,8 +73,9 @@ public class Robot extends TimedRobot {
      */
     // @Override
     public void autonomousInit() {
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
-                             // claw) to zero
+        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
+                                            // extend,
+        // claw) to zero
 
         SequentialCommandGroup cg = new SequentialCommandGroup();
 
@@ -118,8 +110,9 @@ public class Robot extends TimedRobot {
         // This makes sure that the autonomous stops running when teleop starts running.
         // If you want the autonomous to continue until interrupted by another command,
         // remove this line or comment it out.
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
-                             // claw) to zero
+        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
+                                            // extend,
+        // claw) to zero
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -129,7 +122,8 @@ public class Robot extends TimedRobot {
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
             // wpk might want to change this to a move command.
             Command setArmLength = new InstantCommand(
-                    () -> robotContainer.armSub.setLength(0.0, Constants.ArmConstants.ExtendVel, Constants.ArmConstants.ExtendAccel));
+                    () -> robotContainer.armSub.setLength(0.0, Constants.ArmConstants.ExtendVel,
+                            Constants.ArmConstants.ExtendAccel));
             Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Resting));
 
             SequentialCommandGroup calbrationSequence = new SequentialCommandGroup(
@@ -154,8 +148,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
-                             // claw) to zero
+        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
+                                            // extend,
+        // claw) to zero
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
     }
@@ -199,11 +194,11 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        SmartDashboard.putData( CommandScheduler.getInstance()) ;
-        SmartDashboard.putData( robotContainer.driveSub) ;
-        SmartDashboard.putData( robotContainer.visionSub) ;
-        SmartDashboard.putData( robotContainer.armSub) ;
-        SmartDashboard.putData( robotContainer.clawSub) ;
+        SmartDashboard.putData(CommandScheduler.getInstance());
+        SmartDashboard.putData(robotContainer.driveSub);
+        SmartDashboard.putData(robotContainer.visionSub);
+        SmartDashboard.putData(robotContainer.armSub);
+        SmartDashboard.putData(robotContainer.clawSub);
 
         if (this.isDisabled()) {
             robotContainer.armSub.stopMoving();
@@ -212,6 +207,5 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
     }
-
 
 }
