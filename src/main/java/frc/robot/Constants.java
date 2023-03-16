@@ -48,9 +48,10 @@ public final class Constants {
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
         public static final double TimeToReachVelocity = 0.2; // per second
-        
-//        public static final double MaxVelocityChange = MaxSpeed * ( TimeToReachVelocity / 50 ); // percentage of Acceleration
-        public static final double MaxVelocityChange = MaxSpeed * 0.2 ; // percentage of Acceleration
+
+        // public static final double MaxVelocityChange = MaxSpeed * (
+        // TimeToReachVelocity / 50 ); // percentage of Acceleration
+        public static final double MaxVelocityChange = MaxSpeed * 0.2; // percentage of Acceleration
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
@@ -77,7 +78,7 @@ public final class Constants {
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 
-        public static final double BalanceTolerance = 2.5; 
+        public static final double BalanceTolerance = 2.5;
         public static final double AutoBalanceSpeed = 0.5;
     }
 

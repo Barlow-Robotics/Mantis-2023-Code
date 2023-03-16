@@ -40,6 +40,12 @@ public class Vision extends SubsystemBase implements Sendable {
     private DatagramChannel visionChannel = null;
     ByteBuffer buffer = ByteBuffer.allocate(1024);
 
+    public enum AlignType {
+        Pole, GamePiece, AprilTag
+    };
+
+    public AlignType selectedAlign = AlignType.GamePiece;
+
     public Vision() {
         cameraLight = new DigitalOutput(Constants.VisionConstants.CameraLightID);
         try {
@@ -54,7 +60,6 @@ public class Vision extends SubsystemBase implements Sendable {
 
     @Override
     public void periodic() {
-
         try {
             boolean done = false;
             String message = "";
@@ -91,6 +96,10 @@ public class Vision extends SubsystemBase implements Sendable {
         } catch (Exception ex) {
             System.out.println("Exception reading data");
         }
+    }
+
+    public AlignType getSelectedAlign() {
+        return selectedAlign;
     }
 
     public void turnOnVisionLight() {

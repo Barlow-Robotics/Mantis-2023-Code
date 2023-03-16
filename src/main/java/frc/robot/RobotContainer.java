@@ -29,10 +29,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
-import frc.robot.commands.AlignWithAprilTags;
-import frc.robot.commands.AlignWithGamePiece;
-import frc.robot.commands.AlignWithPole;
+// import frc.robot.commands.AlignWithAprilTags;
+// import frc.robot.commands.AlignWithGamePiece;
+// import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
+import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
@@ -71,9 +72,10 @@ public class RobotContainer {
     private Trigger moveToBottomButton; // button a (left white button)
     private Trigger moveToRestingPositionButton; // button x (middle white button)
     private Trigger moveToPlayerStationButton; // right stick (black button)
-    private Trigger alignWithAprilTagsButton;
-    private Trigger alignWithGamePieceButton;
-    private Trigger alignWithPoleButton;
+    // private Trigger alignWithAprilTagsButton;
+    // private Trigger alignWithGamePieceButton;
+    // private Trigger alignWithPoleButton;
+    private Trigger autoAlignButton;
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
     // private Trigger operatorToggleClawButton; // y button (right white button)
@@ -97,7 +99,7 @@ public class RobotContainer {
                 new RunCommand(
                         () -> {
 
-                            boolean autoSteer = alignWithGamePieceButton.getAsBoolean();
+                            boolean autoSteer = autoAlignButton.getAsBoolean();
 
                             double x = driverController.getRawAxis(xAxis);
                             if (Math.abs(x) < 0.01) {
@@ -279,14 +281,17 @@ public class RobotContainer {
 
         /* * * * * * VISION BUTTONS * * * * * */
 
-        alignWithAprilTagsButton = new JoystickButton(driverController, 6);
-        alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
+        // alignWithAprilTagsButton = new JoystickButton(driverController, 6);
+        // alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
 
-        alignWithGamePieceButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
-        alignWithGamePieceButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
+        // alignWithGamePieceButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
+        // alignWithGamePieceButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
 
-        alignWithPoleButton = new JoystickButton(driverController, 8);
-        alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
+        // alignWithPoleButton = new JoystickButton(driverController, 8);
+        // alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
+
+        autoAlignButton = new JoystickButton(driverController, 8);
+        autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub));
     }
 
     private void buildAutoOptions() {
