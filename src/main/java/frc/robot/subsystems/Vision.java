@@ -102,6 +102,10 @@ public class Vision extends SubsystemBase implements Sendable {
         return selectedAlign;
     }
 
+    public void setAlignType(AlignType newAlignType) {
+        selectedAlign = newAlignType;
+    }
+
     public void turnOnVisionLight() {
         // turn the green LEDs on and off.
         // The LEDs will be controlled by a digital output from the RoboRio.

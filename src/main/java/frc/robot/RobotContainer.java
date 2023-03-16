@@ -39,6 +39,7 @@ import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
+import frc.robot.subsystems.Vision.AlignType;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
@@ -75,13 +76,13 @@ public class RobotContainer {
     // private Trigger alignWithAprilTagsButton;
     // private Trigger alignWithGamePieceButton;
     // private Trigger alignWithPoleButton;
-    private Trigger autoAlignButton;
-    private Trigger alignWithAprilTagsButton;
-    private Trigger alignWithGamePieceButton;
-    private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
-    // private Trigger operatorToggleClawButton; // y button (right white button)
+    private Trigger operatorToggleClawButton; // y button (right white button)
+    private Trigger changeTargetGamePieceButton;
+    private Trigger changeTargetAprilTagButton;
+    private Trigger changeTargetPoleButton;
+    private Trigger autoAlignButton;
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -96,11 +97,13 @@ public class RobotContainer {
         createAutonomousCommands();
         buildAutoOptions();
 
-        driveSub.setDefaultCommand(
+        driveSub.setDefaultCommand( // DriveDefaultCommand
                 // A split-stick arcade command, with forward/backward controlled by the left
                 // hand, and turning controlled by the right.
                 new RunCommand(
                         () -> {
+
+                            SmartDashboard.putString("Align Type", visionSub.getSelectedAlign().toString()) ;
 
                             boolean autoSteer = autoAlignButton.getAsBoolean();
 
@@ -143,15 +146,13 @@ public class RobotContainer {
                                 if (!lastAutoSteer) {
                                     pid.reset();
                                 }
-                                yaw = -pid.calculate(visionSub
-                                        .gamePieceDistanceFromCenter());
+                                yaw = -pid.calculate(visionSub.gamePieceDistanceFromCenter());
                                 lastAutoSteer = true;
                             }
                             NetworkTableInstance.getDefault().getEntry("drive/speed").setDouble(-speed);
                             NetworkTableInstance.getDefault().getEntry("drive/yaw").setDouble(yaw);
 
                             driveSub.drive(-speed, yaw * 0.8, true);
-
                         },
                         driveSub));
 
@@ -258,10 +259,8 @@ public class RobotContainer {
         driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
         driverToggleClawButton.onTrue(toggleClaw);
 
+        operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
         operatorToggleClawButton.onTrue(toggleClaw);
-        // operatorToggleClawButton = new JoystickButton(operatorButtonController,
-        // XboxControllerConstants.ButtonY);
-        // operatorToggleClawButton.onTrue(toggleClaw);
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -285,21 +284,26 @@ public class RobotContainer {
 
         /* * * * * * VISION BUTTONS * * * * * */
 
+        changeTargetGamePieceButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
+        changeTargetGamePieceButton.onTrue(new InstantCommand(() -> visionSub.setAlignType(AlignType.GamePiece)));
+
+        changeTargetAprilTagButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
+        changeTargetAprilTagButton.onFalse(new InstantCommand(() -> visionSub.setAlignType(AlignType.AprilTag)));
+
+        changeTargetPoleButton = new JoystickAnalogButton(driverController, 2, -1.0, 0.0);
+        changeTargetPoleButton.onFalse(new InstantCommand(() -> visionSub.setAlignType(AlignType.Pole)));
+
+        autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
+        autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub));
+
         // alignWithAprilTagsButton = new JoystickButton(driverController, 6);
         // alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
-        changeAlignTypeButton = new JoystickAnalogButton(driverController, 2, 0.75, 1.0);
-
-        alignWithAprilTagsButton = new JoystickButton(driverController, 6);
-        alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
 
         // alignWithGamePieceButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
         // alignWithGamePieceButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
 
         // alignWithPoleButton = new JoystickButton(driverController, 8);
         // alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
-
-        autoAlignButton = new JoystickButton(driverController, 8);
-        autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub));
     }
 
     private void buildAutoOptions() {

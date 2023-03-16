@@ -51,7 +51,7 @@ public final class Constants {
 
         // public static final double MaxVelocityChange = MaxSpeed * (
         // TimeToReachVelocity / 50 ); // percentage of Acceleration
-        public static final double MaxVelocityChange = MaxSpeed * 0.2; // percentage of Acceleration
+        public static final double MaxVelocityChange = MaxSpeed * 0.5; // percentage of Acceleration
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
