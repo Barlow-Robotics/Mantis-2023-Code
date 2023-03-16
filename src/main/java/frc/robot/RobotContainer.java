@@ -255,17 +255,15 @@ public class RobotContainer {
         yawAxis = Constants.RadioMasterConstants.RightGimbalX;
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
-
-        balanceButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA); // Need to change
-        balanceButton.onTrue(new AutoBalance(driveSub));
-
-        /* * * * * * CLAW BUTTONS * * * * * */
-
-        driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
-        driverToggleClawButton.onTrue(toggleClaw);
-
-        operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
-        operatorToggleClawButton.onTrue(toggleClaw);
+        
+                balanceButton = new JoystickButton(driverController, RadioMasterConstants.YawAxisAttenuation); // Changed from ButtonA but may be wrong
+                balanceButton.onTrue(new AutoBalance(driveSub));
+        
+                /* * * * * * CLAW BUTTONS * * * * * */
+        
+                driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
+                driverToggleClawButton.onTrue(toggleClaw);
+        
 
         /* * * * * * ARM BUTTONS * * * * * */
 

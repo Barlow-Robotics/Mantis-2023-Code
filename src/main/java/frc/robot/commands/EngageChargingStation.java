@@ -10,19 +10,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
-public class AutoBalance extends CommandBase {
+public class EngageChargingStation extends CommandBase {
     /** Creates a new Engage. */
     private Drive driveSub;
 
-    public AutoBalance(Drive d) {
+    public EngageChargingStation(Drive d) {
         driveSub = d;
         addRequirements(driveSub);
+        // Use addRequirements() here to declare subsystem dependencies.
     }
 
+    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
     }
 
+    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         double error = driveSub.getPitch();
@@ -32,10 +35,12 @@ public class AutoBalance extends CommandBase {
         }
     }
 
+    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
     }
 
+    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return false;
