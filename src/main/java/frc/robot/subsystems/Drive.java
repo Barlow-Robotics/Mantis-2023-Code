@@ -11,6 +11,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.*;
 
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -199,10 +201,17 @@ public class Drive extends SubsystemBase implements Sendable {
 
         // finds desired speed to get to MaxSpeed
 
-        double leftSpeed = (Math.min(Math.abs(deltaLeft), Constants.DriveConstants.maxAccelerationRate* Constants.DriveConstants.MaxSpeed))
+        double leftSpeed = getLeftSpeed()+ (Math.min(Math.abs(deltaLeft), Constants.DriveConstants.MaxVelocityChange ))
                 * Math.signum(deltaLeft);
-        double rightSpeed = (Math.min(Math.abs(deltaRight), Constants.DriveConstants.maxAccelerationRate* Constants.DriveConstants.MaxSpeed))
+        double rightSpeed = getRightSpeed()+(Math.min(Math.abs(deltaRight), Constants.DriveConstants.MaxVelocityChange ))
                 * Math.signum(deltaRight);
+
+        // double leftSpeed = desiredLeftSpeed;
+        // double rightSpeed = desiredRightSpeed;
+
+        // driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, speeds.left ) ;
+        // driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, speeds.right ) ;
+
 
         // Brian - the signum function returns the sign of a number and allows us to
         // avoid the if statements...
@@ -225,6 +234,7 @@ public class Drive extends SubsystemBase implements Sendable {
         // }
 
         setSpeeds(leftSpeed, rightSpeed);
+
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
@@ -313,10 +323,17 @@ public class Drive extends SubsystemBase implements Sendable {
 
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.25, 6380, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.25, 6380, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.25, 6380, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.25, 6380, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.05, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.05, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.05, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.05, 21777, false);
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
+        SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Pitch"));
+        angle.set(5.0);    
     }
 
 }

@@ -47,9 +47,10 @@ public final class Constants {
         public static final double MaxSpeed = 4.0; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
-        public static final double timeToReachMaxAcceleration = 1; // per second
+        public static final double TimeToReachVelocity = 0.2; // per second
         
-        public static final double maxAccelerationRate = MaxSpeed*(timeToReachMaxAcceleration/50); // percentage of Acceleration
+//        public static final double MaxVelocityChange = MaxSpeed * ( TimeToReachVelocity / 50 ); // percentage of Acceleration
+        public static final double MaxVelocityChange = MaxSpeed * 0.2 ; // percentage of Acceleration
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
@@ -68,7 +69,7 @@ public final class Constants {
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
-        public static final double ClosedVoltageRampingConstant = 0.2;
+        public static final double ClosedVoltageRampingConstant = 0.0;
         public static final double ManualVoltageRampingConstant = 0.0;
         public static final double kF = 0.048;
         public static final double kP = 0.005;

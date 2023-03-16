@@ -21,10 +21,6 @@ import frc.robot.commands.CalibrateArmRotations;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Arm;
 
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -44,13 +40,9 @@ public class Robot extends TimedRobot {
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings // O
 
-//    Joystick opp = new Joystick(0);
 
-//    int state = 0; // O
-
-    BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream(); // O
-
-    public boolean currentProfileButton;
+    // BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream(); // O
+    // public boolean currentProfileButton;
 
     private boolean calibrationPerformed = false;
 
@@ -132,7 +124,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
-        if (!calibrationPerformed && !this.isSimulation()) {
+        if (!calibrationPerformed && !Robot.isSimulation()) {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
             // wpk might want to change this to a move command.
@@ -177,15 +169,13 @@ public class Robot extends TimedRobot {
     @Override
     public void simulationInit() {
         robotContainer.armSub.simulationInit();
+        robotContainer.driveSub.simulationInit();
+        robotContainer.clawSub.simulationInit();
     }
 
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {
-        // if (!simulationInitialized) {
-        // simulationInit();
-        // simulationInitialized = true;
-        // }
         PhysicsSim.getInstance().run();
     }
 
@@ -209,12 +199,11 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        NetworkTableInstance.getDefault().getEntry("claw/sensorDistance").setDouble(robotContainer.clawSub.getDistanceInches());
-        NetworkTableInstance.getDefault().getEntry("claw/rangeValid").setBoolean(robotContainer.clawSub.getRangeSensor().isRangeValid());
         SmartDashboard.putData( CommandScheduler.getInstance()) ;
         SmartDashboard.putData( robotContainer.driveSub) ;
         SmartDashboard.putData( robotContainer.visionSub) ;
         SmartDashboard.putData( robotContainer.armSub) ;
+        SmartDashboard.putData( robotContainer.clawSub) ;
 
         if (this.isDisabled()) {
             robotContainer.armSub.stopMoving();
@@ -224,55 +213,5 @@ public class Robot extends TimedRobot {
 
     }
 
-    /**
-     * Fill _bufferedStream with points from csv/generated-table.
-     *
-     * @param profile  generated array from excel
-     * @param totalCnt num points in profile
-     */
-    // private void initBuffer(double[][] profile, int totalCnt) {
 
-    // boolean forward = true; // set to false to drive in opposite direction of
-    // profile (not really needed
-    // // since you can use negative numbers in profile).
-
-    // TrajectoryPoint point = new TrajectoryPoint(); // temp for for loop, since
-    // unused params are initialized
-    // // automatically, you can alloc just one
-
-    // /* clear the buffer, in case it was used elsewhere */
-    // bufferedStream.Clear();
-
-    // /* Insert every point into buffer, no limit on size */
-    // for (int i = 0; i < totalCnt; ++i) {
-
-    // double direction = forward ? +1 : -1;
-    // double positionRot = profile[i][0];
-    // double velocityRPM = profile[i][1];
-    // int durationMilliseconds = (int) profile[i][2];
-
-    // /* for each point, fill our structure and pass it to API */
-    // point.timeDur = durationMilliseconds;
-    // point.position = direction * positionRot *
-    // Constants.DriveConstants.countsPerRevolution; // Convert
-    // // Revolutions to
-    // // Units
-    // point.velocity = direction * velocityRPM *
-    // Constants.DriveConstants.countsPerRevolution / 600.0; // Convert
-    // // RPM to
-    // // Units/100ms
-    // point.auxiliaryPos = 0;
-    // point.auxiliaryVel = 0;
-    // point.profileSlotSelect0 = Constants.kPrimaryPIDSlot; /* which set of gains
-    // would you like to use [0,3]? */
-    // point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
-    // point.zeroPos = (i == 0); /* set this to true on the first point */
-    // point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last
-    // point */
-    // point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0]
-    // output here */
-
-    // bufferedStream.Write(point);
-    // }
-    // }
 }

@@ -125,10 +125,8 @@ public class Arm extends SubsystemBase implements Sendable {
 
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
-        rotateMotorLeader
-                .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+        rotateMotorLeader.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rotateMotorLeader.configMotionAcceleration(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
         double currentAngle = getAngle();
         double ff = Math.sin(Math.toRadians(currentAngle)) * rotationFeedForward();
 
@@ -269,9 +267,9 @@ public class Arm extends SubsystemBase implements Sendable {
     // Simulation Support
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 6800);
-        PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 6800);
-        PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 6800);
+        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 21777);
+        PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 21777);
+        PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 21777);
     }
 
 }

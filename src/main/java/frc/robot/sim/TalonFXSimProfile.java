@@ -47,6 +47,7 @@ class TalonFXSimProfile extends SimProfile {
      * Users may modify this to utilize more accurate physics simulation.
      */
     public void run() {
+
         final double period = getPeriod();
         final double accelAmount = _fullVel / _accelToFullTime * period / 1000;
 
