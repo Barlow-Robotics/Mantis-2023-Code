@@ -20,6 +20,16 @@
         "header": {
           "open": true
         }
+      },
+      "Talon FX[4]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[4]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
       }
     }
   },

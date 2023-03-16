@@ -71,13 +71,12 @@ public class RobotContainer {
     private Trigger moveToBottomButton; // button a (left white button)
     private Trigger moveToRestingPositionButton; // button x (middle white button)
     private Trigger moveToPlayerStationButton; // right stick (black button)
-    private Trigger changeAlignTypeButton;
     private Trigger alignWithAprilTagsButton;
     private Trigger alignWithGamePieceButton;
     private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
-    private Trigger operatorToggleClawButton; // y button (right white button)
+    // private Trigger operatorToggleClawButton; // y button (right white button)
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -254,8 +253,9 @@ public class RobotContainer {
         driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
         driverToggleClawButton.onTrue(toggleClaw);
 
-        operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
-        operatorToggleClawButton.onTrue(toggleClaw);
+        // operatorToggleClawButton = new JoystickButton(operatorButtonController,
+        // XboxControllerConstants.ButtonY);
+        // operatorToggleClawButton.onTrue(toggleClaw);
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -278,8 +278,6 @@ public class RobotContainer {
         moveToPlayerStationButton.onTrue(new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
 
         /* * * * * * VISION BUTTONS * * * * * */
-
-        changeAlignTypeButton = new JoystickAnalogButton(driverController, 2, 0.75, 1.0);
 
         alignWithAprilTagsButton = new JoystickButton(driverController, 6);
         alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
@@ -375,6 +373,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Place on Top and Leave Community", placeTopAndEngage);
         autoChooser.addOption("Place on Top and Engage Station", placeTopAndReverse);
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
     }
 
     public Command getAutonomousCommand() {
