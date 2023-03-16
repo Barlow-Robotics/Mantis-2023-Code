@@ -212,7 +212,9 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getEntry("claw/sensorDistance").setDouble(robotContainer.clawSub.getDistanceInches());
         NetworkTableInstance.getDefault().getEntry("claw/rangeValid").setBoolean(robotContainer.clawSub.getRangeSensor().isRangeValid());
         SmartDashboard.putData( CommandScheduler.getInstance()) ;
+        SmartDashboard.putData( robotContainer.driveSub) ;
         SmartDashboard.putData( robotContainer.visionSub) ;
+        SmartDashboard.putData( robotContainer.armSub) ;
 
         if (this.isDisabled()) {
             robotContainer.armSub.stopMoving();

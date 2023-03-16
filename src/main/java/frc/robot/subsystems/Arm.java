@@ -15,13 +15,15 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.sim.PhysicsSim;
 
-public class Arm extends SubsystemBase {
+public class Arm extends SubsystemBase implements Sendable {
     /** Creates a new Arm. */
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
@@ -98,21 +100,21 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString());
-        NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength());
-        NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength());
-        NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle());
-        NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle());
-        NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength());
-        NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent")
-                .setDouble(rotateMotorLeader.getStatorCurrent());
-        NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent")
-                .setDouble(rotateMotorLeader.getSupplyCurrent());
-        NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent")
-                .setDouble(rotateMotorFollower.getStatorCurrent());
-        NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent")
-                .setDouble(rotateMotorFollower.getSupplyCurrent());
-        // System.out.println() ;
+        // NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString());
+        // NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength());
+        // NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength());
+        // NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle());
+        // NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle());
+        // NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength());
+        // NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent")
+        //         .setDouble(rotateMotorLeader.getStatorCurrent());
+        // NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent")
+        //         .setDouble(rotateMotorLeader.getSupplyCurrent());
+        // NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent")
+        //         .setDouble(rotateMotorFollower.getStatorCurrent());
+        // NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent")
+        //         .setDouble(rotateMotorFollower.getSupplyCurrent());
+        // // System.out.println() ;
     }
 
     private double rotationFeedForward() {
@@ -123,12 +125,6 @@ public class Arm extends SubsystemBase {
 
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
-        // double currentPos = rotateMotorLeader.getSelectedSensorPosition();
-        // double degrees = (currentPos - Constants.ArmConstants.kMeasuredPosHorizontal)
-        // / Constants.ArmConstants.CountsPerArmDegree;
-        // double radians = java.lang.Math.toRadians(degrees);
-        // double cosineScalar = java.lang.Math.cos(radians);
-
         rotateMotorLeader
                 .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         rotateMotorLeader.configMotionAcceleration(
@@ -144,13 +140,6 @@ public class Arm extends SubsystemBase {
                                         // the line from arm motor and the edge of the chasis
             setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.RotateAccel);
         }
-        // else if (desiredAngle < 40) { // 40 degrees is the angle between the arm
-        // support
-        // (prependicular to ground) and the line from arm motor and the edge of the
-        // chasis
-        // setLength(0, Constants.ArmConstants.armRotateSpeed,
-        // Constants.ArmConstants.AngleAcceleration);
-        // }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
         rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
@@ -170,12 +159,10 @@ public class Arm extends SubsystemBase {
     }
 
     public void startRotating(double velocity) { // Velocity in degrees per second
-        // rotateMotorLeader.set(TalonFXControlMode.Velocity,
-        // velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
         rotateMotorLeader.set(TalonFXControlMode.PercentOutput, -0.07);
     }
 
-    /* Extend Motor */
+
     public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is
                                                                                             // fully retracted
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
@@ -187,10 +174,6 @@ public class Arm extends SubsystemBase {
         } else if (desiredLength < ArmConstants.ArmMinLength) {
             desiredLength = ArmConstants.ArmMinLength;
         }
-        // else if (getAngle() < 40) { // 40 degrees is the angle between the arm
-        // support (prependicular to ground) and
-        // // the line from rotation motor to the edge of the chasis
-        // desiredLength = getLength(); }
 
         extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
@@ -235,6 +218,10 @@ public class Arm extends SubsystemBase {
         return armState;
     }
 
+    public String getStateName() {
+        return armState.toString() ;
+    }
+
     public double lengthLim() {
         double lengthLim; // Inches
         if (getAngle() > 29) {
@@ -244,6 +231,40 @@ public class Arm extends SubsystemBase {
         } // Rough estimate, need to change
         return lengthLim;
     }
+
+    private double getLeftStatorCurrent() {
+        return rotateMotorLeader.getStatorCurrent() ;
+    }
+
+    private double getLeftSupplyCurrent() {
+        return rotateMotorLeader.getSupplyCurrent() ;
+    }
+
+    private double getRightStatorCurrent() {
+        return rotateMotorFollower.getStatorCurrent() ;
+    }
+
+    private double getRightSupplyCurrent() {
+        return rotateMotorFollower.getSupplyCurrent() ;
+    }
+
+
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Arm Subsystem");
+
+        builder.addStringProperty("State", this::getStateName, null);
+        builder.addDoubleProperty("Angle", this::getAngle, null ) ;
+        builder.addDoubleProperty("Length", this::getLength, null ) ;
+        builder.addBooleanProperty("isAtRetractLimit", this::isAtMinLength, null);
+        builder.addBooleanProperty("isAtExtendLimit", this::isAtMaxLength, null);
+        builder.addBooleanProperty("isAtMinAngle", this::isAtMinAngle, null);
+
+        builder.addDoubleProperty("Left Stator Current", this::getLeftStatorCurrent, null ) ;
+        builder.addDoubleProperty("Left Supply Current", this::getLeftSupplyCurrent, null ) ;
+        builder.addDoubleProperty("Right Stator Current", this::getRightStatorCurrent, null ) ;
+        builder.addDoubleProperty("Right Supply Current", this::getRightSupplyCurrent, null ) ;
+    }
+
 
     // Simulation Support
 

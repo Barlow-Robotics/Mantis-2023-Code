@@ -16,6 +16,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,7 +26,7 @@ import frc.robot.sim.PhysicsSim;
 import java.lang.Math;
 
 /** Represents a differential drive style drivetrain. */
-public class Drive extends SubsystemBase {
+public class Drive extends SubsystemBase implements Sendable {
     WPI_TalonFX driveMotorLeftLeader;
     WPI_TalonFX driveMotorLeftFollower;
     WPI_TalonFX driveMotorRightLeader;
@@ -188,47 +190,46 @@ public class Drive extends SubsystemBase {
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
-            // *** need to reduce max speed when arm is extended??
+        // *** need to reduce max speed when arm is extended??
 
+        double desiredLeftSpeed = speeds.left * Constants.DriveConstants.MaxSpeed;
+        double desiredRightSpeed = speeds.right * Constants.DriveConstants.MaxSpeed;
+        double deltaLeft = (desiredLeftSpeed) - getLeftSpeed();
+        double deltaRight = (desiredRightSpeed) - getRightSpeed();
 
-            double desiredLeftSpeed = speeds.left * Constants.DriveConstants.MaxSpeed;
-            double desiredRightSpeed = speeds.right * Constants.DriveConstants.MaxSpeed;
-            double DesiredDeltaLeftSpeed = (desiredLeftSpeed) - getLeftSpeed(); 
-            double DesiredDeltaRightSpeed = (desiredRightSpeed) - getRightSpeed(); 
-            double DeltaVRight = 0;
-            double DeltaVLeft = 0;
+        // finds desired speed to get to MaxSpeed
 
-            // finds desired speed to get to MaxSpeed 
-            if (DesiredDeltaRightSpeed >= 0) {
-                DeltaVRight = Math.min(Constants.DriveConstants.maxAccelerationRate, Math.abs(DesiredDeltaRightSpeed))*1;
-            }
-            else if (DesiredDeltaRightSpeed < 0) {
-                DeltaVRight = Math.min(Constants.DriveConstants.maxAccelerationRate, Math.abs(DesiredDeltaRightSpeed))*-1;
-            }            
-            if (DesiredDeltaLeftSpeed >= 0) {
-                DeltaVLeft = Math.min(Constants.DriveConstants.maxAccelerationRate, Math.abs(DesiredDeltaLeftSpeed))*1;
-            }
-            else if (DesiredDeltaLeftSpeed < 0) {
-                DeltaVLeft = Math.min(Constants.DriveConstants.maxAccelerationRate, Math.abs(DesiredDeltaLeftSpeed))*-1;
-            }
+        double leftSpeed = (Math.min(Math.abs(deltaLeft), Constants.DriveConstants.maxAccelerationRate* Constants.DriveConstants.MaxSpeed))
+                * Math.signum(deltaLeft);
+        double rightSpeed = (Math.min(Math.abs(deltaRight), Constants.DriveConstants.maxAccelerationRate* Constants.DriveConstants.MaxSpeed))
+                * Math.signum(deltaRight);
 
-            setSpeeds(DeltaVLeft, DeltaVRight) ;
+        // Brian - the signum function returns the sign of a number and allows us to
+        // avoid the if statements...
 
-
-            NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
-            NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
-            NetworkTableInstance.getDefault().getEntry("drive/ik_left_speed").setDouble(speeds.left);
-            NetworkTableInstance.getDefault().getEntry("drive/ik_right_speed").setDouble(speeds.right);
-        // for (double right = DeltaVRight, left = DeltaVLeft; right <= DeltaVRight && left <= DeltaVLeft; 
-        //     left += Constants.DriveConstants.maxDeltaSpeed, right += Constants.DriveConstants.maxDeltaSpeed) { 
-        //     if (right > DeltaVRight) {
-        //         setSpeeds(left + speeds.left, speeds.right);
-        //     } 
-        //     else if (left > DeltaVLeft) {
-        //         setSpeeds(speeds.left, right + speeds.right);
-        //     }
-
+        // if (DesiredDeltaRightSpeed >= 0) {
+        // DeltaVRight = Math.min(Constants.DriveConstants.maxAccelerationRate,
+        // Math.abs(DesiredDeltaRightSpeed))*1;
         // }
+        // else if (DesiredDeltaRightSpeed < 0) {
+        // DeltaVRight = Math.min(Constants.DriveConstants.maxAccelerationRate,
+        // Math.abs(DesiredDeltaRightSpeed))*-1;
+        // }
+        // if (DesiredDeltaLeftSpeed >= 0) {
+        // DeltaVLeft = Math.min(Constants.DriveConstants.maxAccelerationRate,
+        // Math.abs(DesiredDeltaLeftSpeed))*1;
+        // }
+        // else if (DesiredDeltaLeftSpeed < 0) {
+        // DeltaVLeft = Math.min(Constants.DriveConstants.maxAccelerationRate,
+        // Math.abs(DesiredDeltaLeftSpeed))*-1;
+        // }
+
+        setSpeeds(leftSpeed, rightSpeed);
+
+        NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
+        NetworkTableInstance.getDefault().getEntry("drive/ik_left_speed").setDouble(speeds.left);
+        NetworkTableInstance.getDefault().getEntry("drive/ik_right_speed").setDouble(speeds.right);
     }
 
     public Pose2d getPose() {
@@ -276,9 +277,6 @@ public class Drive extends SubsystemBase {
         NetworkTableInstance.getDefault().getEntry("drive/leftVolts").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
 
-        // NetworkTableInstance.getDefault().getEntry("drive/pose/x").setDouble(0.0);
-        // NetworkTableInstance.getDefault().getEntry("drive/pose/y").setDouble(0.0);
-        // NetworkTableInstance.getDefault().getEntry("drive/pose/rotation").setDouble(0.0);
     }
 
     private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
@@ -299,29 +297,26 @@ public class Drive extends SubsystemBase {
         return navX.getPitch() ;
     }
 
+
+
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Drive Subsystem");
+
+        builder.addDoubleProperty("Left Distance", this::getLeftDistance, null ) ;
+        builder.addDoubleProperty("Right Distance", this::getRightDistance, null ) ;
+
+        builder.addDoubleProperty("Left Speed", this::getLeftSpeed, null);
+        builder.addDoubleProperty("Right Speed", this::getRightSpeed, null);
+
+        builder.addDoubleProperty("Pitch", this::getPitch, null);
+    }
+
+
     public void simulationInit() {
-        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.75, 6800,
-        // false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.75, 6800,
-        // false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.75, 6800,
-        // false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.25, 6380, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.25, 6380, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.25, 6380, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.25, 6380, false);
     }
 
-    @Override
-    public void simulationPeriodic() {
-        if (!simulationInitialized) {
-            simulationInit();
-            simulationInitialized = true;
-        }
-        PhysicsSim.getInstance().run();
-
-        // double headingNoise = 0.0; // (Math.random() - 0.5) * 4.0 ;
-        // gyroSim.setAngle(this.m_odometry.getPoseMeters().getRotation().getDegrees() +
-        // headingNoise);
-        // gyroSim.setAngle(5.0);
-        // gyroSim.setRate(1.0);
-        NetworkTableInstance.getDefault().getEntry("drive/gyro/getAngle").setDouble(gyro.getAngle());
-    }
 }

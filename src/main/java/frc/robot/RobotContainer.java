@@ -39,6 +39,7 @@ import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.EngageChargingStation;
 import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
@@ -50,7 +51,7 @@ import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
 
-    private final Drive driveSub = new Drive();
+    public final Drive driveSub = new Drive();
     public final Arm armSub = new Arm();
     public final Claw clawSub = new Claw(armSub);
     public final Vision visionSub = new Vision();
@@ -88,7 +89,8 @@ public class RobotContainer {
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
 
-    SendableChooser<Command> autoChooser = new SendableChooser<>();
+//    SendableChooser<Command> autoChooser = new SendableChooser<>();
+    SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
 
@@ -111,7 +113,6 @@ public class RobotContainer {
                             if (Math.abs(yaw) < 0.01) {
                                 yaw = 0.0;
                             }
-                            double speed = -x;
                             double speed = -x;
                             // if (x != 0) {
                             // speed = (Math.abs(x) / x) * (Math
@@ -257,13 +258,13 @@ public class RobotContainer {
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
         
-                balanceButton = new JoystickButton(driverController, RadioMasterConstants.YawAxisAttenuation); // Changed from ButtonA but may be wrong
-                balanceButton.onTrue(new AutoBalance(driveSub));
+        // balanceButton = new JoystickButton(driverController, RadioMasterConstants.YawAxisAttenuation); // Changed from ButtonA but may be wrong
+        // balanceButton.onTrue(new AutoBalance(driveSub));
         
-                /* * * * * * CLAW BUTTONS * * * * * */
-        
-                driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
-                driverToggleClawButton.onTrue(toggleClaw);
+        /* * * * * * CLAW BUTTONS * * * * * */
+
+        driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
+        driverToggleClawButton.onTrue(toggleClaw);
         
 
         /* * * * * * ARM BUTTONS * * * * * */
@@ -374,7 +375,8 @@ private void createAutonomousCommands() {
 }
 
     public Command getAutonomousCommand() {
+        return null ;
 
-        return autoChooser.getSelected();
+        // return autoChooser.getSelected();
     }
 }
