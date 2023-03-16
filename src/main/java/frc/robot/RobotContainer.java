@@ -76,9 +76,12 @@ public class RobotContainer {
     // private Trigger alignWithGamePieceButton;
     // private Trigger alignWithPoleButton;
     private Trigger autoAlignButton;
+    private Trigger alignWithAprilTagsButton;
+    private Trigger alignWithGamePieceButton;
+    private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
-    private Trigger operatorToggleClawButton; // y button (right white button)
+    // private Trigger operatorToggleClawButton; // y button (right white button)
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -256,6 +259,9 @@ public class RobotContainer {
         driverToggleClawButton.onTrue(toggleClaw);
 
         operatorToggleClawButton.onTrue(toggleClaw);
+        // operatorToggleClawButton = new JoystickButton(operatorButtonController,
+        // XboxControllerConstants.ButtonY);
+        // operatorToggleClawButton.onTrue(toggleClaw);
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -380,6 +386,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Place on Top and Leave Community", placeTopAndEngage);
         autoChooser.addOption("Place on Top and Engage Station", placeTopAndReverse);
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
     }
 
     public Command getAutonomousCommand() {
