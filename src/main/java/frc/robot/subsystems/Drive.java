@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,7 +33,7 @@ public class Drive extends SubsystemBase {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    // public final AHRS navX = new AHRS();
+    public final AHRS navX = new AHRS();
 
     // private final DifferentialDriveKinematics kinematics = new
     // DifferentialDriveKinematics(
@@ -290,6 +291,12 @@ public class Drive extends SubsystemBase {
 
         /* Config sensor used for Primary PID [Velocity] */
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
+    }
+
+
+
+    public double getPitch(){
+        return navX.getPitch() ;
     }
 
     public void simulationInit() {

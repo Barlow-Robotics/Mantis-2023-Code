@@ -34,9 +34,6 @@
     "transitory": {
       "claw": {
         "open": true
-      },
-      "drive": {
-        "open": true
       }
     }
   }

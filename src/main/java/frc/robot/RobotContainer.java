@@ -38,7 +38,7 @@ import frc.robot.commands.AlignWithAprilTags;
 import frc.robot.commands.AlignWithGamePiece;
 import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
-import frc.robot.commands.EngageChargingStation;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
@@ -83,6 +83,7 @@ public class RobotContainer {
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
+    private Trigger balanceButton;
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -110,7 +111,8 @@ public class RobotContainer {
                             if (Math.abs(yaw) < 0.01) {
                                 yaw = 0.0;
                             }
-                            double speed = -x ;
+                            double speed = -x;
+                            double speed = -x;
                             // if (x != 0) {
                             // speed = (Math.abs(x) / x) * (Math
                             // .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
@@ -238,7 +240,6 @@ public class RobotContainer {
         // Constants.ArmConstants.AngleAccelerationTime);
     }
 
-
     private void configureButtonBindings() {
 
         driverController = new Joystick(1);
@@ -255,12 +256,15 @@ public class RobotContainer {
         yawAxis = Constants.RadioMasterConstants.RightGimbalX;
         angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
-
-        driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
-        driverToggleClawButton.onTrue(toggleClaw);
-
-        operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
-        operatorToggleClawButton.onTrue(toggleClaw);
+        
+                balanceButton = new JoystickButton(driverController, RadioMasterConstants.YawAxisAttenuation); // Changed from ButtonA but may be wrong
+                balanceButton.onTrue(new AutoBalance(driveSub));
+        
+                /* * * * * * CLAW BUTTONS * * * * * */
+        
+                driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
+                driverToggleClawButton.onTrue(toggleClaw);
+        
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -293,65 +297,84 @@ public class RobotContainer {
         alignWithPoleButton = new JoystickButton(driverController, 8);
         alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
+ 
+
+    SequentialCommandGroup placeTopAndEngage ;
+    SequentialCommandGroup placeTopAndReverse ;
 
 
+private void createAutonomousCommands() {
+    ArmPathGenerator toTop = new ArmPathGenerator(Position.Top, armSub);
+    ArmPathGenerator toResting = new ArmPathGenerator(Position.Resting, armSub);
+    OpenClaw openClaw = new OpenClaw(clawSub);
+    EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
+
+    HashMap<String, Command> eventMap = new HashMap<>();
+    // eventMap.put("MoveArm", toBottomApg.getPathFromResting());
+    // eventMap.put("OpenClaw", openClaw);
+    // eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
+    // // eventMap.put("AutoBalance", autoBalance);
+
+    PathPlannerTrajectory traj = PathPlanner.loadPath(
+            "Reverse",
+            new PathConstraints(1, 4),
+            true);
+
+    RamseteController controller = new RamseteController();
+
+    Command resetOdometry = new InstantCommand(() -> {
+        // driveSub.resetEncoders();
+        driveSub.resetOdometry(traj.getInitialPose());
+    });
+
+    Command pathFollowingCommand = new PPRamseteCommand(
+            traj,
+            driveSub::getPose,
+            controller,
+            new DifferentialDriveKinematics(0.75),
+            driveSub::setSpeeds,
+            true,
+            driveSub);
+
+    Command followPathWithEvents = new FollowPathWithEvents(
+            pathFollowingCommand,
+            traj.getMarkers(),
+            eventMap);
+
+    placeTopAndEngage = new SequentialCommandGroup();
+    placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+    placeTopAndEngage.addCommands(toTop.getPathFromResting());
+    placeTopAndEngage.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+    placeTopAndEngage.addCommands(openClaw);
+    placeTopAndEngage.addCommands(toResting.getPathFromTop());
+    placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+    placeTopAndEngage.addCommands(resetOdometry);
+    placeTopAndEngage.addCommands(pathFollowingCommand);
+
+    placeTopAndReverse = new SequentialCommandGroup();
+    placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+    placeTopAndReverse.addCommands(toTop.getPathFromResting());
+    placeTopAndReverse.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+    placeTopAndReverse.addCommands(openClaw);
+    placeTopAndReverse.addCommands(toResting.getPathFromTop());
+    placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+    placeTopAndReverse.addCommands(resetOdometry);
+    placeTopAndReverse.addCommands(pathFollowingCommand);
+
+    // autoChooser.setDefaultOption("Place on Top and Leave Community", placeTopAndReverse);
+    // autoChooser.addOption("Place on Top and Engage Station", placeTopAndEngage);
+
+    autoChooser.setDefaultOption("Place on Top and Leave Community", (String)"test 1");
+    autoChooser.addOption("Place on Top and Engage Station", "test 2");
 
 
+    SmartDashboard.putData("Autonomous Plan", autoChooser);
+
+
+}
 
     public Command getAutonomousCommand() {
 
-        ArmPathGenerator toTopApg = new ArmPathGenerator(Position.Top, armSub);
-        ArmPathGenerator toRestingApg = new ArmPathGenerator(Position.Resting, armSub);
-        OpenClaw openClaw = new OpenClaw(clawSub);
-        // EngageChargingStation autoBalance = new EngageChargingStation(driveSub);
-
-        HashMap<String, Command> eventMap = new HashMap<>();
-        // eventMap.put("MoveArm", toBottomApg.getPathFromResting());
-        // eventMap.put("OpenClaw", openClaw);
-        // eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
-        // // eventMap.put("AutoBalance", autoBalance);
-
-        PathPlannerTrajectory traj = PathPlanner.loadPath(
-                "Reverse_Only",
-                new PathConstraints(1, 4),
-                true);
-
-        RamseteController controller = new RamseteController();
-
-        Command resetOdometry = new InstantCommand(() -> {
-            // driveSub.resetEncoders();
-            driveSub.resetOdometry(traj.getInitialPose());
-        });
-
-        Command pathFollowingCommand = new PPRamseteCommand(
-                traj,
-                driveSub::getPose,
-                controller,
-                new DifferentialDriveKinematics(0.75),
-                driveSub::setSpeeds,
-                true,
-                driveSub);
-
-        Command followPathWithEvents = new FollowPathWithEvents(
-                pathFollowingCommand,
-                traj.getMarkers(),
-                eventMap);
-
-        SequentialCommandGroup auto = new SequentialCommandGroup();
-        auto.addCommands(new InstantCommand (()->clawSub.disableAutoClose()));
-        auto.addCommands(toTopApg.getPathFromResting());
-        auto.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
-        auto.addCommands(openClaw);
-        auto.addCommands(toRestingApg.getPathFromTop());
-        auto.addCommands(new InstantCommand (()->clawSub.enableAutoClose()));
-        // auto.addCommands(resetOdometry);
-        // auto.addCommands(pathFollowingCommand);
-
-        // autoChooser.setDefaultOption("Simple Auto", m_simpleAuto);
-        // autoChooser.addOption("Complex Auto", m_complexAuto);
-    
-        SmartDashboard.putData(autoChooser);
-
-        // return auto;
-        return autoChooser.getSelected();    }
+        return autoChooser.getSelected();
+    }
 }
