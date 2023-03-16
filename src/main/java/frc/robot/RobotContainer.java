@@ -112,6 +112,7 @@ public class RobotContainer {
                                 yaw = 0.0;
                             }
                             double speed = -x;
+                            double speed = -x;
                             // if (x != 0) {
                             // speed = (Math.abs(x) / x) * (Math
                             // .exp(-400.0 * Math.pow(x / 3.0, 4.0)))
