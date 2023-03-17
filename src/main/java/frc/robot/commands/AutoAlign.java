@@ -18,7 +18,7 @@ public class AutoAlign extends CommandBase {
     
     private Drive driveSub;
     private Vision visionSub;
-    private RobotContainer robotContainer;
+    private RobotContainer robotCont;
 
     private double error;
     private double leftVelocity;
@@ -27,9 +27,10 @@ public class AutoAlign extends CommandBase {
     private double adjustment;
 
     /** Creates a new AutoAlign. */
-    public AutoAlign(Vision v, Drive d) {
+    public AutoAlign(Vision v, Drive d, RobotContainer r) {
         driveSub = d;
         visionSub = v;
+        robotCont = r;
         
         addRequirements(driveSub, visionSub);
     }
@@ -44,7 +45,7 @@ public class AutoAlign extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (robotContainer.changeTargetPoleButton.getAsBoolean() == false) {
+        if (robotCont.changeTargetPoleButton.getAsBoolean() == false) {
             if (visionSub.poleIsVisible()) {
                 error = visionSub.poleDistanceFromCenter();
                 adjustment = pid.calculate(error);
@@ -57,7 +58,7 @@ public class AutoAlign extends CommandBase {
             } else {
                 missedFrames++;
             }
-        } else if (robotContainer.changeTargetGamePieceButton.getAsBoolean() == true) {
+        } else if (robotCont.changeTargetGamePieceButton.getAsBoolean() == true) {
             if (visionSub.gamePieceIsVisible()) {
                 error = visionSub.gamePieceDistanceFromCenter();
                 adjustment = pid.calculate(error);
@@ -70,7 +71,7 @@ public class AutoAlign extends CommandBase {
             } else {
                 missedFrames++;
             }
-        } else if (robotContainer.changeTargetAprilTagButton.getAsBoolean() == false) {
+        } else if (robotCont.changeTargetAprilTagButton.getAsBoolean() == false) {
             if (visionSub.aprilTagIsVisible()) {
                 error = visionSub.aprilTagDistanceFromCenter();
                 adjustment = pid.calculate(error);

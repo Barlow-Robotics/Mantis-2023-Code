@@ -35,6 +35,8 @@ import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.DriveRobot;
+import frc.robot.commands.MoveArmManual;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
@@ -50,6 +52,7 @@ public class RobotContainer {
     public final Arm armSub = new Arm();
     public final Claw clawSub = new Claw(armSub);
     public final Vision visionSub = new Vision();
+    public final RobotContainer robotCont = new RobotContainer();
     // private final Underglow underglowSub = new Underglow();
 
     // private final TurnOffUnderglow turnOffUnderGlowCom = new
@@ -61,12 +64,12 @@ public class RobotContainer {
     public Joystick operatorButtonController; // Joystick 2
     public Joystick operatorAxisController; // Joystick 3
 
-    PIDController pid;
+    public PIDController pid;
 
-    private int xAxis;
-    private int yawAxis;
-    private int angleAxis;
-    private int extensionAxis;
+    public int xAxis;
+    public int yawAxis;
+    public int angleAxis;
+    public int extensionAxis;
 
     private Trigger moveToTopButton; // left stick (blue button)
     private Trigger moveToMiddleButton; // left bumper (green button)
@@ -82,10 +85,7 @@ public class RobotContainer {
     public Trigger changeTargetGamePieceButton;
     public Trigger changeTargetAprilTagButton;
     public Trigger changeTargetPoleButton;
-    private Trigger autoAlignButton;
-
-    private boolean lastAutoSteer = false;
-    private float yawMultiplier = 1.0f;
+    public Trigger autoAlignButton;
 
     SendableChooser<Command> autoChooser = new SendableChooser<Command>();
     final SendableChooser<String> stringChooser = new SendableChooser<String>();
@@ -103,68 +103,65 @@ public class RobotContainer {
         driveSub.setDefaultCommand( // DriveDefaultCommand
                 // A split-stick arcade command, with forward/backward controlled by the left
                 // hand, and turning controlled by the right.
-                new RunCommand(
-                        () -> {
+                // new RunCommand(
+                //         () -> {
 
-                            SmartDashboard.putString("Align Type", visionSub.getSelectedAlign().toString()) ;
+                            // SmartDashboard.putString("Align Type", visionSub.getSelectedAlign().toString()) ;
 
-                            boolean autoSteer = autoAlignButton.getAsBoolean();
+                            // boolean autoSteer = autoAlignButton.getAsBoolean();
 
-                            double x = driverController.getRawAxis(xAxis);
-                            if (Math.abs(x) < 0.01) {
-                                x = 0.0;
-                            }
-                            double yaw = -driverController.getRawAxis(yawAxis);
-                            if (Math.abs(yaw) < 0.01) {
-                                yaw = 0.0;
-                            }
-                            double speed = -x;
-
-                            // // If we're going forward, use "full" speed
-                            // if (speed > 0.0) {
-                            // speed = speed * 0.5;
-                            // } else {
-                            // // we're going backward, so use slower speed
-                            // speed = speed * 0.75;
+                            // double x = driverController.getRawAxis(xAxis);
+                            // if (Math.abs(x) < 0.01) {
+                            //     x = 0.0;
                             // }
-                            double turn = -yaw;
+                            // double yaw = -driverController.getRawAxis(yawAxis);
+                            // if (Math.abs(yaw) < 0.01) {
+                            //     yaw = 0.0;
+                            // }
+                            // double speed = -x;
 
-                            if (!autoSteer || !clawSub.isOpen()) {
-                                yaw = -turn;
+                            // // // If we're going forward, use "full" speed
+                            // // if (speed > 0.0) {
+                            // // speed = speed * 0.5;
+                            // // } else {
+                            // // // we're going backward, so use slower speed
+                            // // speed = speed * 0.75;
+                            // // }
+                            // double turn = -yaw;
 
-                                // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
-                                yawMultiplier = 0.5f;
+                            // if (!autoSteer || !clawSub.isOpen()) {
+                            //     yaw = -turn;
 
-                                double yawSign = 1.0;
-                                if (yaw < 0.0) {
-                                    yawSign = -1.0;
-                                }
-                                yaw = yawSign * (yaw * yaw)
-                                        * yawMultiplier;
-                                if (Math.abs(yaw) < 0.02f) {
-                                    yaw = 0.0f;
-                                }
-                                lastAutoSteer = false;
-                            } else {
-                                if (!lastAutoSteer) {
-                                    pid.reset();
-                                }
-                                yaw = -pid.calculate(visionSub.gamePieceDistanceFromCenter());
-                                lastAutoSteer = true;
-                            }
-                            NetworkTableInstance.getDefault().getEntry("drive/speed").setDouble(-speed);
-                            NetworkTableInstance.getDefault().getEntry("drive/yaw").setDouble(yaw);
+                            //     // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
+                            //     yawMultiplier = 0.5f;
 
-                            driveSub.drive(-speed, yaw * 0.8, true);
-                        },
-                        driveSub));
+                            //     double yawSign = 1.0;
+                            //     if (yaw < 0.0) {
+                            //         yawSign = -1.0;
+                            //     }
+                            //     yaw = yawSign * (yaw * yaw)
+                            //             * yawMultiplier;
+                            //     if (Math.abs(yaw) < 0.02f) {
+                            //         yaw = 0.0f;
+                            //     }
+                            //     lastAutoSteer = false;
+                            // } else {
+                            //     if (!lastAutoSteer) {
+                            //         pid.reset();
+                            //     }
+                            //     yaw = -pid.calculate(visionSub.gamePieceDistanceFromCenter());
+                            //     lastAutoSteer = true;
+                            // }
+                            // NetworkTableInstance.getDefault().getEntry("drive/speed").setDouble(-speed);
+                            // NetworkTableInstance.getDefault().getEntry("drive/yaw").setDouble(yaw);
+
+                            // driveSub.drive(-speed, yaw * 0.8, true);
+                        // },
+                        // driveSub)
+                        new DriveRobot(driveSub, clawSub, visionSub));
 
         armSub.setDefaultCommand(
-            new RunCommand(
-            () -> {
-                
-            }
-            armSub));
+            new MoveArmManual(armSub, robotCont));
     }
 
     private void configureButtonBindings() {
@@ -219,7 +216,7 @@ public class RobotContainer {
         changeTargetPoleButton = new JoystickAnalogButton(driverController, 2, -1.0, 0.0);
 
         autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
-        autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub));
+        autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub, robotCont));
 
         // alignWithAprilTagsButton = new JoystickButton(driverController, 6);
         // alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
