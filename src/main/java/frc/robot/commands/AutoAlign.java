@@ -17,6 +17,10 @@ public class AutoAlign extends CommandBase {
     private Drive driveSub;
     private Vision visionSub;
 
+    private boolean poleButtonPressed;
+    private boolean gamePieceButtonPressed;
+    private boolean aprilTagButtonPressed;
+
     private double error;
     private double leftVelocity;
     private double rightVelocity;
@@ -24,9 +28,13 @@ public class AutoAlign extends CommandBase {
     private double adjustment;
 
     /** Creates a new AutoAlign. */
-    public AutoAlign(Vision v, Drive d) {
+    public AutoAlign(Vision v, Drive d, boolean poleButtonPressed, boolean gamePieceButtonPressed, boolean aprilTagButtonPressed) {
         driveSub = d;
         visionSub = v;
+        poleButtonPressed = poleButtonPressed;
+        gamePieceButtonPressed = gamePieceButtonPressed;
+        aprilTagButtonPressed = aprilTagButtonPressed;
+        
         addRequirements(driveSub, visionSub);
     }
 

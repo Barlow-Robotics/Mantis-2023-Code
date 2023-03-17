@@ -79,9 +79,9 @@ public class RobotContainer {
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
-    private Trigger changeTargetGamePieceButton;
-    private Trigger changeTargetAprilTagButton;
-    private Trigger changeTargetPoleButton;
+    public Trigger changeTargetGamePieceButton;
+    public Trigger changeTargetAprilTagButton;
+    public Trigger changeTargetPoleButton;
     private Trigger autoAlignButton;
 
     private boolean lastAutoSteer = false;
@@ -89,6 +89,9 @@ public class RobotContainer {
 
     SendableChooser<Command> autoChooser = new SendableChooser<Command>();
     final SendableChooser<String> stringChooser = new SendableChooser<String>();
+
+    SequentialCommandGroup placeTopAndEngage;
+    SequentialCommandGroup placeTopAndReverse;
 
     private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
 
@@ -312,14 +315,9 @@ public class RobotContainer {
         SmartDashboard.putData("String Chooser", stringChooser);
     }
 
-    SequentialCommandGroup placeTopAndEngage;
-    SequentialCommandGroup placeTopAndReverse;
-
     private void createAutonomousCommands() {
         ArmPathGenerator toTop = new ArmPathGenerator(Position.Top, armSub);
         ArmPathGenerator toResting = new ArmPathGenerator(Position.Resting, armSub);
-
-        AutoBalance autoBalance = new AutoBalance(driveSub);
 
         HashMap<String, Command> eventMap = new HashMap<>();
         // eventMap.put("MoveArm", toBottomApg.getPathFromResting());
@@ -369,6 +367,7 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 driveSub));
+        placeTopAndEngage.addCommands(new AutoBalance(driveSub));
 
         placeTopAndReverse = new SequentialCommandGroup();
         placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
@@ -390,7 +389,6 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Place on Top and Leave Community", placeTopAndEngage);
         autoChooser.addOption("Place on Top and Engage Station", placeTopAndReverse);
         SmartDashboard.putData("Auto Chooser", autoChooser);
-
     }
 
     public Command getAutonomousCommand() {
