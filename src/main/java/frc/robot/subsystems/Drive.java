@@ -37,7 +37,8 @@ public class Drive extends SubsystemBase implements Sendable {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    public final AHRS navX = new AHRS();
+    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB1 ) ;
+//    public final AHRS navX = new AHRS() ;
 
     // private final DifferentialDriveKinematics kinematics = new
     // DifferentialDriveKinematics(
@@ -91,6 +92,9 @@ public class Drive extends SubsystemBase implements Sendable {
         setDefaultNeutralMode();
         gyro.reset();
         CreateNetworkTableEntries();
+
+        navX.reset();
+        
     }
 
     public void periodic() {

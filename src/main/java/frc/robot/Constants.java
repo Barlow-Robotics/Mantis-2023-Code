@@ -44,14 +44,14 @@ public final class Constants {
         public static final int DriveMotorRightLeaderID = 6;
         public static final int DriveMotorRightFollowerID = 7;
 
-        public static final double MaxSpeed = 4.0; // meters per second
+        public static final double MaxSpeed = 3.8; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
-        public static final double TimeToReachVelocity = 0.2; // per second
+        public static final double TimeToReachVelocity = 0.2; 
 
         // public static final double MaxVelocityChange = MaxSpeed * (
         // TimeToReachVelocity / 50 ); // percentage of Acceleration
-        public static final double MaxVelocityChange = MaxSpeed * 0.5; // percentage of Acceleration
+        public static final double MaxVelocityChange = MaxSpeed * 0.4; // percentage of Acceleration
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
 
@@ -80,6 +80,10 @@ public final class Constants {
 
         public static final double BalanceTolerance = 2.5;
         public static final double AutoBalanceSpeed = 0.5;
+
+        public static final double autoAlignkP = 0.003;
+        public static final double autoAlignkI = 0.0;
+        public static final double autoAlignkD = 0.0;
     }
 
     public static final class ArmConstants {
@@ -279,7 +283,7 @@ public final class Constants {
         public static final int SliderE = 4;
         public static final int SliderC = 6;
 
-        public static final int ButtonD = 3;
+        public static final int ButtonD = 2;
         public static final int ButtonA = 1;
 
         public static final double FowardAxisAttenuation = 1.0;

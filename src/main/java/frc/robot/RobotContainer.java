@@ -34,7 +34,7 @@ import frc.robot.Constants.XboxControllerConstants;
 // import frc.robot.commands.AlignWithGamePiece;
 // import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
-import frc.robot.commands.AutoAlign;
+// import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.DriveRobot;
 import frc.robot.commands.MoveArmManual;
@@ -55,7 +55,7 @@ public class RobotContainer {
     public final Arm armSub = new Arm();
     public final Claw clawSub = new Claw(armSub);
     public final Vision visionSub = new Vision();
-    public final RobotContainer robotCont = new RobotContainer();
+    // public final RobotContainer robotCont = new RobotContainer();
     private final Underglow underglowSub = new Underglow();
 
     private final TurnOffUnderglow turnOffUnderGlowCom = new TurnOffUnderglow(underglowSub);
@@ -67,8 +67,6 @@ public class RobotContainer {
     public Joystick driverController; // Joystick 1
     public Joystick operatorButtonController; // Joystick 2
     public Joystick operatorAxisController; // Joystick 3
-
-    public PIDController pid;
 
     public int xAxis;
     public int yawAxis;
@@ -108,7 +106,10 @@ public class RobotContainer {
         createAutonomousCommands();
         buildAutoOptions();
 
-        driveSub.setDefaultCommand( // DriveDefaultCommand
+        driveSub.setDefaultCommand( new DriveRobot(driveSub, clawSub, visionSub, autoAlignButton, driverController, xAxis, yawAxis));
+
+            
+        // DriveDefaultCommand
                 // A split-stick arcade command, with forward/backward controlled by the left
                 // hand, and turning controlled by the right.
                 // new RunCommand(
@@ -166,10 +167,9 @@ public class RobotContainer {
                             // driveSub.drive(-speed, yaw * 0.8, true);
                         // },
                         // driveSub)
-                        new DriveRobot(driveSub, clawSub, visionSub));
 
-        armSub.setDefaultCommand(
-            new MoveArmManual(armSub, robotCont));
+        // armSub.setDefaultCommand(
+        //     new MoveArmManual(armSub));
     }
 
     private void configureButtonBindings() {
@@ -219,12 +219,12 @@ public class RobotContainer {
 
         /* * * * * * VISION BUTTONS * * * * * */
 
-        changeTargetGamePieceButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
+        changeTargetGamePieceButton = new JoystickAnalogButton(driverController, Constants.RadioMasterConstants.ButtonD, 0.0, 1.0);
         changeTargetAprilTagButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
         changeTargetPoleButton = new JoystickAnalogButton(driverController, 2, -1.0, 0.0);
 
         autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
-        autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub, robotCont));
+        // autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub, robotCont));
 
         // alignWithAprilTagsButton = new JoystickButton(driverController, 6);
         // alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));

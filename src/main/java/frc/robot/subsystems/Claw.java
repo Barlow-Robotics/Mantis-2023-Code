@@ -14,6 +14,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 //import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,10 +29,8 @@ public class Claw extends SubsystemBase {
 
     // Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
-    Solenoid closeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
-            Constants.ClawConstants.CloseSolenoidID);
-    Solenoid openSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
-            Constants.ClawConstants.OpenSolenoidID);
+    Solenoid closeSolenoid ;
+    Solenoid openSolenoid ;
 
     TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.DistanceSensorID);
 
@@ -44,6 +43,12 @@ public class Claw extends SubsystemBase {
     boolean open = false;
 
     public Claw(Arm a) { // add arm to constructors
+        closeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
+            Constants.ClawConstants.CloseSolenoidID);
+        openSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
+            Constants.ClawConstants.OpenSolenoidID);
+
+
         armSub = a;
         clawMotor = new WPI_TalonFX(Constants.ClawConstants.ClawMotorID); // needs config
 
