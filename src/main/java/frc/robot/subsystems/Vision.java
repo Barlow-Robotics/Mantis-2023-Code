@@ -40,12 +40,6 @@ public class Vision extends SubsystemBase implements Sendable {
     private DatagramChannel visionChannel = null;
     ByteBuffer buffer = ByteBuffer.allocate(1024);
 
-    public enum AlignType {
-        Pole, GamePiece, AprilTag
-    };
-
-    public AlignType selectedAlign = AlignType.GamePiece;
-
     public Vision() {
         cameraLight = new DigitalOutput(Constants.VisionConstants.CameraLightID);
         try {
@@ -96,14 +90,6 @@ public class Vision extends SubsystemBase implements Sendable {
         } catch (Exception ex) {
             System.out.println("Exception reading data");
         }
-    }
-
-    public AlignType getSelectedAlign() {
-        return selectedAlign;
-    }
-
-    public void setAlignType(AlignType newAlignType) {
-        selectedAlign = newAlignType;
     }
 
     public void turnOnVisionLight() {
@@ -188,5 +174,4 @@ public class Vision extends SubsystemBase implements Sendable {
         builder.addDoubleProperty("Game piece height", this::bbGamePieceHeight, null);
         builder.addDoubleProperty("Game piece width", this::bbGamePieceWidth, null);
     }
-
 }

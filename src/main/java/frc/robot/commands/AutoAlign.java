@@ -8,9 +8,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.Target;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Vision.AlignType;
 
 public class AutoAlign extends CommandBase {
 
@@ -47,6 +47,8 @@ public class AutoAlign extends CommandBase {
     public void execute() {
         if (robotCont.changeTargetPoleButton.getAsBoolean() == false) {
             if (visionSub.poleIsVisible()) {
+                Target.Pole;
+                
                 error = visionSub.poleDistanceFromCenter();
                 adjustment = pid.calculate(error);
                 adjustment = Math.signum(adjustment)

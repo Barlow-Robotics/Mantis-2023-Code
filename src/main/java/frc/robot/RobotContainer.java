@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -39,11 +40,13 @@ import frc.robot.commands.DriveRobot;
 import frc.robot.commands.MoveArmManual;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
+import frc.robot.commands.TurnOffUnderglow;
+import frc.robot.commands.TurnOnUnderglow;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
-import frc.robot.subsystems.Vision.AlignType;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Underglow;
 import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
@@ -53,12 +56,13 @@ public class RobotContainer {
     public final Claw clawSub = new Claw(armSub);
     public final Vision visionSub = new Vision();
     public final RobotContainer robotCont = new RobotContainer();
-    // private final Underglow underglowSub = new Underglow();
+    private final Underglow underglowSub = new Underglow();
 
-    // private final TurnOffUnderglow turnOffUnderGlowCom = new
-    // TurnOffUnderglow(underglowSub);
-    // private final TurnOnUnderglow turnOnUnderGlowCom = new
-    // TurnOnUnderglow(underglowSub);
+    private final TurnOffUnderglow turnOffUnderGlowCom = new TurnOffUnderglow(underglowSub);
+    private final TurnOnUnderglow turnOnUnderGlowCom = new TurnOnUnderglow(underglowSub);
+
+    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
+
 
     public Joystick driverController; // Joystick 1
     public Joystick operatorButtonController; // Joystick 2
@@ -93,7 +97,11 @@ public class RobotContainer {
     SequentialCommandGroup placeTopAndEngage;
     SequentialCommandGroup placeTopAndReverse;
 
-    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
+    public enum Target {
+        Pole, GamePiece, AprilTag
+    };
+
+    public Target selectedTarget = Target.GamePiece;
 
     public RobotContainer() {
         configureButtonBindings();
@@ -312,5 +320,9 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+    }
+
+    public Target getSelectedAlign() {
+        return selectedTarget;
     }
 }

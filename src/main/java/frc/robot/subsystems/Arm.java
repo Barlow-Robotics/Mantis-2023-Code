@@ -158,12 +158,11 @@ public class Arm extends SubsystemBase implements Sendable {
         rotateMotorLeader.set(TalonFXControlMode.PercentOutput, -0.07);
     }
 
-
-    public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is
-                                                                                            // fully retracted
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
+    public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is                                                                               // fully retracted
+        extendMotor.configMotionCruiseVelocity(
+            velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
+            velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
 
         if (desiredLength > ArmConstants.ArmMaxLength) {
             desiredLength = ArmConstants.ArmMaxLength;
@@ -171,9 +170,10 @@ public class Arm extends SubsystemBase implements Sendable {
             desiredLength = ArmConstants.ArmMinLength;
         }
 
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
+        extendMotor.configMotionCruiseVelocity(
+            velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
         extendMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+            velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         double ff = Constants.ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
@@ -215,7 +215,7 @@ public class Arm extends SubsystemBase implements Sendable {
     }
 
     public String getStateName() {
-        return armState.toString() ;
+        return armState.toString();
     }
 
     public double lengthLim() {
@@ -244,7 +244,6 @@ public class Arm extends SubsystemBase implements Sendable {
         return rotateMotorFollower.getSupplyCurrent() ;
     }
 
-
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Arm Subsystem");
 
@@ -261,7 +260,6 @@ public class Arm extends SubsystemBase implements Sendable {
         builder.addDoubleProperty("Right Supply Current", this::getRightSupplyCurrent, null ) ;
     }
 
-
     // Simulation Support
 
     public void simulationInit() {
@@ -269,5 +267,4 @@ public class Arm extends SubsystemBase implements Sendable {
         PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 21777);
         PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 21777);
     }
-
 }
