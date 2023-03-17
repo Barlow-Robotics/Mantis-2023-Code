@@ -57,9 +57,9 @@ public class RobotContainer {
     // private final TurnOnUnderglow turnOnUnderGlowCom = new
     // TurnOnUnderglow(underglowSub);
 
-    Joystick driverController; // Joystick 1
-    Joystick operatorButtonController; // Joystick 2
-    Joystick operatorAxisController; // Joystick 3
+    public Joystick driverController; // Joystick 1
+    public Joystick operatorButtonController; // Joystick 2
+    public Joystick operatorAxisController; // Joystick 3
 
     PIDController pid;
 
@@ -159,85 +159,12 @@ public class RobotContainer {
                         },
                         driveSub));
 
-        // armSub.setDefaultCommand(
-        // // A split-stick arcade command, with forward/backward controlled by the left
-        // // hand, and turning controlled by the right.
-        // new RunCommand(
-        // () -> {
-        // /* Angle */
-        // double currentAngle = armSub.getAngle();
-        // double desiredAngle = currentAngle
-        // + (operatorButtonController.getRawAxis(angleAxis) *
-        // ArmConstants.AngleMultiplier);
-
-        // if (desiredAngle > ArmConstants.ArmMaxAngle) {
-        // desiredAngle = ArmConstants.ArmMaxAngle;
-        // } else if (desiredAngle < ArmConstants.ArmMinAngle) {
-        // desiredAngle = ArmConstants.ArmMinAngle;
-        // }
-
-        // armSub.setAngle(desiredAngle, ArmConstants.AngleVel,
-        // Constants.ArmConstants.AngleAccelerationTime);
-
-        // /* Extension */
-        // double currentLength = armSub.getLength();
-        // double desiredLength = currentLength +
-        // operatorButtonController.getRawAxis(extensionAxis)
-        // * ArmConstants.LengthMultiplier;
-
-        // if (desiredLength > ArmConstants.ArmMaxLength) {
-        // desiredLength = ArmConstants.ArmMaxLength;
-        // } else if (desiredLength < ArmConstants.ArmMinLength) {
-        // desiredLength = ArmConstants.ArmMinLength;
-        // }
-
-        // armSub.setLength(desiredLength, ArmConstants.LengthVel,
-        // ArmConstants.LengthAccelTime);
-
-        // // if (desiredLength * Math.cos(desiredAngle) <= 0) {
-        // // desiredLength = currentLength;
-        // // }
-        // // double desiredAngle = currentAngle +
-        // operatorButtonController.getRawAxis(1) *
-        // Constants.ArmConstants.AngleMultiplier;
-
-        // // if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
-        // // desiredAngle = Constants.ArmConstants.ArmMaxAngle;
-        // // } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
-        // // desiredAngle = Constants.ArmConstants.ArmMinAngle;
-        // // }
-
-        // // /* Extension */
-        // // double currentLength = armSub.getLength();
-        // // double desiredLength = currentLength +
-        // operatorButtonController.getRawAxis(2) *
-        // Constants.ArmConstants.LengthMultiplier;
-
-        // // if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
-        // // desiredLength = Constants.ArmConstants.ArmMaxLength;
-        // // } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
-        // // desiredLength = Constants.ArmConstants.ArmMinLength;
-        // // }
-        // // armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel,
-        // Constants.ArmConstants.LengthAccelTime);
-
-        // if (desiredLength*Math.cos(desiredAngle) <= 0) {
-        // desiredLength = currentLength;
-        // }
-        // },
-        // armSub));
-        // if (desiredLength * Math.cos(desiredAngle) <= 0) {
-        // desiredLength = currentLength;
-        // }
-
-        // if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
-        // desiredAngle = Constants.ArmConstants.ArmMaxAngle;
-        // } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
-        // desiredAngle = Constants.ArmConstants.ArmMinAngle;
-        // }
-        // wpk commented out until after gb repaired
-        // armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel,
-        // Constants.ArmConstants.AngleAccelerationTime);
+        armSub.setDefaultCommand(
+            new RunCommand(
+            () -> {
+                
+            }
+            armSub));
     }
 
     private void configureButtonBindings() {
@@ -288,13 +215,8 @@ public class RobotContainer {
         /* * * * * * VISION BUTTONS * * * * * */
 
         changeTargetGamePieceButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
-        changeTargetGamePieceButton.onTrue(new InstantCommand(() -> visionSub.setAlignType(AlignType.GamePiece)));
-
         changeTargetAprilTagButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
-        changeTargetAprilTagButton.onFalse(new InstantCommand(() -> visionSub.setAlignType(AlignType.AprilTag)));
-
         changeTargetPoleButton = new JoystickAnalogButton(driverController, 2, -1.0, 0.0);
-        changeTargetPoleButton.onFalse(new InstantCommand(() -> visionSub.setAlignType(AlignType.Pole)));
 
         autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
         autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub));

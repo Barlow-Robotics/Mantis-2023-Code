@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Vision.AlignType;
@@ -14,12 +15,10 @@ import frc.robot.subsystems.Vision.AlignType;
 public class AutoAlign extends CommandBase {
 
     private PIDController pid = new PIDController(0.01, 0, 0);
+    
     private Drive driveSub;
     private Vision visionSub;
-
-    private boolean poleButtonPressed;
-    private boolean gamePieceButtonPressed;
-    private boolean aprilTagButtonPressed;
+    private RobotContainer robotContainer;
 
     private double error;
     private double leftVelocity;
@@ -28,12 +27,9 @@ public class AutoAlign extends CommandBase {
     private double adjustment;
 
     /** Creates a new AutoAlign. */
-    public AutoAlign(Vision v, Drive d, boolean poleButtonPressed, boolean gamePieceButtonPressed, boolean aprilTagButtonPressed) {
+    public AutoAlign(Vision v, Drive d) {
         driveSub = d;
         visionSub = v;
-        poleButtonPressed = poleButtonPressed;
-        gamePieceButtonPressed = gamePieceButtonPressed;
-        aprilTagButtonPressed = aprilTagButtonPressed;
         
         addRequirements(driveSub, visionSub);
     }
@@ -48,7 +44,7 @@ public class AutoAlign extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (visionSub.selectedAlign == AlignType.Pole) {
+        if (robotContainer.changeTargetPoleButton.getAsBoolean() == false) {
             if (visionSub.poleIsVisible()) {
                 error = visionSub.poleDistanceFromCenter();
                 adjustment = pid.calculate(error);
@@ -61,7 +57,7 @@ public class AutoAlign extends CommandBase {
             } else {
                 missedFrames++;
             }
-        } else if (visionSub.selectedAlign == AlignType.GamePiece) {
+        } else if (robotContainer.changeTargetGamePieceButton.getAsBoolean() == true) {
             if (visionSub.gamePieceIsVisible()) {
                 error = visionSub.gamePieceDistanceFromCenter();
                 adjustment = pid.calculate(error);
@@ -74,7 +70,7 @@ public class AutoAlign extends CommandBase {
             } else {
                 missedFrames++;
             }
-        } else if (visionSub.selectedAlign == AlignType.AprilTag) {
+        } else if (robotContainer.changeTargetAprilTagButton.getAsBoolean() == false) {
             if (visionSub.aprilTagIsVisible()) {
                 error = visionSub.aprilTagDistanceFromCenter();
                 adjustment = pid.calculate(error);

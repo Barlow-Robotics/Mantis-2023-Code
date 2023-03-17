@@ -2,111 +2,120 @@
 // // Open Source Software; you can modify and/or share it under the terms of
 // // the WPILib BSD license file in the root directory of this project.
 
-// package frc.robot.commands;
+package frc.robot.commands;
 
-// import edu.wpi.first.wpilibj2.command.CommandBase;
-// import frc.robot.Constants;
-// import frc.robot.subsystems.Arm;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.subsystems.Arm;
 
-// public class MoveArmManual extends CommandBase {
-//   /** Creates a new MoveArmManual. */
+public class MoveArmManual extends CommandBase {
+    /** Creates a new MoveArmManual. */
 
-//   Arm armSub;
+    private int angleAxis;
+    private int extensionAxis;
 
-//   public MoveArmManual(Arm a) {
-//     // Use addRequirements() here to declare subsystem dependencies.
-//     armSub = a;
-//     addRequirements(armsub);
-//   }
+    private Arm armSub;
+    private RobotContainer robotCont;
 
-//   // Called when the command is initially scheduled.
-//   @Override
-//   public void initialize() {}
+    public MoveArmManual(Arm a, RobotContainer r) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        armSub = a;
+        robotCont = r;
+        addRequirements(armSub);
+    }
 
-//   // Called every time the scheduler runs while the command is scheduled.
-//   @Override
-//   public void execute() {
-//     /* Angle */
-//         double currentAngle = armSub.getAngle();
-//         double desiredAngle = currentAngle +
-//         (operatorButtonController.getRawAxis(angleAxis) * Constants.ArmConstants.AngleMultiplier);
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-//         if (desiredAngle > ArmConstants.ArmMaxAngle) {
-//         desiredAngle = ArmConstants.ArmMaxAngle;
-//         } else if (desiredAngle < ArmConstants.ArmMinAngle) {
-//         desiredAngle = Constants.ArmConstants.ArmMinAngle;
-//         }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        /* Angle */
+        double currentAngle = armSub.getAngle();
+        double desiredAngle = currentAngle +
+                (robotCont.operatorButtonController.getRawAxis(angleAxis) * ArmConstants.AngleMultiplier);
 
-//         armSub.setAngle(desiredAngle, ArmConstants.AngleVel,
-//         Constants.ArmConstants.AngleAccelerationTime);
+        if (desiredAngle > ArmConstants.ArmMaxAngle) {
+            desiredAngle = ArmConstants.ArmMaxAngle;
+        } else if (desiredAngle < ArmConstants.ArmMinAngle) {
+            desiredAngle = ArmConstants.ArmMinAngle;
+        }
 
-//         /* Extension */
-//         double currentLength = armSub.getLength();
-//         double desiredLength = currentLength + 
-//         operatorButtonController.getRawAxis(extensionAxis) * Constants.ArmConstants.LengthMultiplier;
+        armSub.setAngle(desiredAngle, ArmConstants.AngleVel, ArmConstants.AngleAcceleration);
 
-//         if (desiredLength > ArmConstants.ArmMaxLength) {
-//         desiredLength = ArmConstants.ArmMaxLength;
-//         } else if (desiredLength < ArmConstants.ArmMinLength) {
-//         desiredLength = ArmConstants.ArmMinLength;
-//         }
+        /* Extension */
+        double currentLength = armSub.getLength();
+        double desiredLength = currentLength + robotCont.operatorButtonController.getRawAxis(extensionAxis)
+                * Constants.ArmConstants.LengthMultiplier;
 
-//         armSub.setLength(desiredLength, ArmConstants.LengthVel,
-//         ArmConstants.LengthAccelTime);
+        if (desiredLength > ArmConstants.ArmMaxLength) {
+            desiredLength = ArmConstants.ArmMaxLength;
+        } else if (desiredLength < ArmConstants.ArmMinLength) {
+            desiredLength = ArmConstants.ArmMinLength;
+        }
 
-//         // if (desiredLength * Math.cos(desiredAngle) <= 0) {
-//         // desiredLength = currentLength;
-//         // }
-//         // double desiredAngle = currentAngle +
-//         operatorButtonController.getRawAxis(1) *
-//         Constants.ArmConstants.AngleMultiplier;
+        armSub.setLength(desiredLength, ArmConstants.ExtendVel, ArmConstants.ExtendAccel);
 
-//         // if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
-//         // desiredAngle = Constants.ArmConstants.ArmMaxAngle;
-//         // } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
-//         // desiredAngle = Constants.ArmConstants.ArmMinAngle;
-//         // }
+        if (desiredLength * Math.cos(desiredAngle) <= 0) {
+            desiredLength = currentLength;
+        }
 
-//         // /* Extension */
-//         // double currentLength = armSub.getLength();
-//         // double desiredLength = currentLength +
-//         operatorButtonController.getRawAxis(2) *
-//         Constants.ArmConstants.LengthMultiplier;
+        desiredAngle = currentAngle +
+                robotCont.operatorButtonController.getRawAxis(1) *
+                        Constants.ArmConstants.AngleMultiplier;
 
-//         // if (desiredLength > Constants.ArmConstants.ArmMaxLength) {
-//         // desiredLength = Constants.ArmConstants.ArmMaxLength;
-//         // } else if (desiredLength < Constants.ArmConstants.ArmMinLength) {
-//         // desiredLength = Constants.ArmConstants.ArmMinLength;
-//         // }
-//         // armSub.setLength(desiredLength, Constants.ArmConstants.LengthVel,
-//         Constants.ArmConstants.LengthAccelTime);
+        if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
+            desiredAngle = Constants.ArmConstants.ArmMaxAngle;
+        } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
+            desiredAngle = Constants.ArmConstants.ArmMinAngle;
+        }
 
-//         if (desiredLength*Math.cos(desiredAngle) <= 0) {
-//         desiredLength = currentLength;
-//         }
-//         },
-//         armSub));
-//         if (desiredLength * Math.cos(desiredAngle) <= 0) {
-//         desiredLength = currentLength;
-//         }
+        // /* Extension */
+        currentLength = armSub.getLength();
+        desiredLength = currentLength +
+                robotCont.operatorButtonController.getRawAxis(2) *
+                        Constants.ArmConstants.LengthMultiplier;
 
-//         if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
-//         desiredAngle = Constants.ArmConstants.ArmMaxAngle;
-//         } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
-//         desiredAngle = Constants.ArmConstants.ArmMinAngle;
-//         }
-//         wpk commented out until after gb repaired
-//         armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel,
-//         Constants.ArmConstants.AngleAccelerationTime);
-//   }
+        if (desiredLength > ArmConstants.ArmMaxLength) {
+            desiredLength = ArmConstants.ArmMaxLength;
+        } else if (desiredLength < ArmConstants.ArmMinLength) {
+            desiredLength = ArmConstants.ArmMinLength;
+        }
+        armSub.setLength(desiredLength, ArmConstants.ExtendVel,
+                ArmConstants.ExtendAccel);
 
-//   // Called once the command ends or is interrupted.
-//   @Override
-//   public void end(boolean interrupted) {}
+        if (desiredLength * Math.cos(desiredAngle) <= 0) {
+            desiredLength = currentLength;
+        }
 
-//   // Returns true when the command should end.
-//   @Override
-//   public boolean isFinished() {
-//     return false;
-//   }
-// }
+        if (desiredLength * Math.cos(desiredAngle) <= 0) {
+            desiredLength = currentLength;
+        }
+
+        if (desiredAngle > Constants.ArmConstants.ArmMaxAngle) {
+            desiredAngle = Constants.ArmConstants.ArmMaxAngle;
+        } else if (desiredAngle < Constants.ArmConstants.ArmMinAngle) {
+            desiredAngle = Constants.ArmConstants.ArmMinAngle;
+        }
+        // wpk commented
+        // out until
+        // after gb
+        // repaired
+        armSub.setAngle(desiredAngle, Constants.ArmConstants.AngleVel, ArmConstants.AngleAcceleration);
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+}

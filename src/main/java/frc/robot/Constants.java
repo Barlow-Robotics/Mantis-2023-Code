@@ -151,7 +151,7 @@ public final class Constants {
         public static final double RotateVel = 75;
         public static final double RotateAccel = 0.15;
         public static final double AngleMultiplier = 1.0;
-        // public static final double AngleVel = 0.5;
+        public static final double AngleVel = 0.5;
         public static final double AngleAcceleration = RotateVel * 4.0;
         // public static final double AngleMultiplier = 0.5;
 
