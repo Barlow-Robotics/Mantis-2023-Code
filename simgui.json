@@ -39,6 +39,7 @@
       "/SmartDashboard/Auto Choices": "String Chooser",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Autonomous Plans": "String Chooser",
+      "/SmartDashboard/Nav X": "Gyro",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/String Chooser": "String Chooser"
     }

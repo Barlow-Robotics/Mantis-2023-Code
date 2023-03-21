@@ -22,6 +22,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
@@ -37,7 +38,8 @@ public class Drive extends SubsystemBase implements Sendable {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB1 ) ;
+//    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB2 ) ;
+    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.I2C.Port.kMXP ) ;
 //    public final AHRS navX = new AHRS() ;
 
     // private final DifferentialDriveKinematics kinematics = new
@@ -87,14 +89,14 @@ public class Drive extends SubsystemBase implements Sendable {
         diffDrive = new DifferentialDrive(driveMotorLeftLeader, driveMotorRightLeader);
         diffDrive.setSafetyEnabled(false);
 
-        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance());
+         odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance());
 
         setDefaultNeutralMode();
-        gyro.reset();
-        CreateNetworkTableEntries();
+//wpk        gyro.reset();
 
-        navX.reset();
-        
+        CreateNetworkTableEntries();
+        SmartDashboard.putData("Nav X", navX);
+
     }
 
     public void periodic() {
@@ -239,7 +241,6 @@ public class Drive extends SubsystemBase implements Sendable {
 
         setSpeeds(leftSpeed, rightSpeed);
 
-
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
         NetworkTableInstance.getDefault().getEntry("drive/ik_left_speed").setDouble(speeds.left);
@@ -290,7 +291,6 @@ public class Drive extends SubsystemBase implements Sendable {
 
         NetworkTableInstance.getDefault().getEntry("drive/leftVolts").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
-
     }
 
     private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
@@ -305,13 +305,9 @@ public class Drive extends SubsystemBase implements Sendable {
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
 
-
-
     public double getPitch(){
-        return navX.getPitch() ;
+        return navX.getRoll() ;
     }
-
-
 
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Drive Subsystem");
@@ -324,7 +320,6 @@ public class Drive extends SubsystemBase implements Sendable {
 
         builder.addDoubleProperty("Pitch", this::getPitch, null);
     }
-
 
     public void simulationInit() {
         PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.05, 21777, false);

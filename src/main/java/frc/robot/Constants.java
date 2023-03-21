@@ -72,9 +72,12 @@ public final class Constants {
 
         public static final double ClosedVoltageRampingConstant = 0.0;
         public static final double ManualVoltageRampingConstant = 0.0;
-        public static final double kF = 0.048;
-        public static final double kP = 0.005;
-        public static final double kI = 0.0001;
+        // public static final double kF = 20.0; //0.048 original
+        // public static final double kP = 0.7; //0.005 original
+        // public static final double kI = 0.001; //0.0001 original
+        public static final double kF = 0.048 ;
+        public static final double kP = 0.005 ;
+        public static final double kI = 0.0001; //0.0001 original
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 

@@ -145,7 +145,7 @@ public class ArmPathGenerator extends CommandBase {
 
     /* * * * * * FROM FLOOR * * * * * */
 
-    private SequentialCommandGroup getPathFromFloor() {
+    public SequentialCommandGroup getPathFromFloor() {
         System.out.println("***** getPathFromFloor");
 
         SequentialCommandGroup g = new SequentialCommandGroup();
@@ -392,7 +392,7 @@ public class ArmPathGenerator extends CommandBase {
 
     /* * * * * * FROM MIDDLE * * * * * */
 
-    private SequentialCommandGroup getPathFromMiddle() {
+    public SequentialCommandGroup getPathFromMiddle() {
         System.out.println("***** getPathFromMiddle");
 
         SequentialCommandGroup g = new SequentialCommandGroup();

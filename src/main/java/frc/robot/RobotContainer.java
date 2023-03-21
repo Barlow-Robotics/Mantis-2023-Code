@@ -6,167 +6,91 @@ package frc.robot;
 
 import java.util.HashMap;
 
-// import java.util.HashMap;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
-// import frc.robot.commands.AlignWithAprilTags;
-// import frc.robot.commands.AlignWithGamePiece;
-// import frc.robot.commands.AlignWithPole;
 import frc.robot.commands.ArmPathGenerator;
-// import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.DriveRobot;
-import frc.robot.commands.MoveArmManual;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
-import frc.robot.commands.TurnOffUnderglow;
-import frc.robot.commands.TurnOnUnderglow;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Underglow;
 import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
 
+    /* Subsystems */
     public final Drive driveSub = new Drive();
     public final Arm armSub = new Arm();
     public final Claw clawSub = new Claw(armSub);
     public final Vision visionSub = new Vision();
-    // public final RobotContainer robotCont = new RobotContainer();
-    private final Underglow underglowSub = new Underglow();
 
-    private final TurnOffUnderglow turnOffUnderGlowCom = new TurnOffUnderglow(underglowSub);
-    private final TurnOnUnderglow turnOnUnderGlowCom = new TurnOnUnderglow(underglowSub);
+    /* Commands */
+    private final ToggleClaw toggleClawCmd = new ToggleClaw(clawSub);
 
-    private final ToggleClaw toggleClaw = new ToggleClaw(clawSub);
-
-
+    /* Controllers */
     public Joystick driverController; // Joystick 1
     public Joystick operatorButtonController; // Joystick 2
     public Joystick operatorAxisController; // Joystick 3
 
-    public int xAxis;
-    public int yawAxis;
-    public int angleAxis;
-    public int extensionAxis;
-
+    /* Buttons */
     private Trigger moveToTopButton; // left stick (blue button)
     private Trigger moveToMiddleButton; // left bumper (green button)
     private Trigger moveToBottomButton; // button a (left white button)
     private Trigger moveToRestingPositionButton; // button x (middle white button)
     private Trigger moveToPlayerStationButton; // right stick (black button)
-    // private Trigger alignWithAprilTagsButton;
-    // private Trigger alignWithGamePieceButton;
-    // private Trigger alignWithPoleButton;
     private Trigger moveToFloorButton; // right bumper (yellow button)
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
-    public Trigger changeTargetGamePieceButton;
-    public Trigger changeTargetAprilTagButton;
-    public Trigger changeTargetPoleButton;
+    public Trigger toggleTargetButton;
     public Trigger autoAlignButton;
 
+    /* Drive */
+    public int xAxis;
+    public int yawAxis;
+    public int angleAxis;
+    public int extensionAxis;
+
+    /* Shuffleboard */
     SendableChooser<Command> autoChooser = new SendableChooser<Command>();
     final SendableChooser<String> stringChooser = new SendableChooser<String>();
 
     SequentialCommandGroup placeTopAndEngage;
     SequentialCommandGroup placeTopAndReverse;
+    SequentialCommandGroup placeTopAndGrabPiece;
 
-    public enum Target {
-        Pole, GamePiece, AprilTag
-    };
+    AutoBalance autoBalanceTest ;
 
-    public Target selectedTarget = Target.GamePiece;
 
     public RobotContainer() {
         configureButtonBindings();
         createAutonomousCommands();
         buildAutoOptions();
 
-        driveSub.setDefaultCommand( new DriveRobot(driveSub, clawSub, visionSub, autoAlignButton, driverController, xAxis, yawAxis));
+        autoBalanceTest = new AutoBalance(driveSub) ;
+        SmartDashboard.putData("auto balance", autoBalanceTest);
 
-            
-        // DriveDefaultCommand
-                // A split-stick arcade command, with forward/backward controlled by the left
-                // hand, and turning controlled by the right.
-                // new RunCommand(
-                //         () -> {
-
-                            // SmartDashboard.putString("Align Type", visionSub.getSelectedAlign().toString()) ;
-
-                            // boolean autoSteer = autoAlignButton.getAsBoolean();
-
-                            // double x = driverController.getRawAxis(xAxis);
-                            // if (Math.abs(x) < 0.01) {
-                            //     x = 0.0;
-                            // }
-                            // double yaw = -driverController.getRawAxis(yawAxis);
-                            // if (Math.abs(yaw) < 0.01) {
-                            //     yaw = 0.0;
-                            // }
-                            // double speed = -x;
-
-                            // // // If we're going forward, use "full" speed
-                            // // if (speed > 0.0) {
-                            // // speed = speed * 0.5;
-                            // // } else {
-                            // // // we're going backward, so use slower speed
-                            // // speed = speed * 0.75;
-                            // // }
-                            // double turn = -yaw;
-
-                            // if (!autoSteer || !clawSub.isOpen()) {
-                            //     yaw = -turn;
-
-                            //     // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
-                            //     yawMultiplier = 0.5f;
-
-                            //     double yawSign = 1.0;
-                            //     if (yaw < 0.0) {
-                            //         yawSign = -1.0;
-                            //     }
-                            //     yaw = yawSign * (yaw * yaw)
-                            //             * yawMultiplier;
-                            //     if (Math.abs(yaw) < 0.02f) {
-                            //         yaw = 0.0f;
-                            //     }
-                            //     lastAutoSteer = false;
-                            // } else {
-                            //     if (!lastAutoSteer) {
-                            //         pid.reset();
-                            //     }
-                            //     yaw = -pid.calculate(visionSub.gamePieceDistanceFromCenter());
-                            //     lastAutoSteer = true;
-                            // }
-                            // NetworkTableInstance.getDefault().getEntry("drive/speed").setDouble(-speed);
-                            // NetworkTableInstance.getDefault().getEntry("drive/yaw").setDouble(yaw);
-
-                            // driveSub.drive(-speed, yaw * 0.8, true);
-                        // },
-                        // driveSub)
+        driveSub.setDefaultCommand( 
+            new DriveRobot(
+                driveSub, clawSub, visionSub, autoAlignButton, toggleTargetButton, driverController, xAxis, yawAxis));
 
         // armSub.setDefaultCommand(
         //     new MoveArmManual(armSub));
@@ -192,10 +116,10 @@ public class RobotContainer {
         /* * * * * * CLAW BUTTONS * * * * * */
 
         driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
-        driverToggleClawButton.onTrue(toggleClaw);
+        driverToggleClawButton.onTrue(toggleClawCmd);
 
         operatorToggleClawButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonY);
-        operatorToggleClawButton.onTrue(toggleClaw);
+        operatorToggleClawButton.onTrue(toggleClawCmd);
 
         /* * * * * * ARM BUTTONS * * * * * */
 
@@ -219,21 +143,8 @@ public class RobotContainer {
 
         /* * * * * * VISION BUTTONS * * * * * */
 
-        changeTargetGamePieceButton = new JoystickAnalogButton(driverController, Constants.RadioMasterConstants.ButtonD, 0.0, 1.0);
-        changeTargetAprilTagButton = new JoystickAnalogButton(driverController, 2, 0.0, 1.0);
-        changeTargetPoleButton = new JoystickAnalogButton(driverController, 2, -1.0, 0.0);
-
+        toggleTargetButton = new JoystickAnalogButton(driverController, 6, 0.0, 1.0);
         autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
-        // autoAlignButton.onTrue(new AutoAlign(visionSub, driveSub, robotCont));
-
-        // alignWithAprilTagsButton = new JoystickButton(driverController, 6);
-        // alignWithAprilTagsButton.onTrue(new AlignWithAprilTags(visionSub, driveSub));
-
-        // alignWithGamePieceButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
-        // alignWithGamePieceButton.onTrue(new AlignWithGamePiece(visionSub, driveSub));
-
-        // alignWithPoleButton = new JoystickButton(driverController, 8);
-        // alignWithPoleButton.onTrue(new AlignWithPole(visionSub, driveSub));
     }
 
     private void buildAutoOptions() {
@@ -245,12 +156,14 @@ public class RobotContainer {
     private void createAutonomousCommands() {
         ArmPathGenerator toTop = new ArmPathGenerator(Position.Top, armSub);
         ArmPathGenerator toResting = new ArmPathGenerator(Position.Resting, armSub);
+        ArmPathGenerator toFloor = new ArmPathGenerator(Position.Floor, armSub);
+        ArmPathGenerator toMiddle = new ArmPathGenerator(Position.Middle, armSub);
 
-        HashMap<String, Command> eventMap = new HashMap<>();
-        // eventMap.put("MoveArm", toBottomApg.getPathFromResting());
-        // eventMap.put("OpenClaw", openClaw);
-        // eventMap.put("MoveToResting", toRestingApg.getPathFromBottom());
-        // // eventMap.put("AutoBalance", autoBalance);
+        HashMap<String, Command> grabPieceEventMap = new HashMap<>();
+        grabPieceEventMap.put("OpenClaw1", new OpenClaw(clawSub));
+        grabPieceEventMap.put("GoToFloor", toFloor.getPathFromResting());
+        grabPieceEventMap.put("GoToMiddle", toMiddle.getPathFromFloor());
+        grabPieceEventMap.put("OpenClaw2", new OpenClaw(clawSub));
 
         PathPlannerTrajectory traj = PathPlanner.loadPath(
                 "Reverse",
@@ -259,25 +172,7 @@ public class RobotContainer {
 
         RamseteController controller = new RamseteController();
 
-        // Command resetOdometry = new InstantCommand(() -> {
-        // // driveSub.resetEncoders();
-        // driveSub.resetOdometry(traj.getInitialPose());
-        // });
-
-        // Command pathFollowingCommand = new PPRamseteCommand(
-        // traj,
-        // driveSub::getPose,
-        // controller,
-        // new DifferentialDriveKinematics(0.75),
-        // driveSub::setSpeeds,
-        // true,
-        // driveSub);
-
-        // Command followPathWithEvents = new FollowPathWithEvents(
-        // pathFollowingCommand,
-        // traj.getMarkers(),
-        // eventMap);
-
+        /* Place Game Piece on Top Row, Reverse Out of Community, Engage Charging Station */
         placeTopAndEngage = new SequentialCommandGroup();
         placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         placeTopAndEngage.addCommands(toTop.getPathFromResting());
@@ -296,6 +191,7 @@ public class RobotContainer {
                 driveSub));
         placeTopAndEngage.addCommands(new AutoBalance(driveSub));
 
+        /* Place Game Piece on Top Row, Reverse Out of Community */
         placeTopAndReverse = new SequentialCommandGroup();
         placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         placeTopAndReverse.addCommands(toTop.getPathFromResting());
@@ -312,6 +208,25 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 driveSub));
+        
+        /* Place Game Piece on Top Row, Reverse out of Community, Grab Game Piece, Place Game Piece on Middle Row */
+        placeTopAndGrabPiece = new SequentialCommandGroup();
+        placeTopAndGrabPiece.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        placeTopAndGrabPiece.addCommands(toTop.getPathFromResting());
+        placeTopAndGrabPiece.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        placeTopAndGrabPiece.addCommands(new OpenClaw(clawSub));
+        placeTopAndGrabPiece.addCommands(toResting.getPathFromTop());
+        placeTopAndGrabPiece.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        placeTopAndGrabPiece.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
+        placeTopAndGrabPiece.addCommands(new PPRamseteCommand(
+                traj,
+                driveSub::getPose,
+                controller,
+                new DifferentialDriveKinematics(0.75),
+                driveSub::setSpeeds,
+                true,
+                driveSub));
+        placeTopAndGrabPiece.addCommands(toResting.getPathFromMiddle());
 
         autoChooser.setDefaultOption("Place on Top and Leave Community", placeTopAndEngage);
         autoChooser.addOption("Place on Top and Engage Station", placeTopAndReverse);
@@ -320,9 +235,5 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
-    }
-
-    public Target getSelectedAlign() {
-        return selectedTarget;
     }
 }

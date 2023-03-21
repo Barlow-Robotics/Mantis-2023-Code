@@ -24,9 +24,13 @@ public class AutoBalance extends CommandBase {
     @Override
     public void execute() {
         double error = driveSub.getPitch();
-        // Does the navX need to be zeroed/reset/calibrated?
+
         if (Math.abs(error) >= Constants.DriveConstants.BalanceTolerance) {
-            driveSub.setSpeeds(Constants.DriveConstants.AutoBalanceSpeed * error, Constants.DriveConstants.AutoBalanceSpeed * error);
+            driveSub.setSpeeds(
+                Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error), 
+                Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error));
+        } else {
+            driveSub.setSpeeds(0.0, 0.0);
         }
     }
 
