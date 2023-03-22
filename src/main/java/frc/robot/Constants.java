@@ -81,8 +81,8 @@ public final class Constants {
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 
-        public static final double BalanceTolerance = 2.5;
-        public static final double AutoBalanceSpeed = 0.5;
+        public static final double BalanceTolerance = 5.5;
+        public static final double AutoBalanceSpeed = 0.15;
 
         public static final double AutoAlignkP = 0.003;
         public static final double AutoAlignkI = 0.0;

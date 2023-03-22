@@ -14,7 +14,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 //import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,21 +22,19 @@ import frc.robot.Constants.ClawConstants;
 import frc.robot.sim.PhysicsSim;
 
 public class Claw extends SubsystemBase {
-    /** Creates a new Claw. */
 
     WPI_TalonFX clawMotor; // For adjusting angle
 
     // Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
-    Solenoid closeSolenoid ;
-    Solenoid openSolenoid ;
+    Solenoid closeSolenoid;
+    Solenoid openSolenoid;
 
     TimeOfFlight distanceSensor = new TimeOfFlight(Constants.ClawConstants.DistanceSensorID);
 
     // Add distance sensor from playing with fusion
 
     Arm armSub;
-    // private final Timer timer = new Timer();
 
     boolean autoCloseEnabled = true;
     boolean open = false;

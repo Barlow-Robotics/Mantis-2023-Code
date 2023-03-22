@@ -55,8 +55,8 @@ public class AutoBalance extends CommandBase {
         ff = value ;
     }
 
-    public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Feed Forward", this::getFF, this::setFF);
-    }
+    // public void initSendable(SendableBuilder builder) {
+    //     builder.addDoubleProperty("Feed Forward", this::getFF, this::setFF);
+    // }
 
 }

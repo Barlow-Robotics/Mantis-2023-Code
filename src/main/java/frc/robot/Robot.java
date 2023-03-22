@@ -92,6 +92,10 @@ public class Robot extends TimedRobot {
                     new PrintCommand("Calibration Complete"));
         }
 
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
+        }
+
         autonomousCommand = robotContainer.getAutonomousCommand();
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {

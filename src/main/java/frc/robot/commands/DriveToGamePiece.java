@@ -16,7 +16,7 @@ public class DriveToGamePiece extends CommandBase {
     Drive driveSub;
     Vision visionSub;
 
-    double targetDistance; //meters?
+    double targetDistance = 0.5; //meters
 
     double startingLeftDistance;
     double startingRightDistance;
@@ -29,10 +29,10 @@ public class DriveToGamePiece extends CommandBase {
 
     public PIDController pid;
 
-    public DriveToGamePiece(Drive d, Vision v, double dist) {
+    public DriveToGamePiece(Drive d, Vision v) {
+        
         driveSub = d;
         visionSub = v;
-        targetDistance = dist;
 
         pid = new PIDController(
                 Constants.DriveConstants.AutoAlignkP,

@@ -82,21 +82,21 @@ public class RobotContainer {
 
     AutoBalance autoBalanceTest;
 
-
     public RobotContainer() {
         configureButtonBindings();
         createAutonomousCommands();
         buildAutoOptions();
 
-        autoBalanceTest = new AutoBalance(driveSub) ;
+        autoBalanceTest = new AutoBalance(driveSub);
         SmartDashboard.putData("auto balance", autoBalanceTest);
 
-        driveSub.setDefaultCommand( 
-            new DriveRobot(
-                driveSub, clawSub, visionSub, autoAlignButton, toggleTargetButton, driverController, throttleJoystickID, turnJoystickID));
+        driveSub.setDefaultCommand(
+                new DriveRobot(
+                        driveSub, clawSub, visionSub, autoAlignButton, toggleTargetButton, driverController,
+                        throttleJoystickID, turnJoystickID));
 
         // armSub.setDefaultCommand(
-        //     new MoveArmManual(armSub));
+        // new MoveArmManual(armSub));
     }
 
     private void configureButtonBindings() {
@@ -162,7 +162,7 @@ public class RobotContainer {
         ArmPathGenerator toFloor = new ArmPathGenerator(Position.Floor, armSub);
         ArmPathGenerator toMiddle = new ArmPathGenerator(Position.Middle, armSub);
 
-        ArrayList<Translation2d> gamePiecePoints = new ArrayList<Translation2d>() ;
+        ArrayList<Translation2d> gamePiecePoints = new ArrayList<Translation2d>();
         gamePiecePoints.add(new Translation2d(7.09, 4.61));
         gamePiecePoints.add(new Translation2d(7.09, 0.9));
         gamePiecePoints.add(new Translation2d(9.51, 4.57));
@@ -172,35 +172,38 @@ public class RobotContainer {
                 "Reverse",
                 new PathConstraints(1, 4),
                 true);
-        
+
         PathPlannerTrajectory engagePath = PathPlanner.loadPath(
-            "ChargingStation",
-            new PathConstraints(1, 4),
-            true);    
-            
+                "ChargingStation",
+                new PathConstraints(1, 4),
+                true);
+
         PathPlannerTrajectory shortSideGamePiecePath1 = PathPlanner.loadPath(
-            "GrabPieceShortSide1",
-            new PathConstraints(1, 4),
-            true);
+                "GrabPieceShortSide1",
+                new PathConstraints(1, 4),
+                true);
 
         PathPlannerTrajectory shortSideGamePiecePath2 = PathPlanner.loadPath(
-            "GrabPieceShortSide2",
-            new PathConstraints(1, 4),
-            false);
+                "GrabPieceShortSide2",
+                new PathConstraints(1, 4),
+                false);
 
         PathPlannerTrajectory longSideGamePiecePath1 = PathPlanner.loadPath(
-            "GrabPieceLongSide1",
-            new PathConstraints(1, 4),
-            true);
+                "GrabPieceLongSide1",
+                new PathConstraints(1, 4),
+                true);
 
         PathPlannerTrajectory longSideGamePiecePath2 = PathPlanner.loadPath(
-            "GrabPieceLongSide2",
-            new PathConstraints(1, 4),
-            false);
+                "GrabPieceLongSide2",
+                new PathConstraints(1, 4),
+                false);
 
         RamseteController controller = new RamseteController();
 
-        /* Place Game Piece on Top Row, Reverse Out of Community, Engage Charging Station */
+        /*
+         * Place Game Piece on Top Row, Reverse Out of Community, Engage Charging
+         * Station
+         */
         placeTopAndEngage = new SequentialCommandGroup();
         placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         placeTopAndEngage.addCommands(toTop.getPathFromResting());
@@ -208,7 +211,7 @@ public class RobotContainer {
         placeTopAndEngage.addCommands(new OpenClaw(clawSub));
         placeTopAndEngage.addCommands(toResting.getPathFromTop());
         placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        placeTopAndEngage.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
+        placeTopAndEngage.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
         placeTopAndEngage.addCommands(new PPRamseteCommand(
                 engagePath,
                 driveSub::getPose,
@@ -221,13 +224,13 @@ public class RobotContainer {
 
         /* Place Game Piece on Top Row, Reverse Out of Community */
         placeTopAndReverse = new SequentialCommandGroup();
-        placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        placeTopAndReverse.addCommands(toTop.getPathFromResting());
-        placeTopAndReverse.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
-        placeTopAndReverse.addCommands(new OpenClaw(clawSub));
-        placeTopAndReverse.addCommands(toResting.getPathFromTop());
+        // placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        // placeTopAndReverse.addCommands(toTop.getPathFromResting());
+        // placeTopAndReverse.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        // placeTopAndReverse.addCommands(new OpenClaw(clawSub));
+        // placeTopAndReverse.addCommands(toResting.getPathFromTop());
         placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        placeTopAndReverse.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
+        placeTopAndReverse.addCommands(new InstantCommand(() -> driveSub.resetOdometry(reversePath.getInitialPose()), driveSub));
         placeTopAndReverse.addCommands(new PPRamseteCommand(
                 reversePath,
                 driveSub::getPose,
@@ -236,15 +239,21 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 driveSub));
-        
-        /* Place Game Piece on Top Row, Reverse over Short Community Line, Grab Game Piece, Place Game Piece on Middle Row */
+
+        /*
+         * Place Game Piece on Top Row, Reverse over Short Community Line, Grab Game
+         * Piece, Place Game Piece on Middle Row
+         */
         placeTopAndGrabPieceShortSide = new SequentialCommandGroup();
-        placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        placeTopAndGrabPieceShortSide.addCommands(toTop.getPathFromResting());
-        placeTopAndGrabPieceShortSide.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
-        placeTopAndGrabPieceShortSide.addCommands(new OpenClaw(clawSub));
-        placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromTop());
-        placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
+        // placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() ->
+        // clawSub.disableAutoClose()));
+        // placeTopAndGrabPieceShortSide.addCommands(toTop.getPathFromResting());
+        // placeTopAndGrabPieceShortSide.addCommands(new
+        // edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        // placeTopAndGrabPieceShortSide.addCommands(new OpenClaw(clawSub));
+        // placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromTop());
+        placeTopAndGrabPieceShortSide.addCommands(
+                new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath1,
                 driveSub::getPose,
@@ -252,22 +261,26 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub
-            ).alongWith(toFloor.getPathFromResting()));
-        placeTopAndGrabPieceShortSide.addCommands(new DriveToGamePiece(driveSub, visionSub, 0.5));
-        placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
-                shortSideGamePiecePath2,
-                driveSub::getPose,
-                controller,
-                new DifferentialDriveKinematics(0.75),
-                driveSub::setSpeeds,
-                true,
-                driveSub
-            ).alongWith(toMiddle.getPathFromFloor()));
-        placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromMiddle());
+                driveSub)/* .alongWith(toFloor.getPathFromResting()) */);
+        // placeTopAndGrabPieceShortSide.addCommands(new DriveToGamePiece(driveSub,
+        // visionSub));
+        // placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() ->
+        // clawSub.enableAutoClose()));
+        // placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
+        // shortSideGamePiecePath2,
+        // driveSub::getPose,
+        // controller,
+        // new DifferentialDriveKinematics(0.75),
+        // driveSub::setSpeeds,
+        // true,
+        // driveSub
+        // ).alongWith(toMiddle.getPathFromFloor()));
+        // placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromMiddle());
 
-        /* Place Game Piece on Top Row, Reverse over Long Community Line, Grab Game Piece, Place Game Piece on Middle Row */
+        /*
+         * Place Game Piece on Top Row, Reverse over Long Community Line, Grab Game
+         * Piece, Place Game Piece on Middle Row
+         */
         placeTopAndGrabPieceLongSide = new SequentialCommandGroup();
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         placeTopAndGrabPieceLongSide.addCommands(toTop.getPathFromResting());
@@ -276,35 +289,34 @@ public class RobotContainer {
         placeTopAndGrabPieceLongSide.addCommands(toResting.getPathFromTop());
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
         placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
-                shortSideGamePiecePath1,
+                longSideGamePiecePath1,
                 driveSub::getPose,
                 controller,
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub
-            ).alongWith(toFloor.getPathFromResting()));
-        placeTopAndGrabPieceLongSide.addCommands(new DriveToGamePiece(driveSub, visionSub, 0.5));
+                driveSub).alongWith(toFloor.getPathFromResting()));
+        placeTopAndGrabPieceLongSide.addCommands(new DriveToGamePiece(driveSub, visionSub));
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
-                shortSideGamePiecePath2,
+                longSideGamePiecePath2,
                 driveSub::getPose,
                 controller,
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub
-            ).alongWith(toMiddle.getPathFromFloor()));
+                driveSub).alongWith(toMiddle.getPathFromFloor()));
         placeTopAndGrabPieceLongSide.addCommands(toResting.getPathFromMiddle());
 
-        autoChooser.setDefaultOption("Place on Top, Leave Community", placeTopAndEngage);
-        autoChooser.addOption("Place on Top, Engage Station", placeTopAndReverse);
+        autoChooser.setDefaultOption("Place on Top, Leave Community", placeTopAndReverse);
+        autoChooser.addOption("Place on Top, Engage Station", placeTopAndEngage);
         autoChooser.addOption("Place on Top, Leave Short Community, Pick Up Game Piece", placeTopAndGrabPieceShortSide);
         autoChooser.addOption("Place on Top, Leave Long Community, Pick Up Game Piece", placeTopAndGrabPieceLongSide);
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        return this.placeTopAndReverse;
+        // return autoChooser.getSelected();
     }
 }
