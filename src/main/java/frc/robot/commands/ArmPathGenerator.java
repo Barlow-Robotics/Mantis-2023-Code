@@ -12,848 +12,839 @@ import frc.robot.subsystems.Arm.Position;
 import frc.robot.Constants;
 
 public class ArmPathGenerator extends CommandBase {
-    /** Creates a new CommandGenerator. */
+        Arm armSub;
+        Arm.Position to;
 
-    Arm armSub;
-    Arm.Position to;
-
-    public ArmPathGenerator(Arm.Position to, Arm armSub) {
-        // Use addRequirements() here to declare subsystem dependencies.
-        this.to = to;
-        this.armSub = armSub;
-        addRequirements(armSub);
-    }
-
-    /* * * * * * FROM RESTING * * * * * */
-
-    public SequentialCommandGroup getPathFromResting() {
-
-        System.out.println("***** getPathFromResting");
-        SequentialCommandGroup g = new SequentialCommandGroup();
-
-        switch (to) {
-            case Resting:
-                break; // do nothing in this case since we're already at resting
-
-            case Bottom:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.BottomArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Middle:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.MiddleArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Top:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.TopArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Floor:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.FloorArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case PlayerStation:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.PlayerStationArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Transition:
-                break; // Not applicable
+        public ArmPathGenerator(Arm.Position to, Arm armSub) {
+                this.to = to;
+                this.armSub = armSub;
+                addRequirements(armSub);
         }
 
-        return g;
-    }
+        /* * * * * * FROM RESTING * * * * * */
 
-    /* * * * * * FROM FLOOR * * * * * */
+        public SequentialCommandGroup getPathFromResting() {
 
-    public SequentialCommandGroup getPathFromFloor() {
-        System.out.println("***** getPathFromFloor");
+                System.out.println("***** getPathFromResting");
+                SequentialCommandGroup g = new SequentialCommandGroup();
 
-        SequentialCommandGroup g = new SequentialCommandGroup();
+                switch (to) {
+                        case Resting:
+                                break; // do nothing in this case since we're already at resting
 
-        switch (to) {
-            case Resting:
-                g.addCommands(
-                        new MoveArm(
+                        case Bottom:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Middle:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Top:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.TopArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Floor:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case PlayerStation:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.PlayerStationArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Transition:
+                                break; // Not applicable
+                }
+
+                return g;
+        }
+
+        /* * * * * * FROM FLOOR * * * * * */
+
+        public SequentialCommandGroup getPathFromFloor() {
+                System.out.println("***** getPathFromFloor");
+
+                SequentialCommandGroup g = new SequentialCommandGroup();
+
+                switch (to) {
+                        case Resting:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.RestingArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Bottom:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Middle:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Top:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.TopArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Floor:
+                                break; // Not applicable
+
+                        case PlayerStation:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.PlayerStationArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Transition:
+                                break;// Not applicable
+                }
+
+                return g;
+        }
+
+        /* * * * * * FROM BOTTOM * * * * * */
+
+        public SequentialCommandGroup getPathFromBottom() {
+                System.out.println("***** getPathFromBottom");
+
+                SequentialCommandGroup g = new SequentialCommandGroup();
+
+                switch (to) {
+                        case Resting:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.RestingArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Bottom:
+                                break; // Not applicable
+
+                        case Middle:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Top:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.TopArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Floor:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case PlayerStation:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.PlayerStationArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Transition:
+                                break; // todo
+                }
+
+                return g;
+        }
+
+        /* * * * * * FROM MIDDLE * * * * * */
+
+        public SequentialCommandGroup getPathFromMiddle() {
+                System.out.println("***** getPathFromMiddle");
+
+                SequentialCommandGroup g = new SequentialCommandGroup();
+
+                switch (to) {
+                        case Resting:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.RestingArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Bottom:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Middle:
+                                break; // Not applicable
+
+                        case Top:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.TopArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Floor:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case PlayerStation:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.PlayerStationArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Transition:
+                                break; // Not applicable
+                }
+
+                return g;
+        }
+
+        /* * * * * * FROM TOP * * * * * */
+
+        public SequentialCommandGroup getPathFromTop() {
+                System.out.println("***** getPathFromTop");
+
+                SequentialCommandGroup g = new SequentialCommandGroup();
+
+                switch (to) {
+                        case Resting:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.RestingArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Bottom:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Middle:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Top:
+                                break; // Not applicable
+
+                        case Floor:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case PlayerStation:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.PlayerStationArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Transition:
+                                break;// todo
+                }
+
+                return g;
+        }
+
+        /* * * * * * FROM PLAYER STATION * * * * * */
+
+        private SequentialCommandGroup getPathFromPlayerStation() {
+                System.out.println("***** getPathFromPlayerStation");
+
+                SequentialCommandGroup g = new SequentialCommandGroup();
+
+                switch (to) {
+                        case Resting:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.PlayerStationArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.RestingArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.RestingArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                to));
+                                break;
+
+                        case Bottom:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.BottomArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.BottomArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Middle:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.MiddleArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.MiddleArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Top:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.PlayerStationArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.TopArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.TopArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case Floor:
+                                g.addCommands(
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                Constants.ArmConstants.RotateVel,
+                                                                Constants.ArmConstants.RotateAccel,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                0.0,
+                                                                0.0,
+                                                                Position.Transition),
+                                                new MoveArm(
+                                                                armSub,
+                                                                Constants.ArmConstants.FloorArmAngle,
+                                                                0.0,
+                                                                0.0,
+                                                                Constants.ArmConstants.FloorArmLength,
+                                                                Constants.ArmConstants.ExtendVel,
+                                                                Constants.ArmConstants.ExtendAccel,
+                                                                to));
+                                break;
+
+                        case PlayerStation:
+                                break;
+
+                        case Transition:
+                                break; // Not Applicable
+                }
+
+                return g;
+        }
+
+        private SequentialCommandGroup getPathFromTransition() {
+                System.out.println("***** getPathFromTransition");
+
+                SequentialCommandGroup g = new SequentialCommandGroup();
+
+                // Moving from transition is a tricky case so we're using a simple, but
+                // suboptimal approach
+                // First, no matter where we are, we'll retract the arm all the way. After that,
+                // we'll move
+                // to the desured angle and then move to the desired length. This is a three
+                // step approach
+                // because if we're in transition, we don't realy know where we are.
+                // In the future, maybe replace this with something smarter.
+
+                Command first = new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.FloorArmAngle,
+                                Constants.ArmConstants.MiddleArmAngle,
                                 0.0,
                                 0.0,
-                                Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
                                 Constants.ArmConstants.RestingArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Bottom:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Middle:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.FloorArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.MiddleArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
+                                Position.Transition).withTimeout(4.0);
 
-            case Top:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.FloorArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.TopArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
+                g.addCommands(first);
+                g.addCommands(getPathFromResting());
 
-            case Floor:
-                break; // Not applicable
-
-            case PlayerStation:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.PlayerStationArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Transition:
-                break;// Not applicable
+                return g;
         }
 
-        return g;
-    }
+        @Override
+        public void initialize() {
 
-    /* * * * * * FROM BOTTOM * * * * * */
+                SequentialCommandGroup g = null;
 
-    public SequentialCommandGroup getPathFromBottom() {
-        System.out.println("***** getPathFromBottom");
+                switch (armSub.getState()) {
+                        case Resting:
+                                g = getPathFromResting();
+                                break;
+                        case Bottom:
+                                g = getPathFromBottom();
+                                break;
+                        case Middle:
+                                g = getPathFromMiddle();
+                                break;
+                        case Top:
+                                g = getPathFromTop();
+                                break;
+                        case Floor:
+                                g = getPathFromFloor();
+                                break;
+                        case PlayerStation:
+                                g = getPathFromPlayerStation();
+                                break;
+                        case Transition:
+                                g = getPathFromTransition();
+                                break;
+                }
 
-        SequentialCommandGroup g = new SequentialCommandGroup();
-
-        switch (to) {
-            case Resting:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.RestingArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Bottom:
-                break; // Not applicable
-
-            case Middle:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.BottomArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.MiddleArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Top:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.BottomArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.TopArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Floor:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.BottomArmLength,
-                                0.0,
-                                0.0,
-                                to),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.FloorArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case PlayerStation:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.PlayerStationArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Transition:
-                break; // todo
+                if (g != null) {
+                        g.schedule();
+                }
         }
 
-        return g;
-    }
-
-    /* * * * * * FROM MIDDLE * * * * * */
-
-    public SequentialCommandGroup getPathFromMiddle() {
-        System.out.println("***** getPathFromMiddle");
-
-        SequentialCommandGroup g = new SequentialCommandGroup();
-
-        switch (to) {
-            case Resting:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.RestingArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Bottom:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.BottomArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.BottomArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Middle:
-                break; // Not applicable
-
-            case Top:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.MiddleArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.TopArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Floor:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.FloorArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.FloorArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case PlayerStation:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.PlayerStationArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Transition:
-                break; // Not applicable
+        @Override
+        public void execute() {
         }
 
-        return g;
-    }
-
-    /* * * * * * FROM TOP * * * * * */
-
-    public SequentialCommandGroup getPathFromTop() {
-        System.out.println("***** getPathFromTop");
-
-        SequentialCommandGroup g = new SequentialCommandGroup();
-
-        switch (to) {
-            case Resting:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.RestingArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Bottom:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.BottomArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.BottomArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Middle:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.MiddleArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.MiddleArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Top:
-                break; // Not applicable
-
-            case Floor:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.FloorArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.FloorArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case PlayerStation:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.PlayerStationArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Transition:
-                break;// todo
+        @Override
+        public void end(boolean interrupted) {
         }
 
-        return g;
-    }
-
-    /* * * * * * FROM PLAYER STATION * * * * * */
-
-    private SequentialCommandGroup getPathFromPlayerStation() {
-        System.out.println("***** getPathFromPlayerStation");
-
-        SequentialCommandGroup g = new SequentialCommandGroup();
-
-        switch (to) {
-            case Resting:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.PlayerStationArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.RestingArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.RestingArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
-                                0.0,
-                                0.0,
-                                to));
-                break;
-
-            case Bottom:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.BottomArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.BottomArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Middle:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.MiddleArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Top:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.PlayerStationArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.TopArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.TopArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case Floor:
-                g.addCommands(
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                Constants.ArmConstants.RotateVel,
-                                Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.FloorArmLength,
-                                0.0,
-                                0.0,
-                                Position.Transition),
-                        new MoveArm(
-                                armSub,
-                                Constants.ArmConstants.FloorArmAngle,
-                                0.0,
-                                0.0,
-                                Constants.ArmConstants.FloorArmLength,
-                                Constants.ArmConstants.ExtendVel,
-                                Constants.ArmConstants.ExtendAccel,
-                                to));
-                break;
-
-            case PlayerStation:
-                break;
-
-            case Transition:
-                break; // Not Applicable
+        @Override
+        public boolean isFinished() {
+                return true;
         }
-
-        return g;
-    }
-
-    private SequentialCommandGroup getPathFromTransition() {
-        System.out.println("***** getPathFromTransition");
-
-        SequentialCommandGroup g = new SequentialCommandGroup();
-
-        // Moving from transition is a tricky case so we're using a simple, but
-        // suboptimal approach
-        // First, no matter where we are, we'll retract the arm all the way. After that,
-        // we'll move
-        // to the desured angle and then move to the desired length. This is a three
-        // step approach
-        // because if we're in transition, we don't realy know where we are.
-        // In the future, maybe replace this with something smarter.
-
-        Command first = new MoveArm(
-                armSub,
-                Constants.ArmConstants.MiddleArmAngle,
-                0.0,
-                0.0,
-                Constants.ArmConstants.RestingArmAngle,
-                Constants.ArmConstants.ExtendVel,
-                Constants.ArmConstants.ExtendAccel,
-                Position.Transition).withTimeout(4.0);
-
-        g.addCommands(
-                first);
-
-        g.addCommands(getPathFromResting());
-
-        return g;
-    }
-
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-
-        SequentialCommandGroup g = null;
-
-        switch (armSub.getState()) {
-            case Resting:
-                g = getPathFromResting();
-                break;
-            case Bottom:
-                g = getPathFromBottom();
-                break;
-            case Middle:
-                g = getPathFromMiddle();
-                break;
-            case Top:
-                g = getPathFromTop();
-                break;
-            case Floor:
-                g = getPathFromFloor();
-                break;
-            case PlayerStation:
-                g = getPathFromPlayerStation();
-                break;
-            case Transition:
-                g = getPathFromTransition();
-                break;
-        }
-
-        if (g != null) {
-            g.schedule();
-        }
-    }
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return true;
-    }
 }

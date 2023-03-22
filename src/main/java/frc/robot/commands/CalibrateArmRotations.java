@@ -9,37 +9,31 @@ import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class CalibrateArmRotations extends CommandBase {
-  /** Creates a new CalibrateArmRotations. */
-  
-  private Arm armSub;
 
-  public CalibrateArmRotations(Arm a) {
-    armSub = a;
-    addRequirements(armSub);
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+    private Arm armSub;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    armSub.startRotating(Constants.ArmConstants.RotationCalibrationVelocity);
-  }
+    public CalibrateArmRotations(Arm a) {
+        armSub = a;
+        addRequirements(armSub);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    // armSub.StartRotatingAtVelocty(Constants.ArmConstants.RotationCalibrationVelocity);
-  }
+    @Override
+    public void initialize() {
+        armSub.startRotating(Constants.ArmConstants.RotationCalibrationVelocity);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    armSub.startRotating(0);
-  }
+    @Override
+    public void execute() {
+        // armSub.StartRotatingAtVelocty(Constants.ArmConstants.RotationCalibrationVelocity);
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return armSub.isAtMinAngle();
-  }
+    @Override
+    public void end(boolean interrupted) {
+        armSub.startRotating(0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return armSub.isAtMinAngle();
+    }
 }

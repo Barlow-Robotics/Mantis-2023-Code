@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -26,6 +27,7 @@ import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.DriveDistance;
 import frc.robot.commands.DriveRobot;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
@@ -63,11 +65,11 @@ public class RobotContainer {
     public Trigger toggleTargetButton;
     public Trigger autoAlignButton;
 
-    /* Drive */
-    public int xAxis;
-    public int yawAxis;
-    public int angleAxis;
-    public int extensionAxis;
+    /* Drive & Arm Movement */
+    public int throttleJoystickID;
+    public int turnJoystickID;
+    public int angleJoystickID;
+    public int extensionJoystickID;
 
     /* Shuffleboard */
     SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -75,9 +77,10 @@ public class RobotContainer {
 
     SequentialCommandGroup placeTopAndEngage;
     SequentialCommandGroup placeTopAndReverse;
-    SequentialCommandGroup placeTopAndGrabPiece;
+    SequentialCommandGroup placeTopAndGrabPieceShortSide;
+    SequentialCommandGroup placeTopAndGrabPieceLongSide;
 
-    AutoBalance autoBalanceTest ;
+    AutoBalance autoBalanceTest;
 
 
     public RobotContainer() {
@@ -90,7 +93,7 @@ public class RobotContainer {
 
         driveSub.setDefaultCommand( 
             new DriveRobot(
-                driveSub, clawSub, visionSub, autoAlignButton, toggleTargetButton, driverController, xAxis, yawAxis));
+                driveSub, clawSub, visionSub, autoAlignButton, toggleTargetButton, driverController, throttleJoystickID, turnJoystickID));
 
         // armSub.setDefaultCommand(
         //     new MoveArmManual(armSub));
@@ -108,10 +111,10 @@ public class RobotContainer {
 
         // xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
         // yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;
-        xAxis = Constants.RadioMasterConstants.LeftGimbalY;
-        yawAxis = Constants.RadioMasterConstants.RightGimbalX;
-        angleAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
-        extensionAxis = Constants.LogitechDualActionConstants.RightJoystickX;
+        throttleJoystickID = Constants.RadioMasterConstants.LeftGimbalY;
+        turnJoystickID = Constants.RadioMasterConstants.RightGimbalX;
+        angleJoystickID = Constants.LogitechDualActionConstants.LeftJoystickY;
+        extensionJoystickID = Constants.LogitechDualActionConstants.RightJoystickX;
 
         /* * * * * * CLAW BUTTONS * * * * * */
 
@@ -159,16 +162,41 @@ public class RobotContainer {
         ArmPathGenerator toFloor = new ArmPathGenerator(Position.Floor, armSub);
         ArmPathGenerator toMiddle = new ArmPathGenerator(Position.Middle, armSub);
 
-        HashMap<String, Command> grabPieceEventMap = new HashMap<>();
-        grabPieceEventMap.put("OpenClaw1", new OpenClaw(clawSub));
-        grabPieceEventMap.put("GoToFloor", toFloor.getPathFromResting());
-        grabPieceEventMap.put("GoToMiddle", toMiddle.getPathFromFloor());
-        grabPieceEventMap.put("OpenClaw2", new OpenClaw(clawSub));
+        ArrayList<Translation2d> gamePiecePoints = new ArrayList<Translation2d>() ;
+        gamePiecePoints.add(new Translation2d(7.09, 4.61));
+        gamePiecePoints.add(new Translation2d(7.09, 0.9));
+        gamePiecePoints.add(new Translation2d(9.51, 4.57));
+        gamePiecePoints.add(new Translation2d(9.51, 0.9));
 
-        PathPlannerTrajectory traj = PathPlanner.loadPath(
+        PathPlannerTrajectory reversePath = PathPlanner.loadPath(
                 "Reverse",
                 new PathConstraints(1, 4),
                 true);
+        
+        PathPlannerTrajectory engagePath = PathPlanner.loadPath(
+            "ChargingStation",
+            new PathConstraints(1, 4),
+            true);    
+            
+        PathPlannerTrajectory shortSideGamePiecePath1 = PathPlanner.loadPath(
+            "GrabPieceShortSide1",
+            new PathConstraints(1, 4),
+            true);
+
+        PathPlannerTrajectory shortSideGamePiecePath2 = PathPlanner.loadPath(
+            "GrabPieceShortSide2",
+            new PathConstraints(1, 4),
+            false);
+
+        PathPlannerTrajectory longSideGamePiecePath1 = PathPlanner.loadPath(
+            "GrabPieceLongSide1",
+            new PathConstraints(1, 4),
+            true);
+
+        PathPlannerTrajectory longSideGamePiecePath2 = PathPlanner.loadPath(
+            "GrabPieceLongSide2",
+            new PathConstraints(1, 4),
+            false);
 
         RamseteController controller = new RamseteController();
 
@@ -182,7 +210,7 @@ public class RobotContainer {
         placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         placeTopAndEngage.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
         placeTopAndEngage.addCommands(new PPRamseteCommand(
-                traj,
+                engagePath,
                 driveSub::getPose,
                 controller,
                 new DifferentialDriveKinematics(0.75),
@@ -201,7 +229,7 @@ public class RobotContainer {
         placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         placeTopAndReverse.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
         placeTopAndReverse.addCommands(new PPRamseteCommand(
-                traj,
+                reversePath,
                 driveSub::getPose,
                 controller,
                 new DifferentialDriveKinematics(0.75),
@@ -209,27 +237,70 @@ public class RobotContainer {
                 true,
                 driveSub));
         
-        /* Place Game Piece on Top Row, Reverse out of Community, Grab Game Piece, Place Game Piece on Middle Row */
-        placeTopAndGrabPiece = new SequentialCommandGroup();
-        placeTopAndGrabPiece.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        placeTopAndGrabPiece.addCommands(toTop.getPathFromResting());
-        placeTopAndGrabPiece.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
-        placeTopAndGrabPiece.addCommands(new OpenClaw(clawSub));
-        placeTopAndGrabPiece.addCommands(toResting.getPathFromTop());
-        placeTopAndGrabPiece.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        placeTopAndGrabPiece.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
-        placeTopAndGrabPiece.addCommands(new PPRamseteCommand(
-                traj,
+        /* Place Game Piece on Top Row, Reverse over Short Community Line, Grab Game Piece, Place Game Piece on Middle Row */
+        placeTopAndGrabPieceShortSide = new SequentialCommandGroup();
+        placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        placeTopAndGrabPieceShortSide.addCommands(toTop.getPathFromResting());
+        placeTopAndGrabPieceShortSide.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        placeTopAndGrabPieceShortSide.addCommands(new OpenClaw(clawSub));
+        placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromTop());
+        placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
+        placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
+                shortSideGamePiecePath1,
                 driveSub::getPose,
                 controller,
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub));
-        placeTopAndGrabPiece.addCommands(toResting.getPathFromMiddle());
+                driveSub
+            ).alongWith(toFloor.getPathFromResting()));
+        placeTopAndGrabPieceShortSide.addCommands(new DriveDistance(driveSub, 0.5, 0.5));
+        placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
+                shortSideGamePiecePath2,
+                driveSub::getPose,
+                controller,
+                new DifferentialDriveKinematics(0.75),
+                driveSub::setSpeeds,
+                true,
+                driveSub
+            ).alongWith(toMiddle.getPathFromFloor()));
+        placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromMiddle());
 
-        autoChooser.setDefaultOption("Place on Top and Leave Community", placeTopAndEngage);
-        autoChooser.addOption("Place on Top and Engage Station", placeTopAndReverse);
+        /* Place Game Piece on Top Row, Reverse over Long Community Line, Grab Game Piece, Place Game Piece on Middle Row */
+        placeTopAndGrabPieceLongSide = new SequentialCommandGroup();
+        placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        placeTopAndGrabPieceLongSide.addCommands(toTop.getPathFromResting());
+        placeTopAndGrabPieceLongSide.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        placeTopAndGrabPieceLongSide.addCommands(new OpenClaw(clawSub));
+        placeTopAndGrabPieceLongSide.addCommands(toResting.getPathFromTop());
+        placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
+        placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
+                shortSideGamePiecePath1,
+                driveSub::getPose,
+                controller,
+                new DifferentialDriveKinematics(0.75),
+                driveSub::setSpeeds,
+                true,
+                driveSub
+            ).alongWith(toFloor.getPathFromResting()));
+        placeTopAndGrabPieceLongSide.addCommands(new DriveDistance(driveSub, 0.5, 0.5));
+        placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
+                shortSideGamePiecePath2,
+                driveSub::getPose,
+                controller,
+                new DifferentialDriveKinematics(0.75),
+                driveSub::setSpeeds,
+                true,
+                driveSub
+            ).alongWith(toMiddle.getPathFromFloor()));
+        placeTopAndGrabPieceLongSide.addCommands(toResting.getPathFromMiddle());
+
+        autoChooser.setDefaultOption("Place on Top, Leave Community", placeTopAndEngage);
+        autoChooser.addOption("Place on Top, Engage Station", placeTopAndReverse);
+        autoChooser.addOption("Place on Top, Leave Short Community, Pick Up Game Piece", placeTopAndGrabPieceShortSide);
+        autoChooser.addOption("Place on Top, Leave Long Community, Pick Up Game Piece", placeTopAndGrabPieceLongSide);
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 

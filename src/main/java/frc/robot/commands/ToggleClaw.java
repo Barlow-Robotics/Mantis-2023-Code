@@ -8,38 +8,33 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Claw;
 
 public class ToggleClaw extends CommandBase {
-  /** Creates a new ToggleClaw. */
 
-  Claw clawSub;
+    Claw clawSub;
 
-  public ToggleClaw(Claw c) {
-
-    clawSub = c;
-    addRequirements(clawSub);
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    if (clawSub.isOpen()) {
-        clawSub.close();
-    } else {
-        clawSub.open();
+    public ToggleClaw(Claw c) {
+        clawSub = c;
+        addRequirements(clawSub);
     }
-  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    @Override
+    public void initialize() {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    @Override
+    public void execute() {
+        if (clawSub.isOpen()) {
+            clawSub.close();
+        } else {
+            clawSub.open();
+        }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

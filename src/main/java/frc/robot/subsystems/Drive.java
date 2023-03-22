@@ -28,7 +28,6 @@ import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
 import java.lang.Math;
 
-/** Represents a differential drive style drivetrain. */
 public class Drive extends SubsystemBase implements Sendable {
     WPI_TalonFX driveMotorLeftLeader;
     WPI_TalonFX driveMotorLeftFollower;
@@ -38,9 +37,10 @@ public class Drive extends SubsystemBase implements Sendable {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-//    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB2 ) ;
-    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.I2C.Port.kMXP ) ;
-//    public final AHRS navX = new AHRS() ;
+    // public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB2
+    // ) ;
+    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.I2C.Port.kMXP);
+    // public final AHRS navX = new AHRS() ;
 
     // private final DifferentialDriveKinematics kinematics = new
     // DifferentialDriveKinematics(
@@ -53,11 +53,6 @@ public class Drive extends SubsystemBase implements Sendable {
     // private final SimpleMotorFeedforward m_feedforward = new
     // SimpleMotorFeedforward(1, 3);
 
-    /**
-     * Constructs a differential drive object. Sets the encoder distance per pulse
-     * and resets the
-     * gyro.
-     */
     public Drive() {
 
         driveMotorLeftLeader = new WPI_TalonFX(Constants.DriveConstants.DriveMotorLeftLeaderID);
@@ -65,7 +60,6 @@ public class Drive extends SubsystemBase implements Sendable {
         driveMotorRightLeader = new WPI_TalonFX(Constants.DriveConstants.DriveMotorRightLeaderID);
         driveMotorRightFollower = new WPI_TalonFX(Constants.DriveConstants.DriveMotorRightFollowerID);
 
-        // Config Motors
         driveMotorLeftLeader.configFactoryDefault();
         driveMotorLeftFollower.configFactoryDefault();
 
@@ -89,10 +83,10 @@ public class Drive extends SubsystemBase implements Sendable {
         diffDrive = new DifferentialDrive(driveMotorLeftLeader, driveMotorRightLeader);
         diffDrive.setSafetyEnabled(false);
 
-         odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance());
+        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance());
 
         setDefaultNeutralMode();
-//wpk        gyro.reset();
+        // wpk gyro.reset();
 
         CreateNetworkTableEntries();
         SmartDashboard.putData("Nav X", navX);
@@ -100,7 +94,6 @@ public class Drive extends SubsystemBase implements Sendable {
     }
 
     public void periodic() {
-        // Update the odometry in the periodic block
         odometry.update(
                 gyro.getRotation2d(),
                 getLeftDistance(),
@@ -124,8 +117,6 @@ public class Drive extends SubsystemBase implements Sendable {
     public void setDefaultNeutralMode() {
         driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
         driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
-        // driveMotorLeftLeader.setNeutralMode(NeutralMode.Coast);
-        // driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
     /**
@@ -138,9 +129,10 @@ public class Drive extends SubsystemBase implements Sendable {
                 (speeds.leftMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
         driveMotorRightLeader.set(TalonFXControlMode.Velocity,
                 (speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
-        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
+
+        NetworkTableInstance.getDefault().getEntry("drive/leftSetSpeeds")
                 .setDouble(speeds.leftMetersPerSecond * Constants.DriveConstants.MaxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
+        NetworkTableInstance.getDefault().getEntry("drive/rightSetSpeeds")
                 .setDouble(speeds.rightMetersPerSecond * Constants.DriveConstants.MaxSpeed);
     }
 
@@ -174,14 +166,14 @@ public class Drive extends SubsystemBase implements Sendable {
         return (s);
     }
 
-    private double getLeftDistance() {
+    public double getLeftDistance() {
         double d = (driveMotorLeftLeader.getSelectedSensorPosition()
                 / Constants.DriveConstants.CountsPerWheelRevolution)
                 * Constants.DriveConstants.MetersPerRevolution;
         return (d);
     }
 
-    private double getRightDistance() {
+    public double getRightDistance() {
         double d = (driveMotorRightLeader.getSelectedSensorPosition()
                 / Constants.DriveConstants.CountsPerWheelRevolution)
                 * Constants.DriveConstants.MetersPerRevolution;
@@ -207,17 +199,17 @@ public class Drive extends SubsystemBase implements Sendable {
 
         // finds desired speed to get to MaxSpeed
 
-        double leftSpeed = getLeftSpeed()+ (Math.min(Math.abs(deltaLeft), Constants.DriveConstants.MaxVelocityChange ))
+        double leftSpeed = getLeftSpeed() + (Math.min(Math.abs(deltaLeft), Constants.DriveConstants.MaxVelocityChange))
                 * Math.signum(deltaLeft);
-        double rightSpeed = getRightSpeed()+(Math.min(Math.abs(deltaRight), Constants.DriveConstants.MaxVelocityChange ))
-                * Math.signum(deltaRight);
+        double rightSpeed = getRightSpeed()
+                + (Math.min(Math.abs(deltaRight), Constants.DriveConstants.MaxVelocityChange))
+                        * Math.signum(deltaRight);
 
         // double leftSpeed = desiredLeftSpeed;
         // double rightSpeed = desiredRightSpeed;
 
         // driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, speeds.left ) ;
         // driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, speeds.right ) ;
-
 
         // Brian - the signum function returns the sign of a number and allows us to
         // avoid the if statements...
@@ -293,7 +285,7 @@ public class Drive extends SubsystemBase implements Sendable {
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
     }
 
-    private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+    private void setMotorConfig(WPI_TalonFX motor) { 
         motor.configClosedloopRamp(Constants.DriveConstants.ClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.DriveConstants.ManualVoltageRampingConstant);
         motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
@@ -305,15 +297,15 @@ public class Drive extends SubsystemBase implements Sendable {
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
 
-    public double getPitch(){
-        return navX.getRoll() ;
+    public double getPitch() {
+        return navX.getRoll();
     }
 
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Drive Subsystem");
 
-        builder.addDoubleProperty("Left Distance", this::getLeftDistance, null ) ;
-        builder.addDoubleProperty("Right Distance", this::getRightDistance, null ) ;
+        builder.addDoubleProperty("Left Distance", this::getLeftDistance, null);
+        builder.addDoubleProperty("Right Distance", this::getRightDistance, null);
 
         builder.addDoubleProperty("Left Speed", this::getLeftSpeed, null);
         builder.addDoubleProperty("Right Speed", this::getRightSpeed, null);
@@ -332,7 +324,6 @@ public class Drive extends SubsystemBase implements Sendable {
     public void simulationPeriodic() {
         int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
         SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Pitch"));
-        angle.set(5.0);    
+        angle.set(5.0);
     }
-
 }

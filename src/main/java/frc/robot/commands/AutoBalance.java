@@ -9,7 +9,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
 public class AutoBalance extends CommandBase {
-    /** Creates a new Engage. */
+   
     private Drive driveSub;
 
     public AutoBalance(Drive d) {

@@ -22,7 +22,6 @@ public class MoveArm extends CommandBase {
     double extensionAcceleration;
     Position state;
 
-    /** Creates a new MoveArm. */
     public MoveArm(
             Arm a,
             double angle,
@@ -47,11 +46,9 @@ public class MoveArm extends CommandBase {
         this.extensionAcceleration = extensionAcceleration;
         this.state = state;
 
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(armSub);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         System.out.println("***** move command to " + state + " started");
@@ -61,7 +58,6 @@ public class MoveArm extends CommandBase {
         armSub.setLength(length, extensionVelocity, extensionAcceleration);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
@@ -71,7 +67,6 @@ public class MoveArm extends CommandBase {
 
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
@@ -79,7 +74,6 @@ public class MoveArm extends CommandBase {
         }
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         if (

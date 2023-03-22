@@ -16,8 +16,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
 public class DriveRobot extends CommandBase {
-    /** Creates a new Drive. */
-
+    
     Drive driveSub;
     Claw clawSub;
     Vision visionSub;
@@ -33,8 +32,8 @@ public class DriveRobot extends CommandBase {
     Trigger autoAlignButton;
     Trigger toggleTargetButton;
     Joystick driverController;
-    int xAxis;
-    int yawAxis;
+    int controllerThrottleID;
+    int controllerTurnID;
 
     public PIDController pid;
 
@@ -42,7 +41,7 @@ public class DriveRobot extends CommandBase {
 
     public DriveRobot(
             Drive d, Claw c, Vision v, Trigger autoAlignButton, Trigger toggleTargetButton, Joystick driverController,
-            int xAxis, int yawAxis) {
+            int throttleID, int turnID) {
 
         driveSub = d;
         clawSub = c;
@@ -50,13 +49,13 @@ public class DriveRobot extends CommandBase {
         this.autoAlignButton = autoAlignButton;
         this.toggleTargetButton = toggleTargetButton;
         this.driverController = driverController;
-        this.xAxis = xAxis;
-        this.yawAxis = yawAxis;
+        this.controllerThrottleID = throttleID;
+        this.controllerTurnID = turnID;
 
         pid = new PIDController(
-                Constants.DriveConstants.autoAlignkP,
-                Constants.DriveConstants.autoAlignkI,
-                Constants.DriveConstants.autoAlignkD);
+                Constants.DriveConstants.AutoAlignkP,
+                Constants.DriveConstants.AutoAlignkI,
+                Constants.DriveConstants.AutoAlignkD);
 
         addRequirements(driveSub);
     }
@@ -75,11 +74,11 @@ public class DriveRobot extends CommandBase {
         SmartDashboard.putBoolean("Auto Align Enabled", autoAlignEnabled);
         SmartDashboard.putString("Auto Align Target", selectedTarget);
 
-        double x = driverController.getRawAxis(xAxis);
+        double x = driverController.getRawAxis(controllerThrottleID);
         if (Math.abs(x) < 0.01) {
             x = 0.0;
         }
-        double yaw = -driverController.getRawAxis(yawAxis);
+        double yaw = -driverController.getRawAxis(controllerTurnID);
         if (Math.abs(yaw) < 0.01) {
             yaw = 0.0;
         }

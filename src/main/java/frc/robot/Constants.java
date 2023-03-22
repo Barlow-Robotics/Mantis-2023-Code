@@ -47,7 +47,7 @@ public final class Constants {
         public static final double MaxSpeed = 3.8; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
-        public static final double TimeToReachVelocity = 0.2; 
+        public static final double TimeToReachVelocity = 0.2;
 
         // public static final double MaxVelocityChange = MaxSpeed * (
         // TimeToReachVelocity / 50 ); // percentage of Acceleration
@@ -72,21 +72,22 @@ public final class Constants {
 
         public static final double ClosedVoltageRampingConstant = 0.0;
         public static final double ManualVoltageRampingConstant = 0.0;
-        // public static final double kF = 20.0; //0.048 original
-        // public static final double kP = 0.7; //0.005 original
-        // public static final double kI = 0.001; //0.0001 original
-        public static final double kF = 0.048 ;
-        public static final double kP = 0.005 ;
-        public static final double kI = 0.0001; //0.0001 original
+
+        public static final double kF = 0.048;
+        public static final double kP = 0.005;
+        public static final double kI = 0.0001;
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 
         public static final double BalanceTolerance = 2.5;
         public static final double AutoBalanceSpeed = 0.5;
+        public static final double AutoBalancekP = 20.0;
+        public static final double AutoBalancekI = 0.7;
+        public static final double AutoBalancekD = 0.0;
 
-        public static final double autoAlignkP = 0.003;
-        public static final double autoAlignkI = 0.0;
-        public static final double autoAlignkD = 0.0;
+        public static final double AutoAlignkP = 0.003;
+        public static final double AutoAlignkI = 0.0;
+        public static final double AutoAlignkD = 0.0;
     }
 
     public static final class ArmConstants {
@@ -219,15 +220,15 @@ public final class Constants {
         public static final int ClawPID_id = 0;
         public static final double ff = 0.0;
 
-        public static final double CountsPerClawDegree = TalonFXEncoderResolution * RevolutionsPerDegree
-                * RotateGearRatio; // Need to change
+        public static final double CountsPerClawDegree = 
+                TalonFXEncoderResolution * RevolutionsPerDegree * RotateGearRatio; // Need to change
 
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerClawDegree * SecondsTo100MSec;
 
         public static final double ClawAngleTolerance = 1.0;
 
         public static final double ClawSpeed = 100.0; // Needs tuning
-        public static final int DistanceSensorID = 50; // Need to change
+        public static final int DistanceSensorID = 50;
         public static final int AccelerationSmoothing = 2;
 
         public static final double InchesForAutoClosing = 6;
@@ -308,11 +309,8 @@ public final class Constants {
         public static final int ButtonY = 4;
         public static final int LeftBumper = 5;
         public static final int RightBumper = 6;
-        // public static final int BackButton = 7;
-        public static final int StartButton = 8;
         public static final int LeftStick = 9;
         public static final int RightStick = 10;
-        public static final int WindowButton = 7;
 
         public static final double ForwardAxisAttenuation = -0.5;
         public static final double LateralAxisAttenuation = 0.5;
