@@ -12,7 +12,7 @@ import frc.robot.subsystems.Drive;
 public class AutoBalance extends CommandBase {
    
     private Drive driveSub;
-    double ff = 0.1; 
+    double ff = 0.0; 
 
     public AutoBalance(Drive d) {
         driveSub = d;
