@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
@@ -11,6 +12,7 @@ import frc.robot.subsystems.Drive;
 public class AutoBalance extends CommandBase {
    
     private Drive driveSub;
+    double ff = 0.1; 
 
     public AutoBalance(Drive d) {
         driveSub = d;
@@ -24,7 +26,6 @@ public class AutoBalance extends CommandBase {
     @Override
     public void execute() {
         double error = driveSub.getPitch();
-        double ff = 0.1 ;
 
         if (Math.abs(error) >= Constants.DriveConstants.BalanceTolerance) {
             driveSub.setSpeedsWithFF(
@@ -44,4 +45,18 @@ public class AutoBalance extends CommandBase {
     public boolean isFinished() {
         return false;
     }
+
+
+    public double getFF() {
+        return this.ff ;
+    }
+
+    public void setFF( double value) {
+        ff = value ;
+    }
+
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Feed Forward", this::getFF, this::setFF);
+    }
+
 }
