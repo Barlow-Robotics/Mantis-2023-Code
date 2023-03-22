@@ -250,6 +250,8 @@ public final class Constants {
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxSpeedMetersPerSecond / 2.0;
         public static final double kMaxAngularSpeedRadiansPerSecond = 10 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = kMaxAngularSpeedRadiansPerSecond / 0.5;
+
+        public static final double DriveToGamePieceSpeed = 0.5; // meters per second
     }
 
     public final class LogitechDualActionConstants {

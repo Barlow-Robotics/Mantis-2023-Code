@@ -27,8 +27,8 @@ import frc.robot.Constants.RadioMasterConstants;
 import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.DriveDistance;
 import frc.robot.commands.DriveRobot;
+import frc.robot.commands.DriveToGamePiece;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
@@ -254,7 +254,7 @@ public class RobotContainer {
                 true,
                 driveSub
             ).alongWith(toFloor.getPathFromResting()));
-        placeTopAndGrabPieceShortSide.addCommands(new DriveDistance(driveSub, 0.5, 0.5));
+        placeTopAndGrabPieceShortSide.addCommands(new DriveToGamePiece(driveSub, visionSub, 0.5));
         placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath2,
@@ -284,7 +284,7 @@ public class RobotContainer {
                 true,
                 driveSub
             ).alongWith(toFloor.getPathFromResting()));
-        placeTopAndGrabPieceLongSide.addCommands(new DriveDistance(driveSub, 0.5, 0.5));
+        placeTopAndGrabPieceLongSide.addCommands(new DriveToGamePiece(driveSub, visionSub, 0.5));
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath2,

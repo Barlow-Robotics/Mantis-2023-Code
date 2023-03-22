@@ -1,66 +1,85 @@
-// // Copyright (c) FIRST and other WPILib contributors.
-// // Open Source Software; you can modify and/or share it under the terms of
-// // the WPILib BSD license file in the root directory of this project.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-// package frc.robot.commands;
+package frc.robot.commands;
 
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.wpilibj2.command.CommandBase;
-// import frc.robot.subsystems.Drive;
-// import frc.robot.subsystems.Vision;
-// import frc.robot.commands.DriveRobot;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Vision;
 
-// public class DriveToGamePiece extends CommandBase {
-//   /** Creates a new DriveToGamePiece. */
+public class DriveToGamePiece extends CommandBase {
 
-//   Drive driveSub;
-//   Vision visionSub;
+    Drive driveSub;
+    Vision visionSub;
 
-//   double targetDistance; // meters?
-//   double speed; // meters per second?
+    double targetDistance; //meters?
 
-//   double startingLeftDistance;
-//   double startingRightDistance;
+    double startingLeftDistance;
+    double startingRightDistance;
 
+    private double error;
+    private double leftVelocity;
+    private double rightVelocity;
+    private int missedFrames = 0;
+    private double adjustment;
 
+    public PIDController pid;
 
-//   public DriveToGamePiece(Drive d, Vision v, double dist) {
-//     // Use addRequirements() here to declare subsystem dependencies.
-//     driveSub = d;
-//     visionSub = v;
+    public DriveToGamePiece(Drive d, Vision v, double dist) {
+        driveSub = d;
+        visionSub = v;
+        targetDistance = dist;
 
-//     targetDistance = dist;
+        pid = new PIDController(
+                Constants.DriveConstants.AutoAlignkP,
+                Constants.DriveConstants.AutoAlignkI,
+                Constants.DriveConstants.AutoAlignkD);
 
-//     addRequirements(driveSub, visionSub);
-//   }
+        addRequirements(driveSub);
+    }
 
-//   // Called when the command is initially scheduled.
-//   @Override
-//   public void initialize() {
-//     driveSub.resetOdometry(new Pose2d());
-//     startingLeftDistance = driveSub.getLeftDistance();
-//     startingRightDistance = driveSub.getRightDistance();
+    @Override
+    public void initialize() {
+        driveSub.resetOdometry(new Pose2d());
+        startingLeftDistance = driveSub.getLeftDistance();
+        startingRightDistance = driveSub.getRightDistance();
+    }
 
-//     DriveRobot.pid.reset();
-//     missedFrames = 0;
-//   }
+    @Override
+    public void execute() {
 
-//   // Called every time the scheduler runs while the command is scheduled.
-//   @Override
-//   public void execute() {
-//     // drive forward at set speed
-//     // if game piece is seen, turn while continuing to move forawrd
+        if (visionSub.gamePieceIsVisible()) {
+            error = visionSub.gamePieceDistanceFromCenter();
+            adjustment = pid.calculate(error);
+            adjustment = Math.signum(adjustment)
+                    * Math.min(Math.abs(adjustment), Constants.DriveConstants.CorrectionRotationSpeed / 4.0);
+            leftVelocity = Constants.DriveConstants.CorrectionRotationSpeed - adjustment;
+            rightVelocity = Constants.DriveConstants.CorrectionRotationSpeed + adjustment;
 
-//   }
+            driveSub.setSpeeds(leftVelocity, rightVelocity);
+        } else {
+            missedFrames++;
+        }
 
-//   // Called once the command ends or is interrupted.
-//   @Override
-//   public void end(boolean interrupted) {
-//   }
+        driveSub.setSpeeds(Constants.AutoConstants.DriveToGamePieceSpeed, Constants.AutoConstants.DriveToGamePieceSpeed);
+    }
 
-//   // Returns true when the command should end.
-//   @Override
-//   public boolean isFinished() {
-//     return false;
-//   }
-// }
+    @Override
+    public void end(boolean interrupted) {
+        driveSub.setSpeeds(0.0, 0.0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        double distanceTraveled = ((driveSub.getLeftDistance() - startingLeftDistance)
+                + (driveSub.getRightDistance() - startingRightDistance)) / 2.0;
+        if (Math.abs(distanceTraveled) >= Math.abs(targetDistance)) {
+            return true;
+        }
+        return false;
+    }
+}
