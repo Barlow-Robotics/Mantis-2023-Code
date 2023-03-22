@@ -110,6 +110,10 @@ public class Drive extends SubsystemBase implements Sendable {
         // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(odometry.getPoseMeters().getX());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(odometry.getPoseMeters().getY());
+
+        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorLeft").setDouble(driveMotorLeftLeader.getClosedLoopError());
+        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorRight").setDouble(driveMotorRightLeader.getClosedLoopError());
+
         // NetworkTableInstance.getDefault().getEntry("drive/odometry/theta")
         // .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
     }
