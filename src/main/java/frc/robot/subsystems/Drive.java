@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -157,6 +158,25 @@ public class Drive extends SubsystemBase implements Sendable {
         NetworkTableInstance.getDefault().getEntry("drive/right_speed")
                 .setDouble(rightSpeed * Constants.DriveConstants.MaxSpeed);
     }
+
+
+
+    public void setSpeedsWithFF(double leftSpeed, double rightSpeed, double leftFF, double rightFF) {
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity,
+                (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0),
+                DemandType.ArbitraryFeedForward, leftFF);
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity,
+                (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0),
+                DemandType.ArbitraryFeedForward, rightFF);
+
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
+                .setDouble(leftSpeed * Constants.DriveConstants.MaxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
+                .setDouble(rightSpeed * Constants.DriveConstants.MaxSpeed);
+    }
+
+
+
 
     private double getLeftSpeed() {
         double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
