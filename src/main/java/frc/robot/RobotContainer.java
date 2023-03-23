@@ -381,6 +381,16 @@ public class RobotContainer {
                             .setDouble(rotationError.getDegrees());
                 });
 
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/X").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/Y").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/degrees").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vx").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vy").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/omega").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/X").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/Y").setDouble(0.0);
+        NetworkTableInstance.getDefault().getEntry("pathPlanner/rotationError/degrees").setDouble(0.0);
+
         autoChooser.setDefaultOption("Place on Top, Leave Community", placeTopAndReverse);
         autoChooser.addOption("Place on Top, Engage Station", placeTopAndEngage);
         autoChooser.addOption("Place on Top, Leave Short Community, Pick Up Game Piece", placeTopAndGrabPieceShortSide);
