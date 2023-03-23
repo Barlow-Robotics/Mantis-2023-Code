@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -79,7 +80,7 @@ public class Robot extends TimedRobot {
 
         SequentialCommandGroup cg = new SequentialCommandGroup();
 
-        if (!calibrationPerformed) {
+        if (!calibrationPerformed  && !Robot.isSimulation()) {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
             Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Resting));
@@ -107,6 +108,7 @@ public class Robot extends TimedRobot {
     // /** This function is called periodically during autonomous. */
     // @Override
     public void autonomousPeriodic() {
+        int wpk = 1 ;
     }
 
     @Override
@@ -184,6 +186,10 @@ public class Robot extends TimedRobot {
         // and put our
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
+
+        if (Robot.isSimulation()) {
+            DriverStation.silenceJoystickConnectionWarning(true) ;
+        }
 
     }
 

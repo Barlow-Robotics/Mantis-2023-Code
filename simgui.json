@@ -30,6 +30,11 @@
         "header": {
           "open": true
         }
+      },
+      "Talon FX[5]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
@@ -41,7 +46,8 @@
       "/SmartDashboard/Autonomous Plans": "String Chooser",
       "/SmartDashboard/Nav X": "Gyro",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/String Chooser": "String Chooser"
+      "/SmartDashboard/String Chooser": "String Chooser",
+      "/SmartDashboard/auto balance": "Command"
     }
   },
   "NetworkTables": {
