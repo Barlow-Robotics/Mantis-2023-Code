@@ -82,14 +82,12 @@ public class RobotContainer {
     SendableChooser<Command> autoChooser = new SendableChooser<Command>();
     final SendableChooser<String> stringChooser = new SendableChooser<String>();
 
-    PathPlannerTrajectory reversePath ;
-    PathPlannerTrajectory engagePath ;
-    PathPlannerTrajectory shortSideGamePiecePath1 ;
-    PathPlannerTrajectory shortSideGamePiecePath2 ;
-    PathPlannerTrajectory longSideGamePiecePath1 ;
-    PathPlannerTrajectory longSideGamePiecePath2 ;
-
-
+    PathPlannerTrajectory reversePath;
+    PathPlannerTrajectory engagePath;
+    PathPlannerTrajectory shortSideGamePiecePath1;
+    PathPlannerTrajectory shortSideGamePiecePath2;
+    PathPlannerTrajectory longSideGamePiecePath1;
+    PathPlannerTrajectory longSideGamePiecePath2;
 
     SequentialCommandGroup placeTopAndEngage;
     SequentialCommandGroup placeTopAndReverse;
@@ -100,7 +98,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureButtonBindings();
-        loadPaths() ;
+        loadPaths();
         createAutonomousCommands();
         buildAutoOptions();
 
@@ -167,25 +165,18 @@ public class RobotContainer {
         autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
     }
 
-
-
-
     private void buildAutoOptions() {
         stringChooser.setDefaultOption("Place on Top and Leave Community", "test 1");
         stringChooser.addOption("Place on Top and Engage Station", "test 2");
         SmartDashboard.putData("String Chooser", stringChooser);
     }
 
-
-
-
-
     private void loadPaths() {
         reversePath = PathPlanner.loadPath(
                 "Reverse",
                 new PathConstraints(1, 4),
                 true);
-        
+
         engagePath = PathPlanner.loadPath(
                 "ChargingStation",
                 new PathConstraints(1, 4),
@@ -213,20 +204,22 @@ public class RobotContainer {
 
     }
 
-
     SequentialCommandGroup createPlaceTopAndReverseCommand() {
-
         /* Place Game Piece on Top Row, Reverse Out of Community */
         SequentialCommandGroup placeTopAndReverse = new SequentialCommandGroup();
         placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        // placeTopAndReverse.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromResting());
-        // placeTopAndReverse.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
-        // placeTopAndReverse.addCommands(new OpenClaw(clawSub));
-        // placeTopAndReverse.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromTop());
+        placeTopAndReverse.addCommands(new ArmPathGenerator(Position.Top,
+                armSub).getPathFromResting());
+        placeTopAndReverse.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        placeTopAndReverse.addCommands(new OpenClaw(clawSub));
+        placeTopAndReverse.addCommands(new ArmPathGenerator(Position.Resting,
+                armSub).getPathFromTop());
         placeTopAndReverse.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
 
-        PathPlannerState initialState = PathPlannerTrajectory.transformStateForAlliance(reversePath.getState(0), DriverStation.getAlliance()) ;
-        placeTopAndReverse.addCommands(new InstantCommand(() -> driveSub.resetOdometry(initialState.poseMeters), driveSub));
+        PathPlannerState initialState = PathPlannerTrajectory.transformStateForAlliance(reversePath.getState(0),
+                DriverStation.getAlliance());
+        placeTopAndReverse
+                .addCommands(new InstantCommand(() -> driveSub.resetOdometry(initialState.poseMeters), driveSub));
 
         PPRamseteCommand reverseCommand = new PPRamseteCommand(
                 reversePath,
@@ -236,76 +229,66 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 true,
                 // false,
-                driveSub) ;
+                driveSub);
 
         placeTopAndReverse.addCommands(reverseCommand);
 
-        return placeTopAndReverse ;
+        return placeTopAndReverse;
     }
 
-
-
-
-    private void createAutonomousCommands() {
-        ArmPathGenerator toTop = new ArmPathGenerator(Position.Top, armSub);
-        ArmPathGenerator toResting = new ArmPathGenerator(Position.Resting, armSub);
-        ArmPathGenerator toFloor = new ArmPathGenerator(Position.Floor, armSub);
-        ArmPathGenerator toMiddle = new ArmPathGenerator(Position.Middle, armSub);
-
-        ArrayList<Translation2d> gamePiecePoints = new ArrayList<Translation2d>();
-        gamePiecePoints.add(new Translation2d(7.09, 4.61));
-        gamePiecePoints.add(new Translation2d(7.09, 0.9));
-        gamePiecePoints.add(new Translation2d(9.51, 4.57));
-        gamePiecePoints.add(new Translation2d(9.51, 0.9));
-
-        RamseteController controller = new RamseteController();
-        placeTopAndReverse = createPlaceTopAndReverseCommand() ;
-
-        /*
-         * Place Game Piece on Top Row, Reverse Out of Community, Engage Charging
-         * Station
-         */
-        placeTopAndEngage = new SequentialCommandGroup();
+    SequentialCommandGroup createPlaceTopAndEngageCommand() {
+        /* Place Game Piece on Top Row, Reverse Out of Community */
+        SequentialCommandGroup placeTopAndEngage = new SequentialCommandGroup();
         placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        placeTopAndEngage.addCommands(toTop.getPathFromResting());
+        placeTopAndEngage.addCommands(new ArmPathGenerator(Position.Top,
+                armSub).getPathFromResting());
         placeTopAndEngage.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
         placeTopAndEngage.addCommands(new OpenClaw(clawSub));
-        placeTopAndEngage.addCommands(toResting.getPathFromTop());
+        placeTopAndEngage.addCommands(new ArmPathGenerator(Position.Resting,
+                armSub).getPathFromTop());
         placeTopAndEngage.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        placeTopAndEngage.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
+
+        placeTopAndEngage
+                .addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
         placeTopAndEngage.addCommands(new PPRamseteCommand(
                 engagePath,
                 driveSub::getPose,
-                controller,
+                new RamseteController(),
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
                 driveSub));
         placeTopAndEngage.addCommands(new AutoBalance(driveSub));
 
+        return placeTopAndEngage;
+    }
 
-        /*
-         * Place Game Piece on Top Row, Reverse over Short Community Line, Grab Game
-         * Piece, Place Game Piece on Middle Row
-         */
+    SequentialCommandGroup createPlaceTopAndGrabPieceShortSideCommand() {
+        // Place GP on Top, Reverse over Short Community Line, Grab GP, Place GP on Mid
         placeTopAndGrabPieceShortSide = new SequentialCommandGroup();
+        //
         // placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() ->
         // clawSub.disableAutoClose()));
-        // placeTopAndGrabPieceShortSide.addCommands(toTop.getPathFromResting());
+        // placeTopAndGrabPieceShortSide.addCommands(new ArmPathGenerator(Position.Top,
+        // armSub).getPathFromResting());
         // placeTopAndGrabPieceShortSide.addCommands(new
         // edu.wpi.first.wpilibj2.command.WaitCommand(2));
         // placeTopAndGrabPieceShortSide.addCommands(new OpenClaw(clawSub));
-        // placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromTop());
+        // placeTopAndGrabPieceShortSide.addCommands(new
+        // ArmPathGenerator(Position.Resting,
+        // armSub).getPathFromTop());
+        //
         placeTopAndGrabPieceShortSide.addCommands(
                 new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath1,
                 driveSub::getPose,
-                controller,
+                new RamseteController(),
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
                 driveSub)/* .alongWith(toFloor.getPathFromResting()) */);
+        //
         // placeTopAndGrabPieceShortSide.addCommands(new DriveToGamePiece(driveSub,
         // visionSub));
         // placeTopAndGrabPieceShortSide.addCommands(new InstantCommand(() ->
@@ -313,68 +296,90 @@ public class RobotContainer {
         // placeTopAndGrabPieceShortSide.addCommands(new PPRamseteCommand(
         // shortSideGamePiecePath2,
         // driveSub::getPose,
-        // controller,
+        // new RamseteController(),
         // new DifferentialDriveKinematics(0.75),
         // driveSub::setSpeeds,
         // true,
-        // driveSub
-        // ).alongWith(toMiddle.getPathFromFloor()));
-        // placeTopAndGrabPieceShortSide.addCommands(toResting.getPathFromMiddle());
+        // driveSub).alongWith(new ArmPathGenerator(Position.Middle,
+        // armSub).getPathFromFloor()));
+        // placeTopAndGrabPieceShortSide.addCommands(new
+        // ArmPathGenerator(Position.Resting, armSub).getPathFromMiddle());
+        //
+        return placeTopAndGrabPieceShortSide;
+    }
 
-        /*
-         * Place Game Piece on Top Row, Reverse over Long Community Line, Grab Game
-         * Piece, Place Game Piece on Middle Row
-         */
+    SequentialCommandGroup createPlaceTopAndGrabPieceLongSideCommand() {
+        // Place GP on Top, Reverse over Long Community Line, Grab GP, Place GP on Mid
+
         placeTopAndGrabPieceLongSide = new SequentialCommandGroup();
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        placeTopAndGrabPieceLongSide.addCommands(toTop.getPathFromResting());
+        placeTopAndGrabPieceLongSide.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromResting());
         placeTopAndGrabPieceLongSide.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
         placeTopAndGrabPieceLongSide.addCommands(new OpenClaw(clawSub));
-        placeTopAndGrabPieceLongSide.addCommands(toResting.getPathFromTop());
+        placeTopAndGrabPieceLongSide.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromTop());
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> driveSub.resetOdometry(null), driveSub));
         placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
                 longSideGamePiecePath1,
                 driveSub::getPose,
-                controller,
+                new RamseteController(),
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub).alongWith(toFloor.getPathFromResting()));
+                driveSub).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromResting()));
         placeTopAndGrabPieceLongSide.addCommands(new DriveToGamePiece(driveSub, visionSub));
         placeTopAndGrabPieceLongSide.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         placeTopAndGrabPieceLongSide.addCommands(new PPRamseteCommand(
                 longSideGamePiecePath2,
                 driveSub::getPose,
-                controller,
+                new RamseteController(),
                 new DifferentialDriveKinematics(0.75),
                 driveSub::setSpeeds,
                 true,
-                driveSub).alongWith(toMiddle.getPathFromFloor()));
-        placeTopAndGrabPieceLongSide.addCommands(toResting.getPathFromMiddle());
+                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
+        placeTopAndGrabPieceLongSide.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromMiddle());
 
+        return placeTopAndGrabPieceLongSide;
+    }
+
+    private void createAutonomousCommands() {
+
+        ArrayList<Translation2d> gamePiecePoints = new ArrayList<Translation2d>();
+        gamePiecePoints.add(new Translation2d(7.09, 4.61));
+        gamePiecePoints.add(new Translation2d(7.09, 0.9));
+        gamePiecePoints.add(new Translation2d(9.51, 4.57));
+        gamePiecePoints.add(new Translation2d(9.51, 0.9));
+
+        placeTopAndReverse = createPlaceTopAndReverseCommand();
+        placeTopAndEngage = createPlaceTopAndEngageCommand();
+        placeTopAndGrabPieceShortSide = createPlaceTopAndGrabPieceShortSideCommand();
+        placeTopAndGrabPieceLongSide = createPlaceTopAndGrabPieceLongSideCommand();
 
         PPRamseteCommand.setLoggingCallbacks(
-            (PathPlannerTrajectory activeTrajectory) -> {
+                (PathPlannerTrajectory activeTrajectory) -> {
                     System.out.println("PP Logging: activeTRajectory is " + activeTrajectory);
                 },
                 (Pose2d targetPose) -> {
                     NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/X").setDouble(targetPose.getX());
                     NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/Y").setDouble(targetPose.getY());
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/degrees").setDouble(targetPose.getRotation().getDegrees());
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/degrees")
+                            .setDouble(targetPose.getRotation().getDegrees());
                 },
                 (ChassisSpeeds setpointSpeeds) -> {
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vx").setDouble(setpointSpeeds.vxMetersPerSecond);
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vy").setDouble(setpointSpeeds.vyMetersPerSecond);
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/omega").setDouble(setpointSpeeds.omegaRadiansPerSecond);
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vx")
+                            .setDouble(setpointSpeeds.vxMetersPerSecond);
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vy")
+                            .setDouble(setpointSpeeds.vyMetersPerSecond);
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/omega")
+                            .setDouble(setpointSpeeds.omegaRadiansPerSecond);
                 },
                 (Translation2d translationError, Rotation2d rotationError) -> {
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/X").setDouble(translationError.getX());
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/Y").setDouble(translationError.getY());
-                    NetworkTableInstance.getDefault().getEntry("pathPlanner/rotationError/degrees").setDouble(rotationError.getDegrees());
-                }                
-            );
-
-
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/X")
+                            .setDouble(translationError.getX());
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/Y")
+                            .setDouble(translationError.getY());
+                    NetworkTableInstance.getDefault().getEntry("pathPlanner/rotationError/degrees")
+                            .setDouble(rotationError.getDegrees());
+                });
 
         autoChooser.setDefaultOption("Place on Top, Leave Community", placeTopAndReverse);
         autoChooser.addOption("Place on Top, Engage Station", placeTopAndEngage);
