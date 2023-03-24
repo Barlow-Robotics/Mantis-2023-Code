@@ -1,37 +1,12 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "Talon FX[11]": {
+      "Talon FX[10]/Integrated Sensor": {
         "header": {
           "open": true
         }
       },
       "Talon FX[11]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[15]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[15]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[4]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[4]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[5]/Integrated Sensor": {
         "header": {
           "open": true
         }
@@ -77,10 +52,12 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "Arm": {
+          "open": true
+        },
         "open": true
       },
       "pathPlanner": {
-        "open": true,
         "rotationError": {
           "open": true
         },
@@ -89,9 +66,6 @@
         }
       }
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {

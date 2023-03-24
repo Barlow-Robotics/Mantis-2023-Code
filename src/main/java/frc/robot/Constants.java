@@ -93,7 +93,7 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
-        public static final double RotateGearRatio = 120;
+        public static final double RotateGearRatio = 100;
         public static final double ExtendGearRatio = 16;
 
         public static final double ExtendSprocketDiameter = 1.751;
@@ -119,8 +119,8 @@ public final class Constants {
         public static final double RotationCalibrationVelocity = 10; // Degrees per second
 
         public static final int ArmExtendMotorID = 12;
-        public static final int ArmLeaderMotorID = 11;
-        public static final int ArmFollowMotorID = 10;
+        public static final int LeftArmMotorID = 11;
+        public static final int RightArmMotorID = 10;
 
         public static final int AccelerationSmoothing = 2;
 
