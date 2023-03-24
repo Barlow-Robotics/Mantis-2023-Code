@@ -46,6 +46,7 @@ public class Arm extends SubsystemBase implements Sendable {
         rightRotateMotor = new WPI_TalonFX(Constants.ArmConstants.RightArmMotorID);
 
         setExtendMotorConfig(extendMotor);
+
         setRotateMotorConfig(leftRotateMotor);
         setRotateMotorConfig(rightRotateMotor);
 

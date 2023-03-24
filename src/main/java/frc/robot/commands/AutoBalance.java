@@ -12,6 +12,7 @@ public class AutoBalance extends CommandBase {
 
     private Drive driveSub;
     double ff = 0.0;
+    double previousError;
 
     public AutoBalance(Drive d) {
         driveSub = d;
@@ -26,10 +27,15 @@ public class AutoBalance extends CommandBase {
     public void execute() {
         double error = driveSub.getPitch();
 
-        if (Math.abs(error) >= Constants.DriveConstants.BalanceTolerance) {
+        if (Math.abs(error) >= 10) {
             driveSub.setSpeedsWithFF(
                     Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error),
                     Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error),
+                    ff, ff);
+        } else if (Math.abs(error) > 2.5 && Math.abs(error) < 10) {
+            driveSub.setSpeedsWithFF(
+                    Constants.DriveConstants.AutoBalanceKP * -error,
+                    Constants.DriveConstants.AutoBalanceKP * -error,
                     ff, ff);
         } else {
             driveSub.setSpeeds(0.0, 0.0);
