@@ -16,6 +16,8 @@ import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -23,13 +25,16 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
 import java.lang.Math;
+import edu.wpi.first.math.util.Units ;
 
-public class Drive extends SubsystemBase implements Sendable {
+public class Drive extends SubsystemBase  {
     WPI_TalonFX driveMotorLeftLeader;
     WPI_TalonFX driveMotorLeftFollower;
     WPI_TalonFX driveMotorRightLeader;
@@ -49,6 +54,11 @@ public class Drive extends SubsystemBase implements Sendable {
     public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
+    private double lastLeftDistance ;
+    private double lastRightDistance ;
+    DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth);
+    ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro) ;
+
 
     // Gains are for example purposes only - must be determined for your own robot!
     // private final SimpleMotorFeedforward m_feedforward = new
@@ -94,7 +104,11 @@ public class Drive extends SubsystemBase implements Sendable {
 
     }
 
+
+
+
     public void periodic() {
+
         odometry.update(
                 gyro.getRotation2d(),
                 getLeftDistance(),
@@ -106,17 +120,13 @@ public class Drive extends SubsystemBase implements Sendable {
                 .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
         NetworkTableInstance.getDefault().getEntry("drive/right_encoder_count")
                 .setDouble(driveMotorRightLeader.getSelectedSensorPosition());
-        // NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(getLeftSpeed());
-        // NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(getRightSpeed());
-        // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(odometry.getPoseMeters().getX());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(odometry.getPoseMeters().getY());
+        NetworkTableInstance.getDefault().getEntry("drive/odometry/heading").setDouble(odometry.getPoseMeters().getRotation().getDegrees());
 
         NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorLeft").setDouble(driveMotorLeftLeader.getClosedLoopError());
         NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorRight").setDouble(driveMotorRightLeader.getClosedLoopError());
 
-        // NetworkTableInstance.getDefault().getEntry("drive/odometry/theta")
-        // .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
     }
 
     public void setDefaultNeutralMode() {
@@ -130,16 +140,8 @@ public class Drive extends SubsystemBase implements Sendable {
      * @param speeds The desired wheel speeds.
      */
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-        driveMotorLeftLeader.set(TalonFXControlMode.Velocity,
-                (speeds.leftMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
-        driveMotorRightLeader.set(TalonFXControlMode.Velocity,
-                (speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
-
-        NetworkTableInstance.getDefault().getEntry("drive/leftSetSpeeds")
-                .setDouble(speeds.leftMetersPerSecond * Constants.DriveConstants.MaxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/rightSetSpeeds")
-                .setDouble(speeds.rightMetersPerSecond * Constants.DriveConstants.MaxSpeed);
-    }
+        setSpeeds( speeds.leftMetersPerSecond, speeds.rightMetersPerSecond) ;
+   }
 
     /**
      * Sets the desired wheel speeds.
@@ -229,32 +231,6 @@ public class Drive extends SubsystemBase implements Sendable {
                 + (Math.min(Math.abs(deltaRight), Constants.DriveConstants.MaxVelocityChange))
                         * Math.signum(deltaRight);
 
-        // double leftSpeed = desiredLeftSpeed;
-        // double rightSpeed = desiredRightSpeed;
-
-        // driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, speeds.left ) ;
-        // driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, speeds.right ) ;
-
-        // Brian - the signum function returns the sign of a number and allows us to
-        // avoid the if statements...
-
-        // if (DesiredDeltaRightSpeed >= 0) {
-        // DeltaVRight = Math.min(Constants.DriveConstants.maxAccelerationRate,
-        // Math.abs(DesiredDeltaRightSpeed))*1;
-        // }
-        // else if (DesiredDeltaRightSpeed < 0) {
-        // DeltaVRight = Math.min(Constants.DriveConstants.maxAccelerationRate,
-        // Math.abs(DesiredDeltaRightSpeed))*-1;
-        // }
-        // if (DesiredDeltaLeftSpeed >= 0) {
-        // DeltaVLeft = Math.min(Constants.DriveConstants.maxAccelerationRate,
-        // Math.abs(DesiredDeltaLeftSpeed))*1;
-        // }
-        // else if (DesiredDeltaLeftSpeed < 0) {
-        // DeltaVLeft = Math.min(Constants.DriveConstants.maxAccelerationRate,
-        // Math.abs(DesiredDeltaLeftSpeed))*-1;
-        // }
-
         setSpeeds(leftSpeed, rightSpeed);
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
@@ -267,14 +243,15 @@ public class Drive extends SubsystemBase implements Sendable {
         return odometry.getPoseMeters();
     }
 
+
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
         // odometry.resetPosition(gyro.getRotation2d(), 0.0, 0.0, pose);
     }
 
     public void resetEncoders() {
-        driveMotorLeftLeader.setSelectedSensorPosition(0);
-        driveMotorRightLeader.setSelectedSensorPosition(0);
+        driveMotorLeftLeader.setSelectedSensorPosition(0, 0, 30);
+        driveMotorRightLeader.setSelectedSensorPosition(0, 0, 30);
     }
 
     public void setMaxOutput(double maxOutput) {
@@ -326,6 +303,7 @@ public class Drive extends SubsystemBase implements Sendable {
     }
 
     public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
         builder.setSmartDashboardType("Drive Subsystem");
 
         builder.addDoubleProperty("Left Distance", this::getLeftDistance, null);
@@ -346,6 +324,13 @@ public class Drive extends SubsystemBase implements Sendable {
 
     @Override
     public void simulationPeriodic() {
+        Twist2d twist = kinematics.toTwist2d(this.getLeftDistance()-lastLeftDistance, this.getRightDistance()-lastRightDistance) ;
+        NetworkTableInstance.getDefault().getEntry("drive/twist_angle").setDouble(Units.radiansToDegrees(twist.dtheta));
+        gyroSim.setAngle(gyro.getAngle()- Units.radiansToDegrees(twist.dtheta));
+        lastLeftDistance = this.getLeftDistance() ;
+        lastRightDistance = this.getRightDistance() ;
+
+
         int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
         SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Pitch"));
         angle.set(5.0);

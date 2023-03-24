@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
@@ -20,6 +21,7 @@ public class DriveRobot extends CommandBase {
     Drive driveSub;
     Claw clawSub;
     Vision visionSub;
+    Arm armSub ;
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -40,12 +42,14 @@ public class DriveRobot extends CommandBase {
     public String selectedTarget = "None";
 
     public DriveRobot(
-            Drive d, Claw c, Vision v, Trigger autoAlignButton, Trigger toggleTargetButton, Joystick driverController,
+            Drive d, Claw c, Vision v, Arm a, Trigger autoAlignButton, Trigger toggleTargetButton, Joystick driverController,
             int throttleID, int turnID) {
 
         driveSub = d;
         clawSub = c;
         visionSub = v;
+        armSub = a ;
+
         this.autoAlignButton = autoAlignButton;
         this.toggleTargetButton = toggleTargetButton;
         this.driverController = driverController;
@@ -83,28 +87,19 @@ public class DriveRobot extends CommandBase {
             yaw = 0.0;
         }
         double speed = -x;
-
-        // // If we're going forward, use "full" speed
-        // if (speed > 0.0) {
-        // speed = speed * 0.5;
-        // } else {
-        // // we're going backward, so use slower speed
-        // speed = speed * 0.75;
-        // }
         double turn = -yaw;
 
         if (!autoAlignEnabled || !clawSub.isOpen()) {
             yaw = -turn;
 
-            // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
-            yawMultiplier = 0.5f;
-            double yawSign = 1.0;
-
-            if (yaw < 0.0) {
-                yawSign = -1.0;
+            if ( armSub.getAngle() > 60.0 ) {
+                speed = speed * 0.5 ;
+                yaw = yaw * 0.6 ;
             }
 
-            yaw = yawSign * (yaw * yaw) * yawMultiplier;
+            // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
+            yawMultiplier = 0.5f;
+            yaw = Math.signum(yaw) * (yaw * yaw) * yawMultiplier;
 
             if (Math.abs(yaw) < 0.02f) {
                 yaw = 0.0f;

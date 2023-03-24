@@ -6,8 +6,11 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -27,6 +30,9 @@ public class Robot extends TimedRobot {
     // public final Arm armSub = new Arm();
 
     private Command autonomousCommand;
+
+    private Field2d field ;
+
 
     private RobotContainer robotContainer;
 
@@ -187,9 +193,10 @@ public class Robot extends TimedRobot {
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
 
-        if (Robot.isSimulation()) {
-            DriverStation.silenceJoystickConnectionWarning(true) ;
-        }
+        DriverStation.silenceJoystickConnectionWarning(true) ;
+
+        field = new Field2d();
+        SmartDashboard.putData("Field", field) ;
 
     }
 
@@ -209,6 +216,11 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData(robotContainer.visionSub);
         SmartDashboard.putData(robotContainer.armSub);
         SmartDashboard.putData(robotContainer.clawSub);
+        field.setRobotPose(robotContainer.driveSub.getPose());
+            // Push the trajectory to Field2d.
+        if (robotContainer.getCurrentTrajectory() != null) {
+            field.getObject("traj").setTrajectory(robotContainer.getCurrentTrajectory());
+        }
 
         if (this.isDisabled()) {
             robotContainer.armSub.stopMoving();

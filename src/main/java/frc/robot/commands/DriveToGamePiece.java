@@ -16,7 +16,7 @@ public class DriveToGamePiece extends CommandBase {
     Drive driveSub;
     Vision visionSub;
 
-    double targetDistance = 0.5; //meters
+    double targetDistance = 0.0;
 
     double startingLeftDistance;
     double startingRightDistance;
@@ -29,10 +29,13 @@ public class DriveToGamePiece extends CommandBase {
 
     public PIDController pid;
 
-    public DriveToGamePiece(Drive d, Vision v) {
-        
+    public DriveToGamePiece(double speed, double distance, Drive d, Vision v) {
+
         driveSub = d;
         visionSub = v;
+        targetDistance = distance;
+        leftVelocity = speed;
+        rightVelocity = speed;
 
         pid = new PIDController(
                 Constants.DriveConstants.AutoAlignkP,
@@ -44,7 +47,7 @@ public class DriveToGamePiece extends CommandBase {
 
     @Override
     public void initialize() {
-        driveSub.resetOdometry(new Pose2d());
+        // driveSub.resetOdometry(new Pose2d());
         startingLeftDistance = driveSub.getLeftDistance();
         startingRightDistance = driveSub.getRightDistance();
     }
@@ -57,15 +60,14 @@ public class DriveToGamePiece extends CommandBase {
             adjustment = pid.calculate(error);
             adjustment = Math.signum(adjustment)
                     * Math.min(Math.abs(adjustment), Constants.DriveConstants.CorrectionRotationSpeed / 4.0);
-            leftVelocity = Constants.DriveConstants.CorrectionRotationSpeed - adjustment;
-            rightVelocity = Constants.DriveConstants.CorrectionRotationSpeed + adjustment;
+            double left = this.leftVelocity - adjustment;
+            double right = this.rightVelocity + adjustment;
 
-            driveSub.setSpeeds(leftVelocity, rightVelocity);
+            driveSub.setSpeeds(left, right);
         } else {
-            missedFrames++;
+            driveSub.setSpeeds(leftVelocity, rightVelocity);
         }
 
-        driveSub.setSpeeds(Constants.AutoConstants.DriveToGamePieceSpeed, Constants.AutoConstants.DriveToGamePieceSpeed);
     }
 
     @Override
