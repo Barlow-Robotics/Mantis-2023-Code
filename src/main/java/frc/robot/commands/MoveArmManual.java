@@ -35,8 +35,8 @@ public class MoveArmManual extends CommandBase {
     public void execute() {
         /* Angle */
         double currentAngle = armSub.getAngle();
-        double desiredAngle = 
-                currentAngle + (operatorController.getRawAxis(controllerAngleID) * ArmConstants.AngleMultiplier);
+        double desiredAngle = currentAngle
+                + (operatorController.getRawAxis(controllerAngleID) * ArmConstants.AngleMultiplier);
 
         if (desiredAngle > ArmConstants.ArmMaxAngle) {
             desiredAngle = ArmConstants.ArmMaxAngle;

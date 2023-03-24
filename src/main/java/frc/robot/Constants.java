@@ -47,7 +47,7 @@ public final class Constants {
         public static final double MaxSpeed = 3.8; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
-        public static final double TimeToReachVelocity = 0.2; 
+        public static final double TimeToReachVelocity = 0.2;
 
         // public static final double MaxVelocityChange = MaxSpeed * (
         // TimeToReachVelocity / 50 ); // percentage of Acceleration
@@ -75,25 +75,22 @@ public final class Constants {
         // public static final double kF = 20.0; //0.048 original
         // public static final double kP = 0.7; //0.005 original
         // public static final double kI = 0.001; //0.0001 original
-        public static final double kF = 0.048 ;
-        public static final double kP = 0.005 ;
-        public static final double kI = 0.0001; //0.0001 original
+        public static final double kF = 0.048;
+        public static final double kP = 0.005;
+        public static final double kI = 0.0001; // 0.0001 original
         public static final double kD = 0.0;
         public static final int PID_id = 0;
 
         public static final double BalanceTolerance = 5.5;
         public static final double AutoBalanceSpeed = 0.15;
 
-        public static final double DefaultAutoVelocity = 1.0 ;
-        public static final double DefaultAutoAccel = 4.0 ;
-
+        public static final double DefaultAutoVelocity = 1.0;
+        public static final double DefaultAutoAccel = 4.0;
 
         public static final double AutoAlignkP = 0.003;
         public static final double AutoAlignkI = 0.0;
         public static final double AutoAlignkD = 0.0;
     }
-
-
 
     public static final class ArmConstants {
         public static final double RotateGearRatio = 120;
@@ -116,8 +113,7 @@ public final class Constants {
         public static final double armRotateSpeed = 70; // Degrees per second
         public static final double armRotateAccelerationTime = 0.25;
         public static final double armExtendSpeed = 25; // Inches per second
-        public static final double armExtendAccelerationTime = 0.25; // Need to change this (time in sceonds for total
-                                                                     // motion)
+        public static final double armExtendAccelerationTime = 0.25; // Need to change (seconds for total motion)
 
         public static final double ExtentionCalibrationVelocity = -1.0;
         public static final double RotationCalibrationVelocity = 10; // Degrees per second
@@ -202,7 +198,6 @@ public final class Constants {
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
         // what that is.
-
     }
 
     public static final class ClawConstants {

@@ -4,15 +4,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 
 public class AutoBalance extends CommandBase {
-   
+
     private Drive driveSub;
-    double ff = 0.0; 
+    double ff = 0.0;
 
     public AutoBalance(Drive d) {
         driveSub = d;
@@ -29,9 +28,9 @@ public class AutoBalance extends CommandBase {
 
         if (Math.abs(error) >= Constants.DriveConstants.BalanceTolerance) {
             driveSub.setSpeedsWithFF(
-                Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error), 
-                Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error), 
-                ff,ff);
+                    Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error),
+                    Constants.DriveConstants.AutoBalanceSpeed * -Math.signum(error),
+                    ff, ff);
         } else {
             driveSub.setSpeeds(0.0, 0.0);
         }
@@ -46,17 +45,16 @@ public class AutoBalance extends CommandBase {
         return false;
     }
 
-
     public double getFF() {
-        return this.ff ;
+        return this.ff;
     }
 
-    public void setFF( double value) {
-        ff = value ;
+    public void setFF(double value) {
+        ff = value;
     }
 
     // public void initSendable(SendableBuilder builder) {
-    //     builder.addDoubleProperty("Feed Forward", this::getFF, this::setFF);
+    // builder.addDoubleProperty("Feed Forward", this::getFF, this::setFF);
     // }
 
 }

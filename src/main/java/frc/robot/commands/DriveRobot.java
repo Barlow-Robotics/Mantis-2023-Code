@@ -17,11 +17,11 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
 public class DriveRobot extends CommandBase {
-    
+
     Drive driveSub;
     Claw clawSub;
     Vision visionSub;
-    Arm armSub ;
+    Arm armSub;
 
     private boolean lastAutoSteer = false;
     private float yawMultiplier = 1.0f;
@@ -42,13 +42,14 @@ public class DriveRobot extends CommandBase {
     public String selectedTarget = "None";
 
     public DriveRobot(
-            Drive d, Claw c, Vision v, Arm a, Trigger autoAlignButton, Trigger toggleTargetButton, Joystick driverController,
+            Drive d, Claw c, Vision v, Arm a, Trigger autoAlignButton, Trigger toggleTargetButton,
+            Joystick driverController,
             int throttleID, int turnID) {
 
         driveSub = d;
         clawSub = c;
         visionSub = v;
-        armSub = a ;
+        armSub = a;
 
         this.autoAlignButton = autoAlignButton;
         this.toggleTargetButton = toggleTargetButton;
@@ -92,9 +93,9 @@ public class DriveRobot extends CommandBase {
         if (!autoAlignEnabled || !clawSub.isOpen()) {
             yaw = -turn;
 
-            if ( armSub.getAngle() > 60.0 ) {
-                speed = speed * 0.5 ;
-                yaw = yaw * 0.6 ;
+            if (armSub.getAngle() > 60.0) {
+                speed = speed * 0.5;
+                yaw = yaw * 0.6;
             }
 
             // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);

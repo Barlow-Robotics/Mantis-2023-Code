@@ -48,7 +48,7 @@ public class Vision extends SubsystemBase implements Sendable {
             visionChannel.bind(sAddr);
             visionChannel.configureBlocking(false);
         } catch (Exception ex) {
-            int wpk = 1 ;
+            int wpk = 1;
         }
     }
 
