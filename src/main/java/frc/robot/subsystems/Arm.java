@@ -48,8 +48,9 @@ public class Arm extends SubsystemBase implements Sendable {
         setExtendMotorConfig(extendMotor);
         setRotateMotorConfig(rotateMotorLeader);
         setRotateMotorConfig(rotateMotorFollower);
-
-        rotateMotorFollower.setInverted(TalonFXInvertType.Clockwise); // maybe change
+        
+        this // error is a reminder to check if clockwise inversion is correct before running the code and breaking the robot
+        rotateMotorFollower.setInverted(TalonFXInvertType.Clockwise); // <-- THIS IS THE THING THAT MAY NEED TO CHANGE
 
         rotateMotorLeader.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
         rotateMotorFollower.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
