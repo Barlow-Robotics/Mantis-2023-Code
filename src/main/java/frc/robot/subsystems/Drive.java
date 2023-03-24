@@ -316,10 +316,10 @@ public class Drive extends SubsystemBase  {
     }
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.05, 21777, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.05, 21777, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.05, 21777, false);
-        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.05, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.25, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.25, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.25, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.25, 21777, false);
     }
 
     @Override

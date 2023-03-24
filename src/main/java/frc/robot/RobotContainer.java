@@ -43,6 +43,7 @@ import frc.robot.subsystems.Arm.Position;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
+import frc.robot.Constants.DriveConstants;;
 
 public class RobotContainer {
 
@@ -196,7 +197,7 @@ public class RobotContainer {
         /* Place Game Piece on Top Row, Reverse Out of Community */
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
 
-        reversePath = loadPath( "Reverse", 1.0, 4.0, true) ;
+        reversePath = loadPath( "Reverse", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true) ;
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(reversePath.getInitialPose()), driveSub));
         theCommand.addCommands( new InstantCommand( () -> this.currentTrajectory = reversePath)) ;
 
@@ -225,7 +226,7 @@ public class RobotContainer {
     SequentialCommandGroup createPlaceTopAndEngageCommand() {
         /* Place Game Piece on Top Row, Reverse Out of Community */
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-        engagePath = loadPath( "ChargingStation", 1.0, 4.0, true ) ;
+        engagePath = loadPath( "ChargingStation", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true ) ;
         theCommand.addCommands( new InstantCommand( () -> this.currentTrajectory = engagePath)) ;
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
 
@@ -253,7 +254,7 @@ public class RobotContainer {
     SequentialCommandGroup createPlaceTopAndGrabPieceShortSideCommand() {
         // Place GP on Top, Reverse over Short Community Line, Grab GP, Place GP on Mid
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-        shortSideGamePiecePath1 = loadPath( "GrabPieceShortSide1", 1.0, 4.0, true ) ;
+        shortSideGamePiecePath1 = loadPath( "GrabPieceShortSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true ) ;
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands( new InstantCommand( () -> this.currentTrajectory = shortSideGamePiecePath1)) ;
         
@@ -280,7 +281,7 @@ public class RobotContainer {
 
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
 
-        shortSideGamePiecePath2 = loadPath(  "GrabPieceShortSide2", 1.0, 4.0, false ) ;
+        shortSideGamePiecePath2 = loadPath(  "GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false ) ;
         theCommand.addCommands( new InstantCommand( () -> this.currentTrajectory = shortSideGamePiecePath2)) ;
 
         theCommand.addCommands(new PPRamseteCommand(
@@ -306,7 +307,7 @@ public class RobotContainer {
         // Place GP on Top, Reverse over Long Community Line, Grab GP, Place GP on Mid
 
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-        longSideGamePiecePath1 = loadPath( "GrabPieceLongSide1", 1.0, 4.0, true ) ;
+        longSideGamePiecePath1 = loadPath( "GrabPieceLongSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true ) ;
         theCommand.addCommands( new InstantCommand( () -> this.currentTrajectory = longSideGamePiecePath1)) ;
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(longSideGamePiecePath1.getInitialPose()), driveSub));
 
@@ -330,7 +331,7 @@ public class RobotContainer {
         theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
 
-        longSideGamePiecePath2 = loadPath( "GrabPieceLongSide2", 1.0, 4.0, false ) ;
+        longSideGamePiecePath2 = loadPath( "GrabPieceLongSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false ) ;
         theCommand.addCommands( new InstantCommand( () -> this.currentTrajectory = longSideGamePiecePath2)) ;
         theCommand.addCommands(new PPRamseteCommand(
                 longSideGamePiecePath2,
