@@ -21,15 +21,14 @@ public class ArmPathGenerator extends CommandBase {
                 addRequirements(armSub);
         }
 
-        /* * * * * * FROM RESTING * * * * * */
+        /* * * * * * FROM HOME * * * * * */
 
-        public SequentialCommandGroup getPathFromResting() {
+        public SequentialCommandGroup getPathFromHome() {
 
-                System.out.println("***** getPathFromResting");
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
                 switch (to) {
-                        case Resting:
+                        case Home:
                                 break; // do nothing in this case since we're already at resting
 
                         case Bottom:
@@ -143,12 +142,11 @@ public class ArmPathGenerator extends CommandBase {
         /* * * * * * FROM FLOOR * * * * * */
 
         public SequentialCommandGroup getPathFromFloor() {
-                System.out.println("***** getPathFromFloor");
 
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
                 switch (to) {
-                        case Resting:
+                        case Home:
                                 g.addCommands(
                                                 new MoveArm(
                                                                 armSub,
@@ -271,12 +269,11 @@ public class ArmPathGenerator extends CommandBase {
         /* * * * * * FROM BOTTOM * * * * * */
 
         public SequentialCommandGroup getPathFromBottom() {
-                System.out.println("***** getPathFromBottom");
 
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
                 switch (to) {
-                        case Resting:
+                        case Home:
                                 g.addCommands(
                                                 new MoveArm(
                                                                 armSub,
@@ -399,12 +396,11 @@ public class ArmPathGenerator extends CommandBase {
         /* * * * * * FROM MIDDLE * * * * * */
 
         public SequentialCommandGroup getPathFromMiddle() {
-                System.out.println("***** getPathFromMiddle");
 
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
                 switch (to) {
-                        case Resting:
+                        case Home:
                                 g.addCommands(
                                                 new MoveArm(
                                                                 armSub,
@@ -527,12 +523,11 @@ public class ArmPathGenerator extends CommandBase {
         /* * * * * * FROM TOP * * * * * */
 
         public SequentialCommandGroup getPathFromTop() {
-                System.out.println("***** getPathFromTop");
 
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
                 switch (to) {
-                        case Resting:
+                        case Home:
                                 g.addCommands(
                                                 new MoveArm(
                                                                 armSub,
@@ -655,12 +650,11 @@ public class ArmPathGenerator extends CommandBase {
         /* * * * * * FROM PLAYER STATION * * * * * */
 
         private SequentialCommandGroup getPathFromPlayerStation() {
-                System.out.println("***** getPathFromPlayerStation");
 
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
                 switch (to) {
-                        case Resting:
+                        case Home:
                                 g.addCommands(
                                                 new MoveArm(
                                                                 armSub,
@@ -781,7 +775,6 @@ public class ArmPathGenerator extends CommandBase {
         }
 
         private SequentialCommandGroup getPathFromTransition() {
-                System.out.println("***** getPathFromTransition");
 
                 SequentialCommandGroup g = new SequentialCommandGroup();
 
@@ -805,7 +798,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Position.Transition).withTimeout(4.0);
 
                 g.addCommands(first);
-                g.addCommands(getPathFromResting());
+                g.addCommands(getPathFromHome());
 
                 return g;
         }
@@ -816,8 +809,8 @@ public class ArmPathGenerator extends CommandBase {
                 SequentialCommandGroup g = null;
 
                 switch (armSub.getState()) {
-                        case Resting:
-                                g = getPathFromResting();
+                        case Home:
+                                g = getPathFromHome();
                                 break;
                         case Bottom:
                                 g = getPathFromBottom();

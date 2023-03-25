@@ -86,7 +86,7 @@ public final class Constants {
         public static final double AutoBalanceSlowerSpeed = 0.075;
         public static final double AutoBalanceKP = 0.015;
 
-        public static final double DefaultAutoVelocity = 1.0;
+        public static final double DefaultAutoVelocity = 3.0;
         public static final double DefaultAutoAccel = 4.0;
 
         public static final double AutoAlignkP = 0.003;

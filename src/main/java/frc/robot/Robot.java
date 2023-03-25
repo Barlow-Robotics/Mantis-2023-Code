@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
         if (!calibrationPerformed  && !Robot.isSimulation()) {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
-            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Resting));
+            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Home));
 
             cg.addCommands(
                     calibrateLength,
@@ -136,7 +136,7 @@ public class Robot extends TimedRobot {
             Command setArmLength = new InstantCommand(
                     () -> robotContainer.armSub.setLength(0.0, Constants.ArmConstants.ExtendVel,
                             Constants.ArmConstants.ExtendAccel));
-            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Resting));
+            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Home));
 
             SequentialCommandGroup calbrationSequence = new SequentialCommandGroup(
                     calibrateLength,
@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
                     setArmLength,
                     setState,
                     new InstantCommand(() -> {
-                        robotContainer.armSub.setState(Arm.Position.Resting);
+                        robotContainer.armSub.setState(Arm.Position.Home);
                         this.calibrationPerformed = true;
                     }),
                     new PrintCommand("Calibration Complete"));

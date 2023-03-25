@@ -51,7 +51,6 @@ public class MoveArm extends CommandBase {
 
     @Override
     public void initialize() {
-        System.out.println("***** move command to " + state + " started");
 
         armSub.setState(Arm.Position.Transition);
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
@@ -81,7 +80,6 @@ public class MoveArm extends CommandBase {
            && ( extensionVelocity == 0.0 ||  Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.ArmLengthTolerance)
          ) {
             armSub.setState(state);
-            System.out.println("***** move command to " + state + " is finished");
             return true;
         } else {
             return false;

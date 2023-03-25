@@ -94,7 +94,7 @@ public class Claw extends SubsystemBase {
         } else if (distanceSensor.isRangeValid() && distanceSensor.getRange() >= 15 * Constants.InchesToMillimeters)
                      {
             enableAutoClose();
-        }
+        } 
     }
 
     public double getAngle() {

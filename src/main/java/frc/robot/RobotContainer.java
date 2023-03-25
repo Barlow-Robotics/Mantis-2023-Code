@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
-
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -32,6 +35,7 @@ import frc.robot.commands.AutoBalance;
 import frc.robot.commands.DriveRobot;
 import frc.robot.commands.DriveToGamePiece;
 import frc.robot.commands.OpenClaw;
+import frc.robot.commands.TimeStampCommand;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
@@ -104,9 +108,6 @@ public class RobotContainer {
                 new DriveRobot(
                         driveSub, clawSub, visionSub, armSub, autoAlignButton, toggleTargetButton, driverController,
                         throttleJoystickID, turnJoystickID));
-
-        // armSub.setDefaultCommand(
-        // new MoveArmManual(armSub));
     }
 
     private void configureButtonBindings() {
@@ -137,7 +138,7 @@ public class RobotContainer {
         /* * * * * * ARM BUTTONS * * * * * */
 
         moveToRestingPositionButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonA);
-        moveToRestingPositionButton.onTrue(new ArmPathGenerator(Arm.Position.Resting, armSub));
+        moveToRestingPositionButton.onTrue(new ArmPathGenerator(Arm.Position.Home, armSub));
 
         moveToBottomButton = new JoystickButton(operatorButtonController, XboxControllerConstants.LeftStick);
         moveToBottomButton.onTrue(new ArmPathGenerator(Arm.Position.Bottom, armSub));
@@ -161,7 +162,7 @@ public class RobotContainer {
     }
 
     private void buildAutoOptions() {
-        stringChooser.setDefaultOption("Place on Top and Leave Community", "placeTopAndReverse");
+        stringChooser.setDefaultOption("Place on Top, Leave Community", "placeTopAndReverse");
         stringChooser.addOption("Place on Top, Engage Station", "placeTopAndEngage");
         stringChooser.addOption("Place on Top, Leave Short Community, Pick Up Game Piece",
                 "placeTopAndGrabPieceShortSide");
@@ -171,11 +172,11 @@ public class RobotContainer {
     }
 
     private PathPlannerTrajectory loadPath(String name, double velocity, double accel, boolean reverse) {
-        PathPlannerTrajectory temp = PathPlanner.loadPath(
-                name,
-                new PathConstraints(velocity, accel),
-                reverse);
-        return PathPlannerTrajectory.transformTrajectoryForAlliance(temp, DriverStation.getAlliance());
+        PathPlannerTrajectory temp = PathPlanner.loadPath( 
+            name,
+            new PathConstraints(velocity, accel),
+            reverse);
+        return PathPlannerTrajectory.transformTrajectoryForAlliance(temp, DriverStation.getAlliance()) ;
     }
 
     // private void loadPaths() {
@@ -190,28 +191,31 @@ public class RobotContainer {
     SequentialCommandGroup createPlaceTopAndReverseCommand() {
         /* Place Game Piece on Top Row, Reverse Out of Community */
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-
-        reversePath = loadPath("Reverse", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true);
-        theCommand
-                .addCommands(new InstantCommand(() -> driveSub.resetOdometry(reversePath.getInitialPose()), driveSub));
+        
+        reversePath = loadPath(
+            "Reverse", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
+        );
+        
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = reversePath));
-
+        theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(reversePath.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromResting());
+        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
         theCommand.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromTop());
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-
-        PPRamseteCommand reverseCommand = new PPRamseteCommand(
+        theCommand.addCommands(new PPRamseteCommand(
                 reversePath,
                 driveSub::getPose,
                 new RamseteController(),
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub);
-        theCommand.addCommands(reverseCommand);
+                driveSub));
+        theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
+        theCommand.addCommands(new OpenClaw(clawSub));
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
 
         return theCommand;
     }
@@ -219,18 +223,19 @@ public class RobotContainer {
     SequentialCommandGroup createPlaceTopAndEngageCommand() {
         /* Place Game Piece on Top Row, Reverse Out of Community */
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-        engagePath = loadPath("ChargingStation", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel,
-                true);
+        
+        engagePath = loadPath(
+            "ChargingStation", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
+        );
+        
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = engagePath));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
-
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromResting());
+        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
         theCommand.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromTop());
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-
         theCommand.addCommands(new PPRamseteCommand(
                 engagePath,
                 driveSub::getPose,
@@ -247,23 +252,18 @@ public class RobotContainer {
     SequentialCommandGroup createPlaceTopAndGrabPieceShortSideCommand() {
         // Place GP on Top, Reverse over Short Community Line, Grab GP, Place GP on Mid
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-        shortSideGamePiecePath1 = loadPath("GrabPieceShortSide1", DriveConstants.DefaultAutoVelocity,
-                DriveConstants.DefaultAutoAccel, true);
-        theCommand.addCommands(
-                new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
+        
+        shortSideGamePiecePath1 = loadPath(
+            "GrabPieceShortSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
+        );
+         
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath1));
-
+        theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-
-        // theCommand.addCommands(new
-        // ArmPathGenerator(Position.Top,armSub).getPathFromResting());
-
+        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
         theCommand.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
         theCommand.addCommands(new OpenClaw(clawSub));
-
-        // theCommand.addCommands(new ArmPathGenerator(Position.Resting,
-        // armSub).getPathFromTop());
-
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
         theCommand.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath1,
                 driveSub::getPose,
@@ -271,17 +271,17 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub)/* .alongWith(toFloor.getPathFromResting()) */
-        );
-
-        theCommand.addCommands(new DriveToGamePiece(1.0, 1.0, driveSub, visionSub));
-
+                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
+        theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        theCommand.addCommands(new DriveToGamePiece(1.0, 1.0, driveSub, visionSub));
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
 
-        shortSideGamePiecePath2 = loadPath("GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity,
-                DriveConstants.DefaultAutoAccel, false);
+        shortSideGamePiecePath2 = loadPath(
+            "GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false
+        );
+        
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath2));
-
         theCommand.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath2,
                 driveSub::getPose,
@@ -289,34 +289,37 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub));
-
-        // .alongWith(
-        // new ArmPathGenerator(Position.Middle,
-        // armSub).getPathFromFloor()));
-
-        // theCommand.addCommands(new ArmPathGenerator(Position.Resting,
-        // armSub).getPathFromMiddle());
+                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
+        theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        theCommand.addCommands(new OpenClaw(clawSub));
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
 
         return theCommand;
     }
 
     SequentialCommandGroup createPlaceTopAndGrabPieceLongSideCommand() {
         // Place GP on Top, Reverse over Long Community Line, Grab GP, Place GP on Mid
-
         SequentialCommandGroup theCommand = new SequentialCommandGroup();
-        longSideGamePiecePath1 = loadPath("GrabPieceLongSide1", DriveConstants.DefaultAutoVelocity,
-                DriveConstants.DefaultAutoAccel, true);
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
+        String formattedDate = sdf.format(date);
+        
+        longSideGamePiecePath1 = loadPath(
+            "GrabPieceLongSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true);
+        
+        theCommand.addCommands(new TimeStampCommand("started createPlaceTopAndGrabPieceLongSideCommand"));
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = longSideGamePiecePath1));
-        theCommand.addCommands(
-                new InstantCommand(() -> driveSub.resetOdometry(longSideGamePiecePath1.getInitialPose()), driveSub));
-
+        theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(longSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromResting());
+        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
+        theCommand.addCommands(new TimeStampCommand("Move to top finished"));
         theCommand.addCommands(new edu.wpi.first.wpilibj2.command.WaitCommand(2));
+        theCommand.addCommands(new TimeStampCommand("Wait finished"));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromTop());
-
+        theCommand.addCommands(new TimeStampCommand("Open Claw finished"));
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        theCommand.addCommands(new TimeStampCommand("Move to home finished"));
         theCommand.addCommands(new PPRamseteCommand(
                 longSideGamePiecePath1,
                 driveSub::getPose,
@@ -324,15 +327,19 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromResting()));
-
-        // wpk need to put in correct distance
-        theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub));
+                driveSub).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome()));
+        theCommand.addCommands(new TimeStampCommand("path1 finished"));
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub)); // wpk need to put in correct distance
+        theCommand.addCommands(new TimeStampCommand("drive to game piece" + formattedDate));
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
+        theCommand.addCommands(new TimeStampCommand("Move to home finished"));
 
-        longSideGamePiecePath2 = loadPath("GrabPieceLongSide2", DriveConstants.DefaultAutoVelocity,
-                DriveConstants.DefaultAutoAccel, false);
+        longSideGamePiecePath2 = loadPath(
+            "GrabPieceLongSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false);
+
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = longSideGamePiecePath2));
+        theCommand.addCommands(new TimeStampCommand("load path finished"));
         theCommand.addCommands(new PPRamseteCommand(
                 longSideGamePiecePath2,
                 driveSub::getPose,
@@ -340,9 +347,12 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
-
-        theCommand.addCommands(new ArmPathGenerator(Position.Resting, armSub).getPathFromMiddle());
+                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));   
+        theCommand.addCommands(new TimeStampCommand("path2 finished"));
+        theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        theCommand.addCommands(new OpenClaw(clawSub));
+        theCommand.addCommands(new TimeStampCommand("claw open finished"));
+        theCommand.addCommands(new TimeStampCommand("finished createPlaceTopAndGrabPieceLongSideCommand"));
 
         return theCommand;
     }
@@ -361,9 +371,7 @@ public class RobotContainer {
         // placeTopAndGrabPieceLongSide = createPlaceTopAndGrabPieceLongSideCommand();
 
         PPRamseteCommand.setLoggingCallbacks(
-                (PathPlannerTrajectory activeTrajectory) -> {
-                    System.out.println("PP Logging: activeTRajectory is " + activeTrajectory);
-                },
+                null,
                 (Pose2d targetPose) -> {
                     NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/X").setDouble(targetPose.getX());
                     NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/Y").setDouble(targetPose.getY());

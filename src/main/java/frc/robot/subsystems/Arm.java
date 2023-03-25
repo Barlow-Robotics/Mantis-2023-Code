@@ -32,10 +32,10 @@ public class Arm extends SubsystemBase implements Sendable {
     double x = Constants.ArmConstants.RotateGearRatio;
 
     public enum Position {
-        Resting, Bottom, Middle, Top, Floor, PlayerStation, Transition
+        Home, Bottom, Middle, Top, Floor, PlayerStation, Transition
     };
 
-    public Position armState = Position.Resting;
+    public Position armState = Position.Home;
 
     // BufferedTrajectoryPointStream bufferedStream = new
     // BufferedTrajectoryPointStream();
