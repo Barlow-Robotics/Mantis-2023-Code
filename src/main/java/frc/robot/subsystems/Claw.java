@@ -88,6 +88,7 @@ public class Claw extends SubsystemBase {
         setAngle(-armSub.getAngle() + 2.0, Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
 
         if (isOpen() && autoCloseEnabled
+                && distanceSensor.isRangeValid()
                 && distanceSensor.getRange() <= (ClawConstants.InchesForAutoClosing) * Constants.InchesToMillimeters) {
             close();
             disableAutoClose();

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.hal.AllianceStationID;
@@ -38,11 +40,11 @@ public class Robot extends TimedRobot {
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings // O
 
-    // BufferedTrajectoryPointStream bufferedStream = new
-    // BufferedTrajectoryPointStream(); // O
-    // public boolean currentProfileButton;
-
     private boolean calibrationPerformed = false;
+
+    static long startTime = System.currentTimeMillis() ;
+
+    static HashMap<Command, Long> startTimes = new HashMap() ;
 
     /*
      * This function is run when the robot is first started up and should be used
@@ -186,6 +188,23 @@ public class Robot extends TimedRobot {
         PhysicsSim.getInstance().run();
     }
 
+    static public void reportCommandStart(Command c) {
+        double deltaTime = ((double)System.currentTimeMillis() - startTime) / 1000.0 ;
+        System.out.println(deltaTime + ": Started " + c.getName())    ;     
+        startTimes.putIfAbsent(c, System.currentTimeMillis() ) ;
+    }
+
+    static public void reportCommandFinish(Command c) {
+        if ( startTimes.containsKey(c)) {
+            long currentTime = System.currentTimeMillis() ;
+            double deltaTime = ((double)currentTime - startTime) / 1000.0 ;
+            double elapsedTime = (double)(currentTime - startTimes.get(c)) / 1000.0  ;
+            System.out.println(deltaTime + ": Finished (elapsed time " + elapsedTime + ")" + c.getName()) ;     
+            startTimes.remove(c) ;
+        }
+    }
+
+
     public void robotInit() {
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
@@ -197,6 +216,9 @@ public class Robot extends TimedRobot {
 
         field = new Field2d();
         SmartDashboard.putData("Field", field) ;
+
+        CommandScheduler.getInstance().onCommandInitialize( Robot::reportCommandStart ) ;
+        CommandScheduler.getInstance().onCommandFinish(Robot::reportCommandFinish);        
 
     }
 
