@@ -299,7 +299,7 @@ public class RobotContainer {
                 driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
         theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        theCommand.addCommands(new DriveToGamePiece(1.0, 1.0, driveSub, visionSub));
+        theCommand.addCommands(new DriveToGamePiece(2.0, 1.0, driveSub, visionSub));
         theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
 
         shortSideGamePiecePath2 = loadPath(
@@ -314,10 +314,11 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
+                driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));
+        theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
         theCommand.addCommands(new OpenClaw(clawSub));
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
 
         theCommand.onCommandInitialize(Robot::reportCommandStart);
         theCommand.onCommandFinish(Robot::reportCommandFinish );

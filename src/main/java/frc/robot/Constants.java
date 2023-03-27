@@ -86,7 +86,8 @@ public final class Constants {
         public static final double AutoBalanceSlowerSpeed = 0.075;
         public static final double AutoBalanceKP = 0.015;
 
-        public static final double DefaultAutoVelocity = 3.0;
+        // public static final double DefaultAutoVelocity = 3.0;
+        public static final double DefaultAutoVelocity = 1.0;
         public static final double DefaultAutoAccel = 4.0;
 
         public static final double AutoAlignkP = 0.003;
@@ -193,10 +194,10 @@ public final class Constants {
         public static final double LengthKD = 0.1;
         public static final int LengthPID_id = 0;
 
-        public static final double ffRetracted = 0.11; // Need to re-test to find this after claw is attached
-        public static final double ffExtracted = 0.30; // Need to re-test to find this after claw is attached
+        public static final double ffRetracted = 0.13; // Need to re-test to find this after claw is attached
+        public static final double ffExtracted = 0.36; // Need to re-test to find this after claw is attached
 
-        public static final double extendFF = -0.05;
+        public static final double extendFF = -0.06;
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
         // what that is.
