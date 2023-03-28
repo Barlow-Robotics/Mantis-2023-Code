@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
         robotContainer.armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
         robotContainer.clawSub.stopMoving();
+        robotContainer.driveSub.stopMoving () ;
         this.calibrationPerformed = false;
     }
 

@@ -84,9 +84,9 @@ public final class Constants {
         public static final double BalanceTolerance = 5.5;
         public static final double AutoBalanceSpeed = 0.15;
         public static final double AutoBalanceSlowerSpeed = 0.075;
-        public static final double AutoBalanceKP = 0.01071428571;
         public static final double BalanceMaxAngle = 14;
         public static final double BalanceMinAngle = 2.5;
+        public static final double AutoBalanceKP = AutoBalanceSpeed / BalanceMaxAngle;
 
         // public static final double DefaultAutoVelocity = 3.0;
         public static final double DefaultAutoVelocity = 1.0;

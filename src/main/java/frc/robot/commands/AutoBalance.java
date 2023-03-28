@@ -4,11 +4,19 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 
 public class AutoBalance extends CommandBase {
+
+    PIDController controller = new PIDController(
+        Constants.DriveConstants.AutoBalanceKP, 
+        0.0, 
+        Constants.DriveConstants.AutoBalanceKP * 0.7) ;
 
     private Drive driveSub;
     double ff = 0.0;
@@ -21,6 +29,7 @@ public class AutoBalance extends CommandBase {
 
     @Override
     public void initialize() {
+        controller.reset() ;
     }
 
     @Override
@@ -32,29 +41,13 @@ public class AutoBalance extends CommandBase {
         } else if (Math.abs(driveSub.getPitch()) > 14) {
             error = 14 * Math.signum(error);
         }
+        var output = controller.calculate(error) ;
 
-        driveSub.setSpeedsWithFF(DriveConstants.AutoBalanceSpeed * -error,
-                                 DriveConstants.AutoBalanceSpeed * -error,
-                                 ff, ff);
+        NetworkTableInstance.getDefault().getEntry("autobalance/error").setDouble(error);
+        NetworkTableInstance.getDefault().getEntry("autobalance/output_speed").setDouble(output);
 
-        // double error = driveSub.getPitch();
+        driveSub.setSpeeds(output, output);
 
-        // if (Math.abs(error) >= DriveConstants.BalanceMaxAngle) {
-        // driveSub.setSpeedsWithFF(
-        // DriveConstants.AutoBalanceSpeed * -Math.signum(error),
-        // DriveConstants.AutoBalanceSpeed * -Math.signum(error),
-        // ff, ff);
-        // // -14 degrees = 0.15 meters per sec
-        // } else if (Math.abs(error) > DriveConstants.BalanceMinAngle &&
-        // Math.abs(error) < DriveConstants.BalanceMaxAngle) {
-        // driveSub.setSpeedsWithFF(
-        // DriveConstants.AutoBalanceKP * -error,
-        // DriveConstants.AutoBalanceKP * -error,
-        // ff, ff);
-        // // -13.999... degrees = 0.20999... meters per sec
-        // } else {
-        // driveSub.setSpeeds(0.0, 0.0);
-        // }
     }
 
     @Override

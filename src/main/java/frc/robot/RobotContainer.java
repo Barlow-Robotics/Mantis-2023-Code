@@ -103,8 +103,8 @@ public class RobotContainer {
         setupInstrumentation();
         buildAutoOptions();
 
-        autoBalanceTest = new AutoBalance(driveSub);
-        SmartDashboard.putData("auto balance", autoBalanceTest);
+        // autoBalanceTest = new AutoBalance(driveSub);
+        // SmartDashboard.putData("auto balance", autoBalanceTest);
 
         driveSub.setDefaultCommand(
                 new DriveRobot(
@@ -429,6 +429,8 @@ public class RobotContainer {
         // return this.createPlaceTopAndReverseCommand() ;
         // return this.placeTopAndGrabPieceShortSide;
         // return autoChooser.getSelected();
+
+        // return new AutoBalance(driveSub) ;
 
         String choice = stringChooser.getSelected();
         if (choice == "placeTopAndReverse") {

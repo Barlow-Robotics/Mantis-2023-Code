@@ -141,6 +141,11 @@ public class Drive extends SubsystemBase  {
         setSpeeds( speeds.leftMetersPerSecond, speeds.rightMetersPerSecond) ;
    }
 
+    public void stopMoving() {
+        driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, 0.0 ) ;
+        driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, 0.0 ) ;
+    }
+
     /**
      * Sets the desired wheel speeds.
      *
