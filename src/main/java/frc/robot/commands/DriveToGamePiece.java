@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
@@ -15,6 +16,7 @@ public class DriveToGamePiece extends CommandBase {
 
     Drive driveSub;
     Vision visionSub;
+    Claw clawSub ;
 
     double targetDistance = 0.0;
 
@@ -26,16 +28,19 @@ public class DriveToGamePiece extends CommandBase {
     private double rightVelocity;
     private int missedFrames = 0;
     private double adjustment;
+    private boolean stopAtEnd ;
 
     public PIDController pid;
 
-    public DriveToGamePiece(double speed, double distance, Drive d, Vision v) {
+    public DriveToGamePiece(double speed, double distance, Drive d, Vision v, Claw c,  boolean stopAtEnd) {
 
         driveSub = d;
         visionSub = v;
+        clawSub = c ;
         targetDistance = distance;
         leftVelocity = speed;
         rightVelocity = speed;
+        stopAtEnd = stopAtEnd ;
 
         pid = new PIDController(
                 Constants.DriveConstants.AutoAlignkP,
@@ -72,14 +77,17 @@ public class DriveToGamePiece extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        driveSub.setSpeeds(0.0, 0.0);
+        if ( stopAtEnd ) {
+            driveSub.setSpeeds(0.0, 0.0);
+        }
     }
 
     @Override
     public boolean isFinished() {
         double distanceTraveled = ((driveSub.getLeftDistance() - startingLeftDistance)
                 + (driveSub.getRightDistance() - startingRightDistance)) / 2.0;
-        if (Math.abs(distanceTraveled) >= Math.abs(targetDistance)) {
+        // command is done if we've driven far enough or we've closed the claw.
+        if (Math.abs(distanceTraveled) >= Math.abs(targetDistance) || !clawSub.isOpen()) {
             return true;
         }
         return false;

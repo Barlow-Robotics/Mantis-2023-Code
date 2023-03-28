@@ -88,8 +88,8 @@ public final class Constants {
         public static final double BalanceMinAngle = 2.5;
         public static final double AutoBalanceKP = AutoBalanceSpeed / BalanceMaxAngle;
 
-        // public static final double DefaultAutoVelocity = 3.0;
-        public static final double DefaultAutoVelocity = 1.0;
+        public static final double DefaultAutoVelocity = 3.0;
+        // public static final double DefaultAutoVelocity = 1.0;
         public static final double DefaultAutoAccel = 4.0;
 
         public static final double AutoAlignkP = 0.003;
@@ -105,7 +105,7 @@ public final class Constants {
         public static final double ExtendSprocketCircumference = ExtendSprocketDiameter * Math.PI;
 
         public static final double InchesPerRevolution = ExtendSprocketCircumference / ExtendGearRatio;
-        public static final double RevolutionsPerDegree = 1.0 / 360; // Is this right?
+        public static final double RevolutionsPerDegree = 1.0 / 360; 
 
         // add values when we figure out lengths
         public static final double CountsPerArmDegree = TalonFXEncoderResolution * RevolutionsPerDegree

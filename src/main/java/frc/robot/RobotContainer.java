@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -271,7 +272,7 @@ public class RobotContainer {
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
 
-        // wpk test to see time difference of combined movements... Need to make sure this doesn't hit any part of grid!
+        // wpk test to see time difference of combined movements... Need to make sure this doesn't hit any part of grid or chassis!
         // this would save about 1.5 seconds
         // theCommand.addCommands(
         //     new MoveArm(
@@ -286,9 +287,10 @@ public class RobotContainer {
         //     )
         // );
             
-        theCommand.addCommands(new WaitCommand(2));
+        theCommand.addCommands(new WaitCommand(1));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromTop());
         theCommand.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath1,
                 driveSub::getPose,
@@ -296,11 +298,19 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
-        theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        theCommand.addCommands(new DriveToGamePiece(2.0, 1.0, driveSub, visionSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
+                driveSub)); //.alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
+
+        ParallelCommandGroup pg = new ParallelCommandGroup() ;
+        // pg.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
+        pg.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        pg.addCommands(new DriveToGamePiece(1.0, 1.0, driveSub, visionSub, clawSub, false));
+        theCommand.addCommands(pg);
+
+        // theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
+        // theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
+        // theCommand.addCommands(new DriveToGamePiece(2.0, 1.0, driveSub, visionSub));
+
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
 
         shortSideGamePiecePath2 = loadPath(
             "GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false
@@ -315,7 +325,9 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 false,
                 driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));
+
         theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
+        // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor());
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         theCommand.addCommands(new OpenClaw(clawSub));
         // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
@@ -349,7 +361,7 @@ public class RobotContainer {
                 false,
                 driveSub).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome()));
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub)); // wpk need to put in correct distance
+        theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub, clawSub, true)); // wpk need to put in correct distance
         theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
 
         longSideGamePiecePath2 = loadPath(

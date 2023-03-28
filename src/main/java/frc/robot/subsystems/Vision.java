@@ -36,6 +36,7 @@ public class Vision extends SubsystemBase implements Sendable {
     double gamePieceDistanceFromCenter;
     double gamePieceHeight;
     double gamePieceWidth;
+    String sourceIP = "Nothing Received" ;
 
     private DatagramChannel visionChannel = null;
     ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -58,13 +59,14 @@ public class Vision extends SubsystemBase implements Sendable {
             boolean done = false;
             String message = "";
             while (!done) {
-                SocketAddress sender = visionChannel.receive(buffer);
+                InetSocketAddress sender = (InetSocketAddress) visionChannel.receive(buffer);
                 buffer.flip();
                 int limits = buffer.limit();
                 if (limits > 0) {
                     byte bytes[] = new byte[limits];
                     buffer.get(bytes, 0, limits);
                     message = new String(bytes);
+                    sourceIP = sender.getAddress().toString();
                 } else {
                     done = true;
                 }
@@ -166,6 +168,10 @@ public class Vision extends SubsystemBase implements Sendable {
         return NetworkTableInstance.getDefault().getEntry("vision/target_bb_april_tag_width").getDouble(0.0);
     }
 
+    public String getSenderAddress() {
+        return this.sourceIP ;
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Vision Subsystem");
@@ -173,5 +179,6 @@ public class Vision extends SubsystemBase implements Sendable {
         builder.addDoubleProperty("Game piece distance from center", this::gamePieceDistanceFromCenter, null);
         builder.addDoubleProperty("Game piece height", this::bbGamePieceHeight, null);
         builder.addDoubleProperty("Game piece width", this::bbGamePieceWidth, null);
+        builder.addStringProperty("Source Address", this::getSenderAddress, null);
     }
 }
