@@ -115,7 +115,7 @@ public final class Constants {
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
-        public static final double armRotateSpeed = 90; // Degrees per second
+        public static final double armRotateSpeed = 100; // Degrees per second
         public static final double armRotateAccelerationTime = 0.25;
         public static final double armExtendSpeed = 30; // Inches per second
         public static final double armExtendAccelerationTime = 0.25; // Need to change (seconds for total motion)
@@ -136,8 +136,8 @@ public final class Constants {
 
         /* Automatic Arm Positioning Constants */
 
-        public static final double RestingArmAngle = 0.0;
-        public static final double RestingArmLength = 0.25;
+        public static final double HomeArmAngle = 0.0;
+        public static final double HomeArmLength = 0.25;
 
         public static final double FloorArmAngle = 35.0;
         public static final double FloorArmLength = 11.0; // inches
@@ -169,7 +169,7 @@ public final class Constants {
         public static final double AngleAcceleration = RotateVel * 4.0;
         // public static final double AngleMultiplier = 0.5;
 
-        public static final double ExtendVel = 26.0;
+        public static final double ExtendVel = 30.0;
         public static final double ExtendAccel = 0.1;
         public static final double LengthMultiplier = 0.5;
 

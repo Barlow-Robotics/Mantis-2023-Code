@@ -10,7 +10,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
 
-public class FastMoveToTop extends CommandBase {
+public class FastMoveToTopFromHome extends CommandBase {
 
     Arm armSub;
 
@@ -22,7 +22,7 @@ public class FastMoveToTop extends CommandBase {
     double extensionAcceleration;
     Position state;
 
-    public FastMoveToTop(
+    public FastMoveToTopFromHome(
             Arm a,
             double angle,
             double rotationVelocity,
@@ -56,7 +56,7 @@ public class FastMoveToTop extends CommandBase {
     @Override
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
-        if (armSub.getAngle() >= 45) {
+        if (armSub.getAngle() >= 80) {
             armSub.setLength(length, extensionVelocity, extensionAcceleration);
         }
     }

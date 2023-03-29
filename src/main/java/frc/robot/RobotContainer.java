@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -25,8 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -36,9 +31,11 @@ import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.DriveRobot;
 import frc.robot.commands.DriveToGamePiece;
-import frc.robot.commands.FastMoveToTop;
+import frc.robot.commands.FastMoveToHomeFromMiddle;
+import frc.robot.commands.FastMoveToHomeFromTop;
+import frc.robot.commands.FastMoveToMiddleFromHome;
+import frc.robot.commands.FastMoveToTopFromHome;
 import frc.robot.commands.InstrumentedSequentialCommandGroup;
-import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
@@ -184,14 +181,7 @@ public class RobotContainer {
         return PathPlannerTrajectory.transformTrajectoryForAlliance(temp, DriverStation.getAlliance()) ;
     }
 
-    // private void loadPaths() {
-    // reversePath = loadPath( "Reverse", 1.0, 4.0, true) ;
-    // engagePath = loadPath( "ChargingStation", 1.0, 4.0, true ) ;
-    // shortSideGamePiecePath1 = loadPath( "GrabPieceShortSide1", 1.0, 4.0, true ) ;
-    // shortSideGamePiecePath2 = loadPath( "GrabPieceShortSide2", 1.0, 4.0, true ) ;
-    // longSideGamePiecePath1 = loadPath( "GrabPieceLongSide1", 1.0, 4.0, true ) ;
-    // longSideGamePiecePath2 = loadPath( "GrabPieceLongSide2", 1.0, 4.0, true ) ;
-    // }
+    /* * * * * * REVERSE * * * * * */
 
     InstrumentedSequentialCommandGroup createPlaceTopAndReverseCommand() {
         /* Place Game Piece on Top Row, Reverse Out of Community */
@@ -201,12 +191,27 @@ public class RobotContainer {
             "Reverse", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
         );
         
+        theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = reversePath));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(reversePath.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
-        theCommand.addCommands(new WaitCommand(2));
+        // theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
+        
+        theCommand.addCommands(
+            new FastMoveToTopFromHome(
+                armSub, 
+                ArmConstants.TopArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.TopArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+
+        theCommand.addCommands(new WaitCommand(0.25));
         theCommand.addCommands(new OpenClaw(clawSub));
+        theCommand.addCommands(new WaitCommand(0.5));
         theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         theCommand.addCommands(new PPRamseteCommand(
@@ -217,17 +222,14 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 false,
                 driveSub));
-        theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
-        theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
-        theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
 
         theCommand.onCommandInitialize(Robot::reportCommandStart);
         theCommand.onCommandFinish(Robot::reportCommandFinish );
 
         return theCommand;
     }
+
+    /* * * * * * ENGAGE * * * * * */
 
     InstrumentedSequentialCommandGroup createPlaceTopAndEngageCommand() {
         /* Place Game Piece on Top Row, Reverse Out of Community */
@@ -236,14 +238,42 @@ public class RobotContainer {
         engagePath = loadPath(
             "ChargingStation", 1.0, DriveConstants.DefaultAutoAccel, true
         );
-        
+
+        theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = engagePath));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Bottom, armSub).getPathFromHome());
-        theCommand.addCommands(new WaitCommand(0.5));
+        
+        // theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
+        theCommand.addCommands(
+            new FastMoveToTopFromHome(
+                armSub, 
+                ArmConstants.TopArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.TopArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+
+        theCommand.addCommands(new WaitCommand(0.25));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromBottom());
+        theCommand.addCommands(new WaitCommand(0.5));
+
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        theCommand.addCommands(
+            new FastMoveToHomeFromTop(
+                armSub, 
+                ArmConstants.HomeArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.HomeArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         theCommand.addCommands(new PPRamseteCommand(
                 engagePath,
@@ -253,6 +283,7 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 false,
                 driveSub));
+        
         theCommand.addCommands(new AutoBalance(driveSub));
 
         theCommand.onCommandInitialize(Robot::reportCommandStart);
@@ -260,6 +291,8 @@ public class RobotContainer {
 
         return theCommand;
     }
+
+    /* * * * * * GRAB PIECE SHORT COMMUNITY SIDE * * * * * */
 
     InstrumentedSequentialCommandGroup createPlaceTopAndGrabPieceShortSideCommand() {
         // Place GP on Top, Reverse over Short Community Line, Grab GP, Place GP on Mid
@@ -273,12 +306,13 @@ public class RobotContainer {
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath1));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
+        
         // theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
         theCommand.addCommands(
-            new FastMoveToTop(
+            new FastMoveToTopFromHome(
                 armSub, 
                 ArmConstants.TopArmAngle, 
-                ArmConstants.RotateVel ,
+                ArmConstants.RotateVel,
                 ArmConstants.RotateAccel, 
                 ArmConstants.TopArmLength, 
                 ArmConstants.ExtendVel, 
@@ -288,7 +322,19 @@ public class RobotContainer {
 
         theCommand.addCommands(new WaitCommand(0.5));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        theCommand.addCommands(
+            new FastMoveToHomeFromTop(
+                armSub, 
+                ArmConstants.HomeArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.HomeArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
         
         theCommand.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath1,
@@ -318,17 +364,42 @@ public class RobotContainer {
                 false,
                 driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));
 
-        theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
-        // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor());
+        // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
+        theCommand.addCommands(
+            new FastMoveToMiddleFromHome(
+                armSub, 
+                ArmConstants.MiddleArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.MiddleArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
+        
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
+        theCommand.addCommands(
+            new FastMoveToHomeFromMiddle(
+                armSub, 
+                ArmConstants.HomeArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.HomeArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
 
         theCommand.onCommandInitialize(Robot::reportCommandStart);
         theCommand.onCommandFinish(Robot::reportCommandFinish);
 
         return theCommand;
     }
+
+    /* * * * * * GRAB PIECE LONG COMMUNITY SIDE * * * * * */
 
     InstrumentedSequentialCommandGroup createPlaceTopAndGrabPieceLongSideCommand() {
         // Place GP on Top, Reverse over Long Community Line, Grab GP, Place GP on Mid
@@ -337,13 +408,40 @@ public class RobotContainer {
         longSideGamePiecePath1 = loadPath(
             "GrabPieceLongSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true);
         
+        theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = longSideGamePiecePath1));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(longSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
-        theCommand.addCommands(new WaitCommand(2));
+        
+        // theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
+        theCommand.addCommands(
+            new FastMoveToTopFromHome(
+                armSub, 
+                ArmConstants.TopArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.TopArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+
+        theCommand.addCommands(new WaitCommand(0.5));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        theCommand.addCommands(
+            new FastMoveToHomeFromTop(
+                armSub, 
+                ArmConstants.HomeArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.HomeArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+        
         theCommand.addCommands(new PPRamseteCommand(
                 longSideGamePiecePath1,
                 driveSub::getPose,
@@ -352,10 +450,10 @@ public class RobotContainer {
                 driveSub::setSpeeds,
                 false,
                 driveSub).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome()));
+        
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub, clawSub, true)); // wpk need to put in correct distance
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
-
+        
         longSideGamePiecePath2 = loadPath(
             "GrabPieceLongSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false);
 
@@ -367,9 +465,36 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));   
+                driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));   
+        
+        // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
+        theCommand.addCommands(
+            new FastMoveToMiddleFromHome(
+                armSub, 
+                ArmConstants.MiddleArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.MiddleArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
+
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         theCommand.addCommands(new OpenClaw(clawSub));
+
+        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
+        theCommand.addCommands(
+            new FastMoveToHomeFromMiddle(
+                armSub, 
+                ArmConstants.HomeArmAngle, 
+                ArmConstants.RotateVel,
+                ArmConstants.RotateAccel, 
+                ArmConstants.HomeArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
 
         theCommand.onCommandInitialize(Robot::reportCommandStart);
         theCommand.onCommandFinish(Robot::reportCommandFinish );
