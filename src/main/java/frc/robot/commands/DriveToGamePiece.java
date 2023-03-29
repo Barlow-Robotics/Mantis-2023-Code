@@ -87,7 +87,7 @@ public class DriveToGamePiece extends CommandBase {
         double distanceTraveled = ((driveSub.getLeftDistance() - startingLeftDistance)
                 + (driveSub.getRightDistance() - startingRightDistance)) / 2.0;
         // command is done if we've driven far enough or we've closed the claw.
-        if (Math.abs(distanceTraveled) >= Math.abs(targetDistance) || !clawSub.isOpen()) {
+        if (Math.abs(distanceTraveled) >= Math.abs(targetDistance) /*|| !clawSub.isOpen()*/) {
             return true;
         }
         return false;

@@ -125,13 +125,10 @@ public class Arm extends SubsystemBase implements Sendable {
 
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
-        leftRotateMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rightRotateMotor
-                .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        leftRotateMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
-        rightRotateMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+        leftRotateMotor.configMotionCruiseVelocity(velocity * ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rightRotateMotor.configMotionCruiseVelocity(velocity * ArmConstants.DegreesPerSecToCountsPer100MSec);
+        leftRotateMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+        rightRotateMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double currentAngle = getAngle();
         double ff = Math.sin(Math.toRadians(currentAngle)) * rotationFeedForward();
@@ -142,7 +139,7 @@ public class Arm extends SubsystemBase implements Sendable {
             desiredAngle = ArmConstants.ArmMinAngle;
         } else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
                                         // the line from arm motor and the edge of the chasis
-            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.RotateAccel);
+            setLength(0, ArmConstants.armExtendSpeed, ArmConstants.armExtendAccelerationTime);
         }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
@@ -151,7 +148,7 @@ public class Arm extends SubsystemBase implements Sendable {
     }
 
     public double getAngle() {
-        double result = leftRotateMotor.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
+        double result = leftRotateMotor.getSelectedSensorPosition() / ArmConstants.CountsPerArmDegree;
         return result;
     }
 
@@ -170,10 +167,8 @@ public class Arm extends SubsystemBase implements Sendable {
 
     public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is //
                                                                                             // fully retracted
-        extendMotor.configMotionCruiseVelocity(
-                velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
+        extendMotor.configMotionCruiseVelocity(velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
+        extendMotor.configMotionAcceleration(velocity * ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
 
         if (desiredLength > ArmConstants.ArmMaxLength) {
             desiredLength = ArmConstants.ArmMaxLength;
@@ -181,13 +176,11 @@ public class Arm extends SubsystemBase implements Sendable {
             desiredLength = ArmConstants.ArmMinLength;
         }
 
-        extendMotor.configMotionCruiseVelocity(
-                velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+        extendMotor.configMotionCruiseVelocity( velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
+        extendMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        double ff = Constants.ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
+        double ff = ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, ff);
     }
 

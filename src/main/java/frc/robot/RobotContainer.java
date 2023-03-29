@@ -232,16 +232,16 @@ public class RobotContainer {
         InstrumentedSequentialCommandGroup theCommand = new InstrumentedSequentialCommandGroup();
         
         engagePath = loadPath(
-            "ChargingStation", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
+            "ChargingStation", 1.0, DriveConstants.DefaultAutoAccel, true
         );
         
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = engagePath));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
-        theCommand.addCommands(new WaitCommand(2));
+        theCommand.addCommands(new ArmPathGenerator(Position.Bottom, armSub).getPathFromHome());
+        theCommand.addCommands(new WaitCommand(0.5));
         theCommand.addCommands(new OpenClaw(clawSub));
-        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromBottom());
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         theCommand.addCommands(new PPRamseteCommand(
                 engagePath,
@@ -267,6 +267,7 @@ public class RobotContainer {
             "GrabPieceShortSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
         );
         
+        theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath1));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
@@ -287,10 +288,10 @@ public class RobotContainer {
         //     )
         // );
             
-        theCommand.addCommands(new WaitCommand(1));
+        theCommand.addCommands(new WaitCommand(0.5));
         theCommand.addCommands(new OpenClaw(clawSub));
-        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
-        theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromTop());
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
+        
         theCommand.addCommands(new PPRamseteCommand(
                 shortSideGamePiecePath1,
                 driveSub::getPose,
@@ -298,19 +299,12 @@ public class RobotContainer {
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
                 false,
-                driveSub)); //.alongWith(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor()));
+                driveSub).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome()));
 
-        ParallelCommandGroup pg = new ParallelCommandGroup() ;
-        // pg.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
+        ParallelCommandGroup pg = new ParallelCommandGroup();
         pg.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         pg.addCommands(new DriveToGamePiece(1.0, 1.0, driveSub, visionSub, clawSub, false));
         theCommand.addCommands(pg);
-
-        // theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());
-        // theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
-        // theCommand.addCommands(new DriveToGamePiece(2.0, 1.0, driveSub, visionSub));
-
-        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor());
 
         shortSideGamePiecePath2 = loadPath(
             "GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false
@@ -330,10 +324,10 @@ public class RobotContainer {
         // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromFloor());
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         theCommand.addCommands(new OpenClaw(clawSub));
-        // theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
+        theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromMiddle());
 
         theCommand.onCommandInitialize(Robot::reportCommandStart);
-        theCommand.onCommandFinish(Robot::reportCommandFinish );
+        theCommand.onCommandFinish(Robot::reportCommandFinish);
 
         return theCommand;
     }

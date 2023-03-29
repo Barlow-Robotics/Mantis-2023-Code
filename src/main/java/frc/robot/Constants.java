@@ -88,8 +88,8 @@ public final class Constants {
         public static final double BalanceMinAngle = 2.5;
         public static final double AutoBalanceKP = AutoBalanceSpeed / BalanceMaxAngle;
 
-        public static final double DefaultAutoVelocity = 3.0;
-        // public static final double DefaultAutoVelocity = 1.0;
+        // public static final double DefaultAutoVelocity = 3.0;
+        public static final double DefaultAutoVelocity = 2.0;
         public static final double DefaultAutoAccel = 4.0;
 
         public static final double AutoAlignkP = 0.003;
@@ -115,9 +115,9 @@ public final class Constants {
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
-        public static final double armRotateSpeed = 70; // Degrees per second
+        public static final double armRotateSpeed = 90; // Degrees per second
         public static final double armRotateAccelerationTime = 0.25;
-        public static final double armExtendSpeed = 25; // Inches per second
+        public static final double armExtendSpeed = 30; // Inches per second
         public static final double armExtendAccelerationTime = 0.25; // Need to change (seconds for total motion)
 
         public static final double ExtentionCalibrationVelocity = -1.0;
