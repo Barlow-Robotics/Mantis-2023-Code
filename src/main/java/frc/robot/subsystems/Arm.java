@@ -168,7 +168,9 @@ public class Arm extends SubsystemBase implements Sendable {
     public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is //
                                                                                             // fully retracted
         extendMotor.configMotionCruiseVelocity(velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(velocity * ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
+       extendMotor.configMotionAcceleration(velocity * ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
+// wpk test
+        // extendMotor.configMotionAcceleration(21777 / accelerationTime);
 
         if (desiredLength > ArmConstants.ArmMaxLength) {
             desiredLength = ArmConstants.ArmMaxLength;
@@ -176,8 +178,8 @@ public class Arm extends SubsystemBase implements Sendable {
             desiredLength = ArmConstants.ArmMinLength;
         }
 
-        extendMotor.configMotionCruiseVelocity( velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+        // extendMotor.configMotionCruiseVelocity( velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
+        // extendMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         double ff = ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
@@ -200,7 +202,7 @@ public class Arm extends SubsystemBase implements Sendable {
     public void startExtending(double velocity) {
         // extendMotor.set(TalonFXControlMode.Velocity, velocity *
         // Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.set(TalonFXControlMode.PercentOutput, -0.1); // wpk fix magic number
+        extendMotor.set(TalonFXControlMode.PercentOutput, -0.2); // wpk fix magic number
     }
 
     /* Extend and Rotate */
@@ -249,6 +251,27 @@ public class Arm extends SubsystemBase implements Sendable {
         return rightRotateMotor.getSupplyCurrent();
     }
 
+    private double getLeftError() {
+        return this.leftRotateMotor.getClosedLoopError() ;
+    }
+
+    private double getRightError() {
+        return this.rightRotateMotor.getClosedLoopError() ;
+    }
+
+    private double getExtendError() {
+        return this.extendMotor.getClosedLoopError() ;
+    }
+
+    private double getLeftVelocity() {
+        return this.leftRotateMotor.getSelectedSensorVelocity() ;
+    }
+
+    private double getExtendVelocity() {
+        return this.extendMotor.getSelectedSensorVelocity() ;
+    }
+
+
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Arm Subsystem");
 
@@ -259,10 +282,11 @@ public class Arm extends SubsystemBase implements Sendable {
         builder.addBooleanProperty("isAtExtendLimit", this::isAtMaxLength, null);
         builder.addBooleanProperty("isAtMinAngle", this::isAtMinAngle, null);
 
-        builder.addDoubleProperty("Left Stator Current", this::getLeftStatorCurrent, null);
-        builder.addDoubleProperty("Left Supply Current", this::getLeftSupplyCurrent, null);
-        builder.addDoubleProperty("Right Stator Current", this::getRightStatorCurrent, null);
-        builder.addDoubleProperty("Right Supply Current", this::getRightSupplyCurrent, null);
+        builder.addDoubleProperty("Left Closed Loop Error", this::getLeftError, null);
+        builder.addDoubleProperty("Right Closed Loop Error", this::getRightError, null);
+        builder.addDoubleProperty("Extend Closed Loop Error", this::getExtendError, null);
+        builder.addDoubleProperty("Left Motor Velocity", this::getLeftVelocity, null);
+        builder.addDoubleProperty("Extend Motor Velocity", this::getExtendVelocity, null);
     }
 
     // Simulation Support

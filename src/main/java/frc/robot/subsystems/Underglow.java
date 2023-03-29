@@ -29,9 +29,9 @@ public class Underglow extends SubsystemBase {
 
         if (DriverStation.isEnabled()) {
             if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-                desiredMode = Constants.UnderGlowConstants.BlueAliance;
+                desiredMode = Constants.UnderGlowConstants.BlueAlliance;
             } else if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
-                desiredMode = Constants.UnderGlowConstants.RedAliance;
+                desiredMode = Constants.UnderGlowConstants.RedAlliance;
             }
         } else {
             desiredMode = Constants.UnderGlowConstants.NeonGreen;

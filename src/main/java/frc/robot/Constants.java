@@ -242,8 +242,8 @@ public final class Constants {
 
     public static final class UnderGlowConstants {
         public static final SerialPort.Port Port = SerialPort.Port.kUSB1;
-        public static final int BlueAliance = 1;
-        public static final int RedAliance = 2;
+        public static final int BlueAlliance = 1;
+        public static final int RedAlliance = 2;
         public static final int NeonGreen = 3;
     }
 

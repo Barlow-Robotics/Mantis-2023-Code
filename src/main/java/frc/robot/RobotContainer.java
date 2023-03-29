@@ -36,6 +36,7 @@ import frc.robot.commands.ArmPathGenerator;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.DriveRobot;
 import frc.robot.commands.DriveToGamePiece;
+import frc.robot.commands.FastMoveToTop;
 import frc.robot.commands.InstrumentedSequentialCommandGroup;
 import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
@@ -45,6 +46,7 @@ import frc.robot.subsystems.Arm.Position;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;;
 
 public class RobotContainer {
@@ -271,23 +273,19 @@ public class RobotContainer {
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath1));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
-        theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
+        // theCommand.addCommands(new ArmPathGenerator(Position.Top, armSub).getPathFromHome());
+        theCommand.addCommands(
+            new FastMoveToTop(
+                armSub, 
+                ArmConstants.TopArmAngle, 
+                ArmConstants.RotateVel ,
+                ArmConstants.RotateAccel, 
+                ArmConstants.TopArmLength, 
+                ArmConstants.ExtendVel, 
+                ArmConstants.ExtendAccel
+            )
+        );
 
-        // wpk test to see time difference of combined movements... Need to make sure this doesn't hit any part of grid or chassis!
-        // this would save about 1.5 seconds
-        // theCommand.addCommands(
-        //     new MoveArm(
-        //         armSub,
-        //         Constants.ArmConstants.TopArmAngle,
-        //         Constants.ArmConstants.RotateVel,
-        //         Constants.ArmConstants.RotateAccel,
-        //         Constants.ArmConstants.TopArmLength,
-        //         Constants.ArmConstants.ExtendVel,
-        //         Constants.ArmConstants.ExtendAccel,            
-        //         Position.Top
-        //     )
-        // );
-            
         theCommand.addCommands(new WaitCommand(0.5));
         theCommand.addCommands(new OpenClaw(clawSub));
         theCommand.addCommands(new ArmPathGenerator(Position.Home, armSub).getPathFromTop());
