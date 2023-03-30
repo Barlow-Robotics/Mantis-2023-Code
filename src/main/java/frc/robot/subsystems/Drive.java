@@ -158,10 +158,8 @@ public class Drive extends SubsystemBase  {
         driveMotorRightLeader.set(TalonFXControlMode.Velocity,
                 (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0));
 
-        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(leftSpeed * Constants.DriveConstants.MaxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(rightSpeed * Constants.DriveConstants.MaxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed").setDouble(leftSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed);
     }
 
 
@@ -174,10 +172,8 @@ public class Drive extends SubsystemBase  {
                 (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0),
                 DemandType.ArbitraryFeedForward, rightFF);
 
-        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(leftSpeed * Constants.DriveConstants.MaxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(rightSpeed * Constants.DriveConstants.MaxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed").setDouble(leftSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed );
     }
 
 
@@ -277,9 +273,6 @@ public class Drive extends SubsystemBase  {
         NetworkTableInstance.getDefault().getEntry("drive/left_motor_distance").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rotation").setDouble(0.0);
-
-        NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(0.0);
-        NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(0.0);
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(0.0);
