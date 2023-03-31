@@ -166,6 +166,10 @@ public class Claw extends SubsystemBase {
         return this.distanceSensor.isRangeValid() ;
     }
 
+    private double getClosedLoopError() {
+        return this.clawMotor.getClosedLoopError() / Constants.ClawConstants.CountsPerClawDegree ;
+    }
+
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Claw Subsystem");
     
@@ -175,6 +179,7 @@ public class Claw extends SubsystemBase {
 
         builder.addBooleanProperty("Auto Close Enable", this::getAutoCloseEnable, this::setAutoCloseEnabled);
         builder.addDoubleProperty("Angle", this::getAngle, null ) ;
+        builder.addDoubleProperty("Error", this::getClosedLoopError, null ) ;
     }
 
 
