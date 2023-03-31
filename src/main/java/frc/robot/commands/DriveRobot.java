@@ -94,7 +94,7 @@ public class DriveRobot extends CommandBase {
             yaw = -turn;
 
             if (armSub.getAngle() > 60.0) {
-                speed = speed * 0.5;
+                speed = speed * 0.45;
                 yaw = yaw * 0.6;
             }
 

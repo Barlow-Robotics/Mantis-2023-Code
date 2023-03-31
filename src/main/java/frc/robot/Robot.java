@@ -83,6 +83,7 @@ public class Robot extends TimedRobot {
      */
     // @Override
     public void autonomousInit() {
+        robotContainer.driveSub.resetHeading();
         robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
                                             // extend,
         // claw) to zero

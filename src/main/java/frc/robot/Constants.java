@@ -88,9 +88,8 @@ public final class Constants {
         public static final double BalanceMinAngle = 2.5;
         public static final double AutoBalanceKP = AutoBalanceSpeed / BalanceMaxAngle;
 
-        // public static final double DefaultAutoVelocity = 3.0;
         public static final double DefaultAutoVelocity = 2.0;
-        public static final double DefaultAutoAccel = 4.0;
+        public static final double DefaultAutoAccel = 3.0;
 
         public static final double AutoAlignkP = 0.003;
         public static final double AutoAlignkI = 0.0;
@@ -140,7 +139,7 @@ public final class Constants {
         public static final double HomeArmLength = 0.25;
 
         public static final double FloorArmAngle = 35.0;
-        public static final double FloorArmLength = 11.0; // inches
+        public static final double FloorArmLength = 10.0; // inches
 
         public static final double PlayerStationArmAngle = 105.0;
         public static final double PlayerStationArmLength = 0.0;

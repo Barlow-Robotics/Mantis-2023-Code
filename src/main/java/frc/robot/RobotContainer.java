@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -37,6 +41,7 @@ import frc.robot.commands.FastMoveToMiddleFromHome;
 import frc.robot.commands.FastMoveToTopFromHome;
 import frc.robot.commands.InstrumentedSequentialCommandGroup;
 import frc.robot.commands.OpenClaw;
+import frc.robot.commands.PathFromCurrentLocation;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.Position;
@@ -299,11 +304,10 @@ public class RobotContainer {
         InstrumentedSequentialCommandGroup theCommand = new InstrumentedSequentialCommandGroup();
         
         shortSideGamePiecePath1 = loadPath(
-            "GrabPieceShortSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true
+            "GrabPieceShortSide1", 1.0, DriveConstants.DefaultAutoAccel, true
         );
-        
+
         theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
-        theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath1));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(shortSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         
@@ -350,19 +354,42 @@ public class RobotContainer {
         pg.addCommands(new DriveToGamePiece(1.0, 1.0, driveSub, visionSub, clawSub, false));
         theCommand.addCommands(pg);
 
-        shortSideGamePiecePath2 = loadPath(
-            "GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false
-        );
+        // shortSideGamePiecePath2 = loadPath(
+        //     "GrabPieceShortSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false
+        // );
         
-        theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = shortSideGamePiecePath2));
-        theCommand.addCommands(new PPRamseteCommand(
-                shortSideGamePiecePath2,
+        // theCommand.addCommands(new PPRamseteCommand(
+        //         shortSideGamePiecePath2,
+        //         driveSub::getPose,
+        //         new RamseteController(),
+        //         new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
+        //         driveSub::setSpeeds,
+        //         false,
+        //         driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));
+
+        // In order to create path from current location, the following points were manually
+        // created from the waypoints in the PathPlanner tool. If the path is updated in PathPlanner,
+        // then these points will need to be manually updated accordingly. (wpk)
+        ArrayList<PathPoint> points = new ArrayList<PathPoint>() ;
+        points.add(new PathPoint( new Translation2d(4.37, 4.59), new Rotation2d(Math.PI) ) ) ;
+        points.add(new PathPoint( new Translation2d(2.15, 4.40), new Rotation2d(Math.PI) ) );
+        
+        theCommand.addCommands(
+            new PathFromCurrentLocation(
+                points,
+                new PathConstraints(DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel),
+                false ,
                 driveSub::getPose,
                 new RamseteController(),
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
-                false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));
+                true,
+                driveSub, 
+                driveSub
+                ).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()
+            )
+        );
+
 
         // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
         theCommand.addCommands(
@@ -406,10 +433,9 @@ public class RobotContainer {
         InstrumentedSequentialCommandGroup theCommand = new InstrumentedSequentialCommandGroup();
 
         longSideGamePiecePath1 = loadPath(
-            "GrabPieceLongSide1", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, true);
+            "GrabPieceLongSide1", 1.0, DriveConstants.DefaultAutoAccel, true);
         
         theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
-        theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = longSideGamePiecePath1));
         theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(longSideGamePiecePath1.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         
@@ -454,19 +480,41 @@ public class RobotContainer {
         theCommand.addCommands(new InstantCommand(() -> clawSub.enableAutoClose()));
         theCommand.addCommands(new DriveToGamePiece(1.0, 1.5, driveSub, visionSub, clawSub, true)); // wpk need to put in correct distance
         
-        longSideGamePiecePath2 = loadPath(
-            "GrabPieceLongSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false);
+        // longSideGamePiecePath2 = loadPath(
+        //     "GrabPieceLongSide2", DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel, false);
 
-        theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = longSideGamePiecePath2));
-        theCommand.addCommands(new PPRamseteCommand(
-                longSideGamePiecePath2,
+        // theCommand.addCommands(new PPRamseteCommand(
+        //         longSideGamePiecePath2,
+        //         driveSub::getPose,
+        //         new RamseteController(),
+        //         new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
+        //         driveSub::setSpeeds,
+        //         false,
+        //         driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));   
+
+        // In order to create path from current location, the following points were manually
+        // created from the waypoints in the PathPlanner tool. If the path is updated in PathPlanner,
+        // then these points will need to be manually updated accordingly. (wpk)
+        ArrayList<PathPoint> points = new ArrayList<PathPoint>() ;
+        points.add(new PathPoint( new Translation2d(4.11, 1.0), new Rotation2d(Math.toRadians(180.0)) ) ) ;
+        points.add(new PathPoint( new Translation2d(1.97, 1.03), new Rotation2d(Math.PI) ) );
+
+        theCommand.addCommands(
+            new PathFromCurrentLocation(
+                points,
+                new PathConstraints(DriveConstants.DefaultAutoVelocity, DriveConstants.DefaultAutoAccel),
+                false ,
                 driveSub::getPose,
                 new RamseteController(),
                 new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
                 driveSub::setSpeeds,
-                false,
-                driveSub).alongWith(new ArmPathGenerator(Position.Home, armSub).getPathFromFloor()));   
-        
+                true,
+                driveSub, 
+                driveSub
+                ).alongWith(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome()
+            )
+        );
+
         // theCommand.addCommands(new ArmPathGenerator(Position.Middle, armSub).getPathFromHome());
         theCommand.addCommands(
             new FastMoveToMiddleFromHome(
@@ -516,7 +564,9 @@ public class RobotContainer {
         // placeTopAndGrabPieceLongSide = createPlaceTopAndGrabPieceLongSideCommand();
 
         PPRamseteCommand.setLoggingCallbacks(
-                null,
+                (PathPlannerTrajectory traj) -> {
+                    this.currentTrajectory = traj ; 
+                },
                 (Pose2d targetPose) -> {
                     NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/X").setDouble(targetPose.getX());
                     NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/Y").setDouble(targetPose.getY());
@@ -540,6 +590,35 @@ public class RobotContainer {
                             .setDouble(rotationError.getDegrees());
                 });
 
+
+        PathFromCurrentLocation.setLoggingCallbacks(
+            (PathPlannerTrajectory traj) -> {
+                this.currentTrajectory = traj ; 
+            },
+            (Pose2d targetPose) -> {
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/X").setDouble(targetPose.getX());
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/Y").setDouble(targetPose.getY());
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/degrees")
+                        .setDouble(targetPose.getRotation().getDegrees());
+            },
+            (ChassisSpeeds setpointSpeeds) -> {
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vx")
+                        .setDouble(setpointSpeeds.vxMetersPerSecond);
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/vy")
+                        .setDouble(setpointSpeeds.vyMetersPerSecond);
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/setpointSpeeds/omega")
+                        .setDouble(setpointSpeeds.omegaRadiansPerSecond);
+            },
+            (Translation2d translationError, Rotation2d rotationError) -> {
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/X")
+                        .setDouble(translationError.getX());
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/translationError/Y")
+                        .setDouble(translationError.getY());
+                NetworkTableInstance.getDefault().getEntry("pathPlanner/rotationError/degrees")
+                        .setDouble(rotationError.getDegrees());
+            });
+    
+
         NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/X").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/Y").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("pathPlanner/targetPose/degrees").setDouble(0.0);
@@ -560,6 +639,8 @@ public class RobotContainer {
         // return autoChooser.getSelected();
 
         // return new AutoBalance(driveSub) ;
+
+        this.currentTrajectory = new PathPlannerTrajectory() ; 
 
         String choice = stringChooser.getSelected();
         if (choice == "placeTopAndReverse") {
