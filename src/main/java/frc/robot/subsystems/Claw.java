@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.sim.PhysicsSim;
 
@@ -85,8 +86,10 @@ public class Claw extends SubsystemBase {
     @Override
     public void periodic() {
         // 0.0 is perpendicular to arm bar
-        if ( armSub.getAngle() > 5 ) {
-            setAngle((-armSub.getAngle() + 6.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        if ( armSub.getAngle() > (ArmConstants.TopArmAngle - 5)) {
+            setAngle((-armSub.getAngle() + 20.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        } else if (armSub.getAngle() > 5) {
+            setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         } else {
             setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         }
@@ -121,16 +124,16 @@ public class Claw extends SubsystemBase {
         clawMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
-    public void open() {
+    public void close() {
         openSolenoid.set(true);
         closeSolenoid.set(false);
-        open = true;
+        open = false;
     }
 
-    public void close() {
+    public void open() {
         openSolenoid.set(false);
         closeSolenoid.set(true);
-        open = false;
+        open = true;
     }
 
     public boolean isOpen() {

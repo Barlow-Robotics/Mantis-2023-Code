@@ -51,9 +51,11 @@ public final class Constants {
 
         // public static final double MaxVelocityChange = MaxSpeed * (
         // TimeToReachVelocity / 50 ); // percentage of Acceleration
-        public static final double MaxVelocityChange = MaxSpeed * 0.4; // percentage of Acceleration
+        // public static final double MaxVelocityChange = MaxSpeed * 0.4; // percentage of Acceleration
+        public static final double MaxVelocityChange = MaxSpeed * 0.25; // percentage of Acceleration
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
+        public static final double circumferenceWithTrackWidth = TrackWidth * Math.PI;
 
         public static final double DriveGearRatio = 9.8;
         public static final double CountsPerWheelRevolution = TalonFXEncoderResolution * DriveGearRatio;
@@ -104,7 +106,7 @@ public final class Constants {
         public static final double ExtendSprocketCircumference = ExtendSprocketDiameter * Math.PI;
 
         public static final double InchesPerRevolution = ExtendSprocketCircumference / ExtendGearRatio;
-        public static final double RevolutionsPerDegree = 1.0 / 360; 
+        public static final double RevolutionsPerDegree = 1.0 / 360;
 
         // add values when we figure out lengths
         public static final double CountsPerArmDegree = TalonFXEncoderResolution * RevolutionsPerDegree
@@ -210,20 +212,17 @@ public final class Constants {
         public static final int OpenSolenoidID = 3;
         public static final int CloseSolenoidID = 2;
 
-        public static final double RotateGearRatio = 32.861;
-        // public static final double RotateGearRatio = 31.00;
+        // public static final double RotateGearRatio = 32.861;
+        public static final double RotateGearRatio = 31.00;
 
         public static final double RevolutionsPerDegree = 1.0 / 360.0;
 
         public static final double ClawClosedVoltageRampingConstant = 0.0;
         public static final double ClawManualVoltageRampingConstant = 0.0;
-//        public static final double ClawKF = 0.048;
-        public static final double ClawKF = 0.0;
-        public static final double ClawKP = 0.7;
-        // public static final double ClawKI = 0.0001;
-        public static final double ClawKI = 0.0001;
-       public static final double ClawKD = 0.5;
-        // public static final double ClawKD = 8.0;
+        public static final double ClawKF = 0.048;
+        public static final double ClawKP = 0.4;
+        public static final double ClawKI = 0.0000;
+        public static final double ClawKD = 0.3;
         public static final int ClawPID_id = 0;
         public static final double ff = 0.0;
 

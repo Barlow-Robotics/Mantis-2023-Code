@@ -129,10 +129,18 @@ public class PathFromCurrentLocation extends CommandBase {
     // Need to translate the current position based on alliance
     if ( useAllianceColor && DriverStation.getAlliance() == Alliance.Red) {
         Translation2d transformedTranslation = new Translation2d(driveSub.getPose().getX(), FIELD_WIDTH_METERS - driveSub.getPose().getY());
-        Rotation2d transformedHeading = driveSub.getPose().getRotation().times(-1);
+        // Rotation2d transformedHeading = driveSub.getPose().getRotation().plus(new Rotation2d(Math.PI)).times(-1);
+//        Rotation2d transformedHeading = driveSub.getPose().getRotation().times(-1);
+        Rotation2d transformedHeading = driveSub.getPose().getRotation();
         points.add(0, new PathPoint(transformedTranslation, transformedHeading));
     } else {
-        points.add(0, new PathPoint(driveSub.getPose().getTranslation(), driveSub.getHeading()));
+//        points.add(0, new PathPoint(driveSub.getPose().getTranslation(), driveSub.getHeading()));
+        points.add(0, new PathPoint(driveSub.getPose().getTranslation(), driveSub.getHeading().plus(new Rotation2d(Math.PI))));
+    }
+
+    System.out.println("points before generating") ;
+    for ( var p : points) {
+      System.out.println("position " + p.position + ", heading " + p.heading) ;
     }
 
     trajectory  = PathPlanner.generatePath ( constraints, reversed, points ) ;

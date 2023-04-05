@@ -113,6 +113,8 @@ public class Robot extends TimedRobot {
             cg.addCommands(autonomousCommand);
         }
         cg.schedule();
+
+        
     }
 
     // /** This function is called periodically during autonomous. */
@@ -221,6 +223,7 @@ public class Robot extends TimedRobot {
 
         CommandScheduler.getInstance().onCommandInitialize( Robot::reportCommandStart ) ;
         CommandScheduler.getInstance().onCommandFinish(Robot::reportCommandFinish);        
+        CommandScheduler.getInstance().onCommandInterrupt( this::handleInterrupted) ;
 
     }
 
@@ -252,6 +255,10 @@ public class Robot extends TimedRobot {
         }
         CommandScheduler.getInstance().run();
 
+    }
+
+    private void handleInterrupted( Command c) {
+        System.out.println("Commmand " + c + " named " + c.getName() + " was interrupted") ;
     }
 
 }

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -14,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -143,6 +146,10 @@ public class Arm extends SubsystemBase implements Sendable {
         }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
+        NetworkTableInstance.getDefault().getEntry("arm/setAngle").setDouble(setAngle);
+        NetworkTableInstance.getDefault().getEntry("arm/desired_angle").setDouble(desiredAngle);
+
+        //  System.out.println("Setting arm angle to " + desiredAngle + "( " +  setAngle + " ) with feed forward "+ ff ) ;
         leftRotateMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
         rightRotateMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
     }
@@ -169,8 +176,6 @@ public class Arm extends SubsystemBase implements Sendable {
                                                                                             // fully retracted
         extendMotor.configMotionCruiseVelocity(velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
        extendMotor.configMotionAcceleration(velocity * ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
-// wpk test
-        // extendMotor.configMotionAcceleration(21777 / accelerationTime);
 
         if (desiredLength > ArmConstants.ArmMaxLength) {
             desiredLength = ArmConstants.ArmMaxLength;
@@ -178,12 +183,13 @@ public class Arm extends SubsystemBase implements Sendable {
             desiredLength = ArmConstants.ArmMinLength;
         }
 
-        // extendMotor.configMotionCruiseVelocity( velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
-        // extendMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
-
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
         double ff = ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, ff);
+    
+        NetworkTableInstance.getDefault().getEntry("arm/setLength").setDouble(setLength);
+        NetworkTableInstance.getDefault().getEntry("arm/desiredLength").setDouble(desiredLength);
+
     }
 
     public double getLength() {
@@ -234,6 +240,7 @@ public class Arm extends SubsystemBase implements Sendable {
         } // Rough estimate, need to change
         return lengthLim;
     }
+
 
     private double getLeftStatorCurrent() {
         return leftRotateMotor.getStatorCurrent();

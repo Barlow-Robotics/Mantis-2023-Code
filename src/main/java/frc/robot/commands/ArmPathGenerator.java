@@ -18,7 +18,7 @@ public class ArmPathGenerator extends CommandBase {
     public ArmPathGenerator(Arm.Position to, Arm armSub) {
         this.to = to;
         this.armSub = armSub;
-        addRequirements(armSub);
+        // addRequirements(armSub);
     }
 
     /* * * * * * FROM HOME * * * * * */
@@ -795,13 +795,14 @@ public class ArmPathGenerator extends CommandBase {
                 Constants.ArmConstants.MiddleArmAngle,
                 0.0,
                 0.0,
-                Constants.ArmConstants.HomeArmAngle,
+                armSub.getLength(),
                 Constants.ArmConstants.ExtendVel,
                 Constants.ArmConstants.ExtendAccel,
                 Position.Transition).withTimeout(4.0);
 
-        g.addCommands(first);
+//        g.addCommands(first);
         g.addCommands(getPathFromHome());
+        g.setName("Path from transition to " + to ) ;
 
         return g;
     }
