@@ -166,24 +166,23 @@ public class RobotContainer {
                 XboxControllerConstants.ButtonA);
         moveToRestingPositionButton.onTrue(new ArmPathGenerator(Arm.Position.Home, armSub));
 
-        // moveToBottomButton = new JoystickButton(operatorButtonController,
-        //         XboxControllerConstants.LeftStick);
-        // moveToBottomButton.onTrue(new ArmPathGenerator(Arm.Position.Bottom, armSub));
+        moveToBottomButton = new JoystickButton(operatorButtonController,
+                XboxControllerConstants.LeftStick);
+        moveToBottomButton.onTrue(new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
-        // moveToMiddleButton = new JoystickButton(operatorButtonController,
-        //         XboxControllerConstants.LeftBumper);
-        // moveToMiddleButton.onTrue(new ArmPathGenerator(Arm.Position.Middle, armSub));
+        moveToMiddleButton = new JoystickButton(operatorButtonController,
+                XboxControllerConstants.LeftBumper);
+        moveToMiddleButton.onTrue(new ArmPathGenerator(Arm.Position.Middle, armSub));
 
-        // moveToTopButton = new JoystickButton(operatorButtonController,
-        //         XboxControllerConstants.ButtonX);
-        // moveToTopButton.onTrue(new ArmPathGenerator(Arm.Position.Top, armSub));
+        moveToTopButton = new JoystickButton(operatorButtonController,
+                XboxControllerConstants.ButtonX);
+        moveToTopButton.onTrue(new ArmPathGenerator(Arm.Position.Top, armSub));
 
         moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightBumper);
         moveToFloorButton.onTrue(new ArmPathGenerator(Arm.Position.Floor, armSub));
-        // moveToFloorButton.onTrue(getFloorCommand());
 
-        // moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
-        // moveToPlayerStationButton.onTrue(new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
+        moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
+        moveToPlayerStationButton.onTrue(new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
 
         /* * * * * * VISION BUTTONS * * * * * */
 
