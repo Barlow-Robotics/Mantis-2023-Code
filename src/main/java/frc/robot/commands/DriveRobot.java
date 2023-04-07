@@ -28,8 +28,8 @@ public class DriveRobot extends CommandBase {
     private double error;
     private double leftVelocity;
     private double rightVelocity;
-    private int missedFrames = 0;
     private double adjustment;
+    int missedFrames = 0;
 
     Trigger autoAlignButton;
     Trigger toggleTargetButton;

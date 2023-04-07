@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.Faults;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -35,7 +33,7 @@ public class Arm extends SubsystemBase implements Sendable {
     double x = Constants.ArmConstants.RotateGearRatio;
 
     public enum Position {
-        Home, Bottom, Middle, Top, Floor, PlayerStation, Transition
+        Home, Bottom, Middle, Top, Floor, PlayerStation, Transition, Wonky
     };
 
     public Position armState = Position.Home;

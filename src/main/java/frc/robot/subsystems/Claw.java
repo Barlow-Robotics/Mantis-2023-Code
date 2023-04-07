@@ -21,6 +21,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.sim.PhysicsSim;
+import frc.robot.subsystems.Arm.Position;
 
 public class Claw extends SubsystemBase {
 
@@ -88,9 +89,9 @@ public class Claw extends SubsystemBase {
         // 0.0 is perpendicular to arm bar
         if ( armSub.getAngle() > (ArmConstants.TopArmAngle - 5)) {
             setAngle((-armSub.getAngle() + 20.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
-        } else if (armSub.getAngle() > 5) {
-            setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
-        } else {
+        // } else if (armSub.getAngle() > 5) {
+        //     setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        } else if (armSub.getState() != Position.Wonky) {
             setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         }
 

@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -27,7 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,7 +40,6 @@ import frc.robot.commands.FastMoveToHomeFromTop;
 import frc.robot.commands.FastMoveToMiddleFromHome;
 import frc.robot.commands.FastMoveToTopFromHome;
 import frc.robot.commands.InstrumentedSequentialCommandGroup;
-import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.PathFromCurrentLocation;
 import frc.robot.commands.Pivot;
@@ -78,6 +75,9 @@ public class RobotContainer {
     private Trigger moveToRestingPositionButton; // button x (middle white button)
     private Trigger moveToPlayerStationButton; // right stick (black button)
     private Trigger moveToFloorButton; // right bumper (yellow button)
+
+    private Trigger pickUpFallenConeButton; 
+
     private Trigger driverToggleClawButton;
     private Trigger operatorToggleClawButton; // y button (right white button)
     public Trigger toggleTargetButton;
@@ -183,6 +183,9 @@ public class RobotContainer {
 
         moveToPlayerStationButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightStick);
         moveToPlayerStationButton.onTrue(new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
+
+        pickUpFallenConeButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonA); // Need to change this - Angela
+        pickUpFallenConeButton.onTrue(new ArmPathGenerator(Arm.Position.Wonky, armSub));
 
         /* * * * * * VISION BUTTONS * * * * * */
 
