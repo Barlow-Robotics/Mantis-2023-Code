@@ -30,9 +30,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
 import java.lang.Math;
-import edu.wpi.first.math.util.Units ;
+import edu.wpi.first.math.util.Units;
 
-public class Drive extends SubsystemBase  {
+public class Drive extends SubsystemBase {
     WPI_TalonFX driveMotorLeftLeader;
     WPI_TalonFX driveMotorLeftFollower;
     WPI_TalonFX driveMotorRightLeader;
@@ -52,11 +52,10 @@ public class Drive extends SubsystemBase  {
     public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
-    private double lastLeftDistance ;
-    private double lastRightDistance ;
+    private double lastLeftDistance;
+    private double lastRightDistance;
     DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth);
-    ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro) ;
-
+    ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
     // Gains are for example purposes only - must be determined for your own robot!
     // private final SimpleMotorFeedforward m_feedforward = new
@@ -102,9 +101,6 @@ public class Drive extends SubsystemBase  {
 
     }
 
-
-
-
     public void periodic() {
 
         odometry.update(
@@ -120,10 +116,13 @@ public class Drive extends SubsystemBase  {
                 .setDouble(driveMotorRightLeader.getSelectedSensorPosition());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(odometry.getPoseMeters().getX());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(odometry.getPoseMeters().getY());
-        NetworkTableInstance.getDefault().getEntry("drive/odometry/heading").setDouble(odometry.getPoseMeters().getRotation().getDegrees());
+        NetworkTableInstance.getDefault().getEntry("drive/odometry/heading")
+                .setDouble(odometry.getPoseMeters().getRotation().getDegrees());
 
-        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorLeft").setDouble(driveMotorLeftLeader.getClosedLoopError());
-        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorRight").setDouble(driveMotorRightLeader.getClosedLoopError());
+        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorLeft")
+                .setDouble(driveMotorLeftLeader.getClosedLoopError());
+        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorRight")
+                .setDouble(driveMotorRightLeader.getClosedLoopError());
 
     }
 
@@ -138,12 +137,12 @@ public class Drive extends SubsystemBase  {
      * @param speeds The desired wheel speeds.
      */
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-        setSpeeds( speeds.leftMetersPerSecond, speeds.rightMetersPerSecond) ;
-   }
+        setSpeeds(speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
+    }
 
     public void stopMoving() {
-        driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, 0.0 ) ;
-        driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, 0.0 ) ;
+        driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, 0.0);
+        driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
     /**
@@ -162,8 +161,6 @@ public class Drive extends SubsystemBase  {
         NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed);
     }
 
-
-
     public void setSpeedsWithFF(double leftSpeed, double rightSpeed, double leftFF, double rightFF) {
         driveMotorLeftLeader.set(TalonFXControlMode.Velocity,
                 (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0),
@@ -173,11 +170,8 @@ public class Drive extends SubsystemBase  {
                 DemandType.ArbitraryFeedForward, rightFF);
 
         NetworkTableInstance.getDefault().getEntry("drive/left_speed").setDouble(leftSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed );
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed);
     }
-
-
-
 
     private double getLeftSpeed() {
         double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
@@ -242,7 +236,6 @@ public class Drive extends SubsystemBase  {
         return odometry.getPoseMeters();
     }
 
-
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(gyro.getRotation2d(), getLeftDistance(), getRightDistance(), pose);
         // odometry.resetPosition(gyro.getRotation2d(), 0.0, 0.0, pose);
@@ -282,7 +275,7 @@ public class Drive extends SubsystemBase  {
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
     }
 
-    private void setMotorConfig(WPI_TalonFX motor) { 
+    private void setMotorConfig(WPI_TalonFX motor) {
         motor.configClosedloopRamp(Constants.DriveConstants.ClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.DriveConstants.ManualVoltageRampingConstant);
         motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
@@ -320,12 +313,12 @@ public class Drive extends SubsystemBase  {
 
     @Override
     public void simulationPeriodic() {
-        Twist2d twist = kinematics.toTwist2d(this.getLeftDistance()-lastLeftDistance, this.getRightDistance()-lastRightDistance) ;
+        Twist2d twist = kinematics.toTwist2d(this.getLeftDistance() - lastLeftDistance,
+                this.getRightDistance() - lastRightDistance);
         NetworkTableInstance.getDefault().getEntry("drive/twist_angle").setDouble(Units.radiansToDegrees(twist.dtheta));
-        gyroSim.setAngle(gyro.getAngle()- Units.radiansToDegrees(twist.dtheta));
-        lastLeftDistance = this.getLeftDistance() ;
-        lastRightDistance = this.getRightDistance() ;
-
+        gyroSim.setAngle(gyro.getAngle() - Units.radiansToDegrees(twist.dtheta));
+        lastLeftDistance = this.getLeftDistance();
+        lastRightDistance = this.getRightDistance();
 
         int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
         SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Pitch"));

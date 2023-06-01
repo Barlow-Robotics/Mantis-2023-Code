@@ -89,9 +89,11 @@ public class Claw extends SubsystemBase {
         if ( armSub.getAngle() > (ArmConstants.TopArmAngle - 5)) {
             setAngle((-armSub.getAngle() + 20.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         } else if (armSub.getAngle() > 5) {
-            setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+            // setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+            setAngle((-armSub.getAngle() + 0.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         } else {
-            setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+            // setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+            setAngle((-armSub.getAngle() + 0.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         }
 
         if (isOpen() && autoCloseEnabled
@@ -120,8 +122,16 @@ public class Claw extends SubsystemBase {
         clawMotor.set(TalonFXControlMode.Position, setAngle);
     }
 
+    public void startMoving() {
+        clawMotor.set(TalonFXControlMode.PercentOutput, 0.1);
+    }
+
     public void stopMoving() {
         clawMotor.set(TalonFXControlMode.PercentOutput, 0.0);
+    }
+
+    public double getOutput() {
+       return clawMotor.getMotorOutputPercent();
     }
 
     public void close() {
@@ -156,7 +166,6 @@ public class Claw extends SubsystemBase {
         autoCloseEnabled = false;
     }
 
-
     public double getDistanceInches() {
         return (distanceSensor.getRange() / Constants.InchesToMillimeters);
     }
@@ -173,16 +182,29 @@ public class Claw extends SubsystemBase {
         return this.clawMotor.getClosedLoopError() / Constants.ClawConstants.CountsPerClawDegree ;
     }
 
+    public double getSupplyCurrent() {
+        return this.clawMotor.getSupplyCurrent();
+    }
+
+    public double getStatorCurrent() {
+        return this.clawMotor.getStatorCurrent();
+    }
+
+    public void resetEncoders() {
+        this.clawMotor.setSelectedSensorPosition(0);
+    }
+
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Claw Subsystem");
     
         builder.addBooleanProperty("Open", this::isOpen, null);
         builder.addBooleanProperty("Range Valid", this::getRangeIsValid, null);
-        builder.addDoubleProperty("Range", this::getDistanceInches, null ) ;
-
+        builder.addDoubleProperty("Range", this::getDistanceInches, null);
         builder.addBooleanProperty("Auto Close Enable", this::getAutoCloseEnable, this::setAutoCloseEnabled);
-        builder.addDoubleProperty("Angle", this::getAngle, null ) ;
-        builder.addDoubleProperty("Error", this::getClosedLoopError, null ) ;
+        builder.addDoubleProperty("Angle", this::getAngle, null);
+        builder.addDoubleProperty("Error", this::getClosedLoopError, null);
+        builder.addDoubleProperty("Supply Current", this::getSupplyCurrent, null);
+        builder.addDoubleProperty("Percent Output", this::getOutput, null);
     }
 
 

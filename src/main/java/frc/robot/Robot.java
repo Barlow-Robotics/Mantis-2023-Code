@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CalibrateArmExtention;
 import frc.robot.commands.CalibrateArmRotations;
+import frc.robot.commands.CalibrateClaw;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Arm;
 
@@ -69,7 +70,7 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
         robotContainer.armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
         robotContainer.clawSub.stopMoving();
-        robotContainer.driveSub.stopMoving () ;
+        robotContainer.driveSub.stopMoving();
         this.calibrationPerformed = false;
     }
 
@@ -94,10 +95,12 @@ public class Robot extends TimedRobot {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
             Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Home));
+            Command calibrateClaw = new CalibrateClaw(robotContainer.clawSub);
 
             cg.addCommands(
                     calibrateLength,
                     calibrateRotation,
+                    calibrateClaw,
                     setState,
                     new InstantCommand(() -> this.calibrationPerformed = true),
                     new PrintCommand("Calibration Complete"));
@@ -143,10 +146,12 @@ public class Robot extends TimedRobot {
                     () -> robotContainer.armSub.setLength(0.0, Constants.ArmConstants.ExtendVel,
                             Constants.ArmConstants.ExtendAccel));
             Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Home));
+            Command calibrateClaw = new CalibrateClaw(robotContainer.clawSub);
 
             SequentialCommandGroup calbrationSequence = new SequentialCommandGroup(
                     calibrateLength,
                     calibrateRotation,
+                    calibrateClaw,
                     setArmLength,
                     setState,
                     new InstantCommand(() -> {

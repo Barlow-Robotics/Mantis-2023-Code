@@ -53,7 +53,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.DriveConstants;;
+import frc.robot.Constants.DriveConstants;
 
 public class RobotContainer {
 
@@ -144,8 +144,8 @@ public class RobotContainer {
         System.out.println("The controller name is " + controllerType);
         System.out.println("The controller name is " + DriverStation.getJoystickName(1));
 
-        // xAxis = Constants.LogitechDualActionConstants.LeftJoystickY;
-        // yawAxis = Constants.LogitechDualActionConstants.RightJoystickX;
+        // throttleJoystickID = Constants.LogitechDualActionConstants.LeftJoystickY;
+        // turnJoystickID = Constants.LogitechDualActionConstants.RightJoystickX;
         throttleJoystickID = Constants.RadioMasterConstants.LeftGimbalY;
         turnJoystickID = Constants.RadioMasterConstants.RightGimbalX;
         angleJoystickID = Constants.LogitechDualActionConstants.LeftJoystickY;
@@ -155,6 +155,9 @@ public class RobotContainer {
 
         driverToggleClawButton = new JoystickButton(driverController, RadioMasterConstants.ButtonA);
         driverToggleClawButton.onTrue(toggleClawCmd);
+
+        // driverToggleClawButton = new JoystickButton(driverController, Constants.LogitechDualActionConstants.RightBumper);
+        // driverToggleClawButton.onTrue(toggleClawCmd);
 
         operatorToggleClawButton = new JoystickButton(operatorButtonController,
                 XboxControllerConstants.ButtonY);
@@ -188,6 +191,7 @@ public class RobotContainer {
 
         toggleTargetButton = new JoystickAnalogButton(driverController, 6, 0.0, 1.0);
         autoAlignButton = new JoystickButton(driverController, RadioMasterConstants.ButtonD);
+        // autoAlignButton = new JoystickButton(driverController, Constants.LogitechDualActionConstants.LeftBumper);
     }
 
     private void buildAutoOptions() {
