@@ -28,7 +28,6 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\Team4572Admin\\Documents\\FRC2023\\field23 - Blue Alliance.png",
         "traj": {
           "arrows": false,
           "color": [
@@ -122,7 +121,7 @@
     "Plot <2>": {
       "plots": [
         {
-          "height": -46,
+          "height": 0,
           "series": [
             {
               "color": [
