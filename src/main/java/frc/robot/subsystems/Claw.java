@@ -86,15 +86,33 @@ public class Claw extends SubsystemBase {
     @Override
     public void periodic() {
         // 0.0 is perpendicular to arm bar
-        if ( armSub.getAngle() > (ArmConstants.TopArmAngle - 5)) {
-            setAngle((-armSub.getAngle() + 20.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
-        } else if (armSub.getAngle() > 5) {
-            // setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
-            setAngle((-armSub.getAngle() + 0.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+
+        final double maxDelta = 20.0 ;
+        double delta = 0.0 ;
+
+        // if the arm is up high, gradually raise claw angle
+        if ( armSub.getAngle() > (ArmConstants.MiddleArmAngle - 5)) {
+            double percentOfDelta = ( armSub.getAngle() - (ArmConstants.MiddleArmAngle - 5) ) / ( ArmConstants.TopArmAngle - (ArmConstants.MiddleArmAngle - 5) ) ;
+            delta = percentOfDelta * maxDelta ;
+        } else if (armSub.getAngle() < ArmConstants.FloorArmAngle) {
+            // if arm is nearing home position, lower claw slightly so motor doesn't stall against claw stops
+            delta = -0.5 ;
         } else {
-            // setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
-            setAngle((-armSub.getAngle() + 0.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+            // otherwise, keep claw level with the floor
+            delta = 0.0 ;
         }
+        setAngle((-armSub.getAngle() + delta), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        
+
+        // if ( armSub.getAngle() > (ArmConstants.TopArmAngle - 5)) {
+        //     setAngle((-armSub.getAngle() + 20.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        // } else if (armSub.getAngle() > 5) {
+        //     // setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        //     setAngle((-armSub.getAngle() + 0.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        // } else {
+        //     // setAngle((-armSub.getAngle() + 2.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        //     setAngle((-armSub.getAngle() + 0.0), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        // }
 
         if (isOpen() && autoCloseEnabled
                 && distanceSensor.isRangeValid()

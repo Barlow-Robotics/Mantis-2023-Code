@@ -83,7 +83,7 @@ public class DriveRobot extends CommandBase {
         if (Math.abs(x) < 0.01) {
             x = 0.0;
         }
-        double yaw = -driverController.getRawAxis(controllerTurnID);
+        double yaw = -driverController.getRawAxis(controllerTurnID); //look into deadband command
         if (Math.abs(yaw) < 0.01) {
             yaw = 0.0;
         }
@@ -99,7 +99,7 @@ public class DriveRobot extends CommandBase {
             }
 
             // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
-            yawMultiplier = 0.5f;
+            yawMultiplier = 0.6f; //0.5f
             yaw = Math.signum(yaw) * (yaw * yaw) * yawMultiplier;
 
             if (Math.abs(yaw) < 0.02f) {

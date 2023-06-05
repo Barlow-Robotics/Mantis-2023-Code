@@ -141,7 +141,7 @@ public final class Constants {
         public static final double HomeArmAngle = 0.0;
         public static final double HomeArmLength = 0.25;
 
-        public static final double FloorArmAngle =  40.0; //35.0
+        public static final double FloorArmAngle =  35.0; //40.0 //35.0
         public static final double FloorArmLength = 10.0; // inches
 
         public static final double PlayerStationArmAngle = 105.0;
