@@ -29,7 +29,7 @@ public final class Constants {
 
     public final static double kNeutralDeadband = 0.001;
 
-    public static final double maxGravityFF = 0.07;
+    public static final double MaxGravityFF = 0.07;
 
     // PID Gains may have to be adjusted based on the responsiveness of control loop
     // kP kI kD kF Iz PeakOut
@@ -55,7 +55,7 @@ public final class Constants {
         public static final double MaxVelocityChange = MaxSpeed * 0.15; // percentage of Acceleration        0.25
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
-        public static final double circumferenceWithTrackWidth = TrackWidth * Math.PI;
+        public static final double CircumferenceWithTrackWidth = TrackWidth * Math.PI;
 
 
         public static final double DriveGearRatio = 9.8;
@@ -117,10 +117,10 @@ public final class Constants {
         public static final double InchesPerSecToCountsPer100MSec = CountsPerArmInch * SecondsTo100MSec;
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
-        public static final double armRotateSpeed = 100; // Degrees per second
-        public static final double armRotateAccelerationTime = 0.25;
-        public static final double armExtendSpeed = 30; // Inches per second
-        public static final double armExtendAccelerationTime = 0.25; // Need to change (seconds for total motion)
+        public static final double ArmRotateSpeed = 100; // Degrees per second
+        public static final double ArmRotateAccelerationTime = 0.25;
+        public static final double ArmExtendSpeed = 30; // Inches per second
+        public static final double ArmExtendAccelerationTime = 0.25; // Need to change (seconds for total motion)
 
         public static final double ExtentionCalibrationVelocity = -1.0;
         public static final double RotationCalibrationVelocity = 10; // Degrees per second
@@ -201,7 +201,7 @@ public final class Constants {
         public static final double ffRetracted = 0.13; // Need to re-test to find this after claw is attached
         public static final double ffExtracted = 0.36; // Need to re-test to find this after claw is attached
 
-        public static final double extendFF = -0.06;
+        public static final double ExtendFF = -0.06;
         // public static final int kMeasuredPosHorizontal = 840; // ALH - this is
         // supposed to be position measured when arm is horizontal, need to determine
         // what that is.

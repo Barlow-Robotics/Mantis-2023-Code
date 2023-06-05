@@ -142,7 +142,7 @@ public class Arm extends SubsystemBase implements Sendable {
             desiredAngle = ArmConstants.ArmMinAngle;
         } else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
                                         // the line from arm motor and the edge of the chasis
-            setLength(0, ArmConstants.armExtendSpeed, ArmConstants.armExtendAccelerationTime);
+            setLength(0, ArmConstants.ArmExtendSpeed, ArmConstants.ArmExtendAccelerationTime);
         }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
@@ -184,7 +184,7 @@ public class Arm extends SubsystemBase implements Sendable {
         }
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        double ff = ArmConstants.extendFF * Math.cos(Math.toRadians(this.getAngle()));
+        double ff = ArmConstants.ExtendFF * Math.cos(Math.toRadians(this.getAngle()));
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, ff);
     
         NetworkTableInstance.getDefault().getEntry("arm/setLength").setDouble(setLength);

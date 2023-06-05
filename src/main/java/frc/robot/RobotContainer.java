@@ -223,8 +223,7 @@ public class RobotContainer {
 
         theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
         theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = reversePath));
-        theCommand
-                .addCommands(new InstantCommand(
+        theCommand.addCommands(new InstantCommand(
                         () -> driveSub.resetOdometry(reversePath.getInitialPose()), driveSub));
         theCommand.addCommands(new InstantCommand(() -> clawSub.disableAutoClose()));
         theCommand.addCommands(new ArmPathGenerator(Position.Floor, armSub).getPathFromHome());

@@ -34,7 +34,7 @@ public class Pivot extends CommandBase {
     public void initialize() {
         startingLeftDistance = driveSub.getLeftDistance() ;
         startingRightDistance = driveSub.getRightDistance() ;
-        targetDistance = Constants.DriveConstants.circumferenceWithTrackWidth * ( targetAngle / 360.0 ) ;
+        targetDistance = Constants.DriveConstants.CircumferenceWithTrackWidth * ( targetAngle / 360.0 ) ;
         System.out.println("Starting heading before pivot " + driveSub.getHeading()) ;
     }
 
