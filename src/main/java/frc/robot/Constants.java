@@ -118,7 +118,8 @@ public final class Constants {
         public static final double DegreesPerSecToCountsPer100MSec = CountsPerArmDegree * SecondsTo100MSec;
 
         public static final double ArmRotateSpeed = 100; // Degrees per second
-        public static final double ArmRotateAccelerationTime = 0.25;
+        // public static final double ArmRotateAccelerationTime = 0.25;
+        public static final double ArmRotateAccelerationTime = 0.5;
         public static final double ArmExtendSpeed = 30; // Inches per second
         public static final double ArmExtendAccelerationTime = 0.25; // Need to change (seconds for total motion)
 
@@ -141,7 +142,7 @@ public final class Constants {
         public static final double HomeArmAngle = 0.0;
         public static final double HomeArmLength = 0.25;
 
-        public static final double FloorArmAngle =  35.0; //40.0 //35.0
+        public static final double FloorArmAngle =  40.0; //40.0 //35.0
         public static final double FloorArmLength = 10.0; // inches
 
         public static final double PlayerStationArmAngle = 105.0;
@@ -213,8 +214,8 @@ public final class Constants {
         public static final int OpenSolenoidID = 3;
         public static final int CloseSolenoidID = 2;
 
-        // public static final double RotateGearRatio = 32.861;
-        public static final double RotateGearRatio = 31.00;
+        public static final double RotateGearRatio = 32.861;
+        //public static final double RotateGearRatio = 31.00;
 
         public static final double RevolutionsPerDegree = 1.0 / 360.0;
 

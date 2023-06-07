@@ -40,6 +40,8 @@ public class Claw extends SubsystemBase {
     boolean autoCloseEnabled = true;
     boolean open = false;
 
+    double targetAngle = 0.0 ;
+
     public Claw(Arm a) { // add arm to constructors
         closeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM /* <- This probably needs to change */,
             Constants.ClawConstants.CloseSolenoidID);
@@ -96,7 +98,7 @@ public class Claw extends SubsystemBase {
             delta = percentOfDelta * maxDelta ;
         } else if (armSub.getAngle() < ArmConstants.FloorArmAngle) {
             // if arm is nearing home position, lower claw slightly so motor doesn't stall against claw stops
-            delta = -0.5 ;
+            delta = 0.0 ;
         } else {
             // otherwise, keep claw level with the floor
             delta = 0.0 ;
@@ -135,6 +137,7 @@ public class Claw extends SubsystemBase {
         // wpk add constant for acceleration 
         clawMotor.configMotionAcceleration(Constants.ClawConstants.DegreesPerSecToCountsPer100MSec / 0.1); 
 
+        targetAngle = desiredAngle ;
         double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree;
         // clawMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
         clawMotor.set(TalonFXControlMode.Position, setAngle);

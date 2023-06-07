@@ -23,6 +23,7 @@ public class CalibrateClaw extends CommandBase {
 
     @Override
     public void execute() {
+        System.out.println("****** CLAW SUPPLY CURRENT IS " + clawSub.getSupplyCurrent() + " ******");
         clawSub.startMoving();
     }
 
@@ -34,7 +35,6 @@ public class CalibrateClaw extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        System.out.println("****** CLAW SUPPLY CURRENT IS " + clawSub.getSupplyCurrent() + " ******");
-        return clawSub.getSupplyCurrent() >= 1.7;
+        return clawSub.getSupplyCurrent() >= 1.5;
     }
 }
