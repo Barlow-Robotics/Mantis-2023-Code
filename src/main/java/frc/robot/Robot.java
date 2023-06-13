@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
         robotContainer.armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
         robotContainer.clawSub.stopMoving();
         robotContainer.driveSub.stopMoving();
-        this.calibrationPerformed = false;
+        // this.calibrationPerformed = false;
     }
 
     @Override
@@ -134,6 +134,9 @@ public class Robot extends TimedRobot {
         robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
                                             // extend,
         // claw) to zero
+
+        robotContainer.clawSub.close();
+
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -225,6 +228,7 @@ public class Robot extends TimedRobot {
 
         field = new Field2d();
         SmartDashboard.putData("Field", field) ;
+        this.calibrationPerformed = false;
 
         CommandScheduler.getInstance().onCommandInitialize( Robot::reportCommandStart ) ;
         CommandScheduler.getInstance().onCommandFinish(Robot::reportCommandFinish);        

@@ -78,15 +78,21 @@ public class DriveRobot extends CommandBase {
 
         SmartDashboard.putBoolean("Auto Align Enabled", autoAlignEnabled);
         SmartDashboard.putString("Auto Align Target", selectedTarget);
-
+        
         double x = driverController.getRawAxis(controllerThrottleID);
         if (Math.abs(x) < 0.01) {
             x = 0.0;
         }
-        double yaw = -driverController.getRawAxis(controllerTurnID); //look into deadband command
+        NetworkTableInstance.getDefault().getEntry("driverController/xRawAxis")
+                .setDouble(driverController.getRawAxis(controllerThrottleID));
+
+        double yaw = -driverController.getRawAxis(controllerTurnID); 
         if (Math.abs(yaw) < 0.01) {
             yaw = 0.0;
         }
+        NetworkTableInstance.getDefault().getEntry("driverController/yawRawAxis")
+                .setDouble(driverController.getRawAxis(controllerTurnID));
+
         double speed = -x;
         double turn = -yaw;
 
@@ -99,7 +105,7 @@ public class DriveRobot extends CommandBase {
             }
 
             // yawMultiplier = (float) (0.3 + Math.abs(speed) * 0.2f);
-            yawMultiplier = 0.6f; //0.5f
+            yawMultiplier = 0.6f; // 0.5f
             yaw = Math.signum(yaw) * (yaw * yaw) * yawMultiplier;
 
             if (Math.abs(yaw) < 0.02f) {

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -91,19 +92,20 @@ public class Claw extends SubsystemBase {
 
         final double maxDelta = 20.0 ;
         double delta = 0.0 ;
+        double armAngle = armSub.getAngle() ;
 
         // if the arm is up high, gradually raise claw angle
-        if ( armSub.getAngle() > (ArmConstants.MiddleArmAngle - 5)) {
-            double percentOfDelta = ( armSub.getAngle() - (ArmConstants.MiddleArmAngle - 5) ) / ( ArmConstants.TopArmAngle - (ArmConstants.MiddleArmAngle - 5) ) ;
+        if ( armAngle > (ArmConstants.MiddleArmAngle - 5)) {
+            double percentOfDelta = ( armAngle - (ArmConstants.MiddleArmAngle - 5) ) / ( ArmConstants.TopArmAngle - (ArmConstants.MiddleArmAngle - 5) ) ;
             delta = percentOfDelta * maxDelta ;
-        } else if (armSub.getAngle() < ArmConstants.FloorArmAngle) {
+        } else if (armAngle < ArmConstants.FloorArmAngle) {
             // if arm is nearing home position, lower claw slightly so motor doesn't stall against claw stops
             delta = 0.0 ;
         } else {
             // otherwise, keep claw level with the floor
-            delta = 0.0 ;
+            delta = 2.0 ;
         }
-        setAngle((-armSub.getAngle() + delta), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
+        setAngle((-armAngle + delta), Constants.ArmConstants.RotateVel, Constants.ArmConstants.RotateAccel);
         
 
         // if ( armSub.getAngle() > (ArmConstants.TopArmAngle - 5)) {
@@ -140,7 +142,7 @@ public class Claw extends SubsystemBase {
         targetAngle = desiredAngle ;
         double setAngle = desiredAngle * ClawConstants.CountsPerClawDegree;
         // clawMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, Constants.ClawConstants.ff );
-        clawMotor.set(TalonFXControlMode.Position, setAngle);
+        clawMotor.set(TalonFXControlMode.Position, setAngle, DemandType.ArbitraryFeedForward, 0.1);
     }
 
     public void startMoving() {
@@ -211,6 +213,10 @@ public class Claw extends SubsystemBase {
         return this.clawMotor.getStatorCurrent();
     }
 
+    public double getTargetAngle() {
+        return this.targetAngle;
+    }
+
     public void resetEncoders() {
         this.clawMotor.setSelectedSensorPosition(0);
     }
@@ -223,6 +229,7 @@ public class Claw extends SubsystemBase {
         builder.addDoubleProperty("Range", this::getDistanceInches, null);
         builder.addBooleanProperty("Auto Close Enable", this::getAutoCloseEnable, this::setAutoCloseEnabled);
         builder.addDoubleProperty("Angle", this::getAngle, null);
+        builder.addDoubleProperty("Target Angle", this::getTargetAngle, null);
         builder.addDoubleProperty("Error", this::getClosedLoopError, null);
         builder.addDoubleProperty("Supply Current", this::getSupplyCurrent, null);
         builder.addDoubleProperty("Percent Output", this::getOutput, null);

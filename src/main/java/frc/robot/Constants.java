@@ -44,7 +44,7 @@ public final class Constants {
         public static final int DriveMotorRightLeaderID = 6;
         public static final int DriveMotorRightFollowerID = 7;
 
-        public static final double MaxSpeed = 3.0; // meters per second   3.8
+        public static final double MaxSpeed = 3.8; // meters per second
         // public static final double maxAngularSpeed = 2 * Math.PI; // one rotation per
         // second
         public static final double TimeToReachVelocity = 0.2;
@@ -52,7 +52,7 @@ public final class Constants {
         // public static final double MaxVelocityChange = MaxSpeed * (
         // TimeToReachVelocity / 50 ); // percentage of Acceleration
         // public static final double MaxVelocityChange = MaxSpeed * 0.4; // percentage of Acceleration
-        public static final double MaxVelocityChange = MaxSpeed * 0.15; // percentage of Acceleration        0.25
+        public static final double MaxVelocityChange = MaxSpeed * 0.4; // percentage of Acceleration, smoothing value
 
         public static final double TrackWidth = 26.5 * InchesToMeters; // meters
         public static final double CircumferenceWithTrackWidth = TrackWidth * Math.PI;
@@ -142,8 +142,8 @@ public final class Constants {
         public static final double HomeArmAngle = 0.0;
         public static final double HomeArmLength = 0.25;
 
-        public static final double FloorArmAngle =  40.0; //40.0 //35.0
-        public static final double FloorArmLength = 10.0; // inches
+        public static final double FloorArmAngle =  45.0; //40.0 //35.0
+        public static final double FloorArmLength = 11.0; // inches
 
         public static final double PlayerStationArmAngle = 105.0;
         public static final double PlayerStationArmLength = 0.0;
