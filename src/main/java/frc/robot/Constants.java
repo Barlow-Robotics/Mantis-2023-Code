@@ -100,6 +100,8 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
+        private static final int CANCoderResolution = 4096;
+
         public static final double RotateGearRatio = 100;
         public static final double ExtendGearRatio = 16;
 
