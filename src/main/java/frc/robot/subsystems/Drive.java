@@ -4,24 +4,34 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.*;
 
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sim.PhysicsSim;
+import java.lang.Math;
+import edu.wpi.first.math.util.Units;
 
-/** Represents a differential drive style drivetrain. */
 public class Drive extends SubsystemBase {
     WPI_TalonFX driveMotorLeftLeader;
     WPI_TalonFX driveMotorLeftFollower;
@@ -31,7 +41,10 @@ public class Drive extends SubsystemBase {
     DifferentialDrive diffDrive;
 
     public final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-    // public final AHRS navX = new AHRS();
+    // public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB2
+    // ) ;
+    public final AHRS navX = new AHRS(edu.wpi.first.wpilibj.I2C.Port.kMXP);
+    // public final AHRS navX = new AHRS() ;
 
     // private final DifferentialDriveKinematics kinematics = new
     // DifferentialDriveKinematics(
@@ -39,16 +52,15 @@ public class Drive extends SubsystemBase {
     public final DifferentialDriveOdometry odometry;
 
     boolean simulationInitialized = false;
+    private double lastLeftDistance;
+    private double lastRightDistance;
+    DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth);
+    ADXRS450_GyroSim gyroSim = new ADXRS450_GyroSim(gyro);
 
     // Gains are for example purposes only - must be determined for your own robot!
     // private final SimpleMotorFeedforward m_feedforward = new
     // SimpleMotorFeedforward(1, 3);
 
-    /**
-     * Constructs a differential drive object. Sets the encoder distance per pulse
-     * and resets the
-     * gyro.
-     */
     public Drive() {
 
         driveMotorLeftLeader = new WPI_TalonFX(Constants.DriveConstants.DriveMotorLeftLeaderID);
@@ -56,7 +68,6 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader = new WPI_TalonFX(Constants.DriveConstants.DriveMotorRightLeaderID);
         driveMotorRightFollower = new WPI_TalonFX(Constants.DriveConstants.DriveMotorRightFollowerID);
 
-        // Config Motors
         driveMotorLeftLeader.configFactoryDefault();
         driveMotorLeftFollower.configFactoryDefault();
 
@@ -83,12 +94,15 @@ public class Drive extends SubsystemBase {
         odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), getLeftDistance(), getRightDistance());
 
         setDefaultNeutralMode();
-        gyro.reset();
+        // wpk gyro.reset();
+
         CreateNetworkTableEntries();
+        SmartDashboard.putData("Nav X", navX);
+
     }
 
     public void periodic() {
-        // Update the odometry in the periodic block
+
         odometry.update(
                 gyro.getRotation2d(),
                 getLeftDistance(),
@@ -100,20 +114,21 @@ public class Drive extends SubsystemBase {
                 .setDouble(driveMotorLeftLeader.getSelectedSensorPosition());
         NetworkTableInstance.getDefault().getEntry("drive/right_encoder_count")
                 .setDouble(driveMotorRightLeader.getSelectedSensorPosition());
-        // NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(getLeftSpeed());
-        // NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(getRightSpeed());
-        // NetworkTableInstance.getDefault().getEntry("drive/gyro_heading").setDouble(getGyroHeading());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/X").setDouble(odometry.getPoseMeters().getX());
         NetworkTableInstance.getDefault().getEntry("drive/odometry/Y").setDouble(odometry.getPoseMeters().getY());
-        // NetworkTableInstance.getDefault().getEntry("drive/odometry/theta")
-        // .setDouble(m_odometry.getPoseMeters().getRotation().getDegrees());
+        NetworkTableInstance.getDefault().getEntry("drive/odometry/heading")
+                .setDouble(odometry.getPoseMeters().getRotation().getDegrees());
+
+        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorLeft")
+                .setDouble(driveMotorLeftLeader.getClosedLoopError());
+        NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorRight")
+                .setDouble(driveMotorRightLeader.getClosedLoopError());
+
     }
 
     public void setDefaultNeutralMode() {
         driveMotorLeftLeader.setNeutralMode(NeutralMode.Brake);
         driveMotorRightLeader.setNeutralMode(NeutralMode.Brake);
-        // driveMotorLeftLeader.setNeutralMode(NeutralMode.Coast);
-        // driveMotorRightLeader.setNeutralMode(NeutralMode.Coast);
     }
 
     /**
@@ -122,14 +137,12 @@ public class Drive extends SubsystemBase {
      * @param speeds The desired wheel speeds.
      */
     public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-        driveMotorLeftLeader.set(TalonFXControlMode.Velocity,
-                (speeds.leftMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
-        driveMotorRightLeader.set(TalonFXControlMode.Velocity,
-                (speeds.rightMetersPerSecond * Constants.DriveConstants.MetersPerSecondToCountsPerSecond));
-        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(speeds.leftMetersPerSecond * Constants.DriveConstants.MaxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(speeds.rightMetersPerSecond * Constants.DriveConstants.MaxSpeed);
+        setSpeeds(speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
+    }
+
+    public void stopMoving() {
+        driveMotorLeftLeader.set(TalonFXControlMode.PercentOutput, 0.0);
+        driveMotorRightLeader.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
     /**
@@ -144,32 +157,42 @@ public class Drive extends SubsystemBase {
         driveMotorRightLeader.set(TalonFXControlMode.Velocity,
                 (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0));
 
-        NetworkTableInstance.getDefault().getEntry("drive/left_speed")
-                .setDouble(leftSpeed * Constants.DriveConstants.MaxSpeed);
-        NetworkTableInstance.getDefault().getEntry("drive/right_speed")
-                .setDouble(rightSpeed * Constants.DriveConstants.MaxSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed").setDouble(leftSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed);
     }
 
-    // private double getLeftSpeed() {
-    // double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
-    // * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
-    // return (s);
-    // }
+    public void setSpeedsWithFF(double leftSpeed, double rightSpeed, double leftFF, double rightFF) {
+        driveMotorLeftLeader.set(TalonFXControlMode.Velocity,
+                (leftSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0),
+                DemandType.ArbitraryFeedForward, leftFF);
+        driveMotorRightLeader.set(TalonFXControlMode.Velocity,
+                (rightSpeed * Constants.DriveConstants.MetersPerSecondToCountsPerSecond / 10.0),
+                DemandType.ArbitraryFeedForward, rightFF);
 
-    // private double getRightSpeed() {
-    // double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0
-    // * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
-    // return (s);
-    // }
+        NetworkTableInstance.getDefault().getEntry("drive/left_speed").setDouble(leftSpeed);
+        NetworkTableInstance.getDefault().getEntry("drive/right_speed").setDouble(rightSpeed);
+    }
 
-    private double getLeftDistance() {
+    private double getLeftSpeed() {
+        double s = driveMotorLeftLeader.getSelectedSensorVelocity() * 10.0
+                * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+        return (s);
+    }
+
+    private double getRightSpeed() {
+        double s = driveMotorRightLeader.getSelectedSensorVelocity() * 10.0
+                * (1.0 / Constants.DriveConstants.MetersPerSecondToCountsPerSecond);
+        return (s);
+    }
+
+    public double getLeftDistance() {
         double d = (driveMotorLeftLeader.getSelectedSensorPosition()
                 / Constants.DriveConstants.CountsPerWheelRevolution)
                 * Constants.DriveConstants.MetersPerRevolution;
         return (d);
     }
 
-    private double getRightDistance() {
+    public double getRightDistance() {
         double d = (driveMotorRightLeader.getSelectedSensorPosition()
                 / Constants.DriveConstants.CountsPerWheelRevolution)
                 * Constants.DriveConstants.MetersPerRevolution;
@@ -185,12 +208,23 @@ public class Drive extends SubsystemBase {
      */
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double rot, boolean squareInputs) {
-        if ( xSpeed < -0.2) {
-            int wpk = 1 ;
-        }
         DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(xSpeed, rot, squareInputs);
-        setSpeeds(speeds.left * Constants.DriveConstants.MaxSpeed, speeds.right * Constants.DriveConstants.MaxSpeed);
         // *** need to reduce max speed when arm is extended??
+
+        double desiredLeftSpeed = speeds.left * Constants.DriveConstants.MaxSpeed;
+        double desiredRightSpeed = speeds.right * Constants.DriveConstants.MaxSpeed;
+        double deltaLeft = (desiredLeftSpeed) - getLeftSpeed();
+        double deltaRight = (desiredRightSpeed) - getRightSpeed();
+
+        // finds desired speed to get to MaxSpeed
+
+        double leftSpeed = getLeftSpeed() + (Math.min(Math.abs(deltaLeft), Constants.DriveConstants.MaxVelocityChange))
+                * Math.signum(deltaLeft);
+        double rightSpeed = getRightSpeed()
+                + (Math.min(Math.abs(deltaRight), Constants.DriveConstants.MaxVelocityChange))
+                        * Math.signum(deltaRight);
+
+        setSpeeds(leftSpeed, rightSpeed);
 
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(xSpeed);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(rot);
@@ -208,8 +242,8 @@ public class Drive extends SubsystemBase {
     }
 
     public void resetEncoders() {
-        driveMotorLeftLeader.setSelectedSensorPosition(0);
-        driveMotorRightLeader.setSelectedSensorPosition(0);
+        driveMotorLeftLeader.setSelectedSensorPosition(0, 0, 30);
+        driveMotorRightLeader.setSelectedSensorPosition(0, 0, 30);
     }
 
     public void setMaxOutput(double maxOutput) {
@@ -233,22 +267,15 @@ public class Drive extends SubsystemBase {
         NetworkTableInstance.getDefault().getEntry("drive/right_motor_distance").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rotation").setDouble(0.0);
 
-        NetworkTableInstance.getDefault().getEntry("drive/leftSpeed").setDouble(0.0);
-        NetworkTableInstance.getDefault().getEntry("drive/rightSpeed").setDouble(0.0);
-
         NetworkTableInstance.getDefault().getEntry("drive/xSpeed").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rot").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/arcadeDrive").setDouble(0.0);
 
         NetworkTableInstance.getDefault().getEntry("drive/leftVolts").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
-
-        // NetworkTableInstance.getDefault().getEntry("drive/pose/x").setDouble(0.0);
-        // NetworkTableInstance.getDefault().getEntry("drive/pose/y").setDouble(0.0);
-        // NetworkTableInstance.getDefault().getEntry("drive/pose/rotation").setDouble(0.0);
     }
 
-    private void setMotorConfig(WPI_TalonFX motor) { // changed to TalonFX for intake
+    private void setMotorConfig(WPI_TalonFX motor) {
         motor.configClosedloopRamp(Constants.DriveConstants.ClosedVoltageRampingConstant);
         motor.configOpenloopRamp(Constants.DriveConstants.ManualVoltageRampingConstant);
         motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
@@ -260,29 +287,41 @@ public class Drive extends SubsystemBase {
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 30);
     }
 
+    public double getPitch() {
+        return navX.getRoll();
+    }
+
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.setSmartDashboardType("Drive Subsystem");
+
+        builder.addDoubleProperty("Left Distance", this::getLeftDistance, null);
+        builder.addDoubleProperty("Right Distance", this::getRightDistance, null);
+
+        builder.addDoubleProperty("Left Speed", this::getLeftSpeed, null);
+        builder.addDoubleProperty("Right Speed", this::getRightSpeed, null);
+
+        builder.addDoubleProperty("Pitch", this::getPitch, null);
+    }
+
     public void simulationInit() {
-        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.75, 6800, false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.75, 6800,
-        // false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.75, 6800,
-        // false);
-        // PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.75, 6800,
-        // false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftLeader, 0.25, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorLeftFollower, 0.25, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightLeader, 0.25, 21777, false);
+        PhysicsSim.getInstance().addTalonFX(driveMotorRightFollower, 0.25, 21777, false);
     }
 
     @Override
     public void simulationPeriodic() {
-        if (!simulationInitialized) {
-            simulationInit();
-            simulationInitialized = true;
-        }
-        PhysicsSim.getInstance().run();
+        Twist2d twist = kinematics.toTwist2d(this.getLeftDistance() - lastLeftDistance,
+                this.getRightDistance() - lastRightDistance);
+        NetworkTableInstance.getDefault().getEntry("drive/twist_angle").setDouble(Units.radiansToDegrees(twist.dtheta));
+        gyroSim.setAngle(gyro.getAngle() - Units.radiansToDegrees(twist.dtheta));
+        lastLeftDistance = this.getLeftDistance();
+        lastRightDistance = this.getRightDistance();
 
-        // double headingNoise = 0.0; // (Math.random() - 0.5) * 4.0 ;
-        // gyroSim.setAngle(this.m_odometry.getPoseMeters().getRotation().getDegrees() +
-        // headingNoise);
-        // gyroSim.setAngle(5.0);
-        // gyroSim.setRate(1.0);
-        NetworkTableInstance.getDefault().getEntry("drive/gyro/getAngle").setDouble(gyro.getAngle());
+        int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
+        SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Pitch"));
+        angle.set(5.0);
     }
 }

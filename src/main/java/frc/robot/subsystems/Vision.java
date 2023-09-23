@@ -4,10 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -15,12 +11,12 @@ import java.nio.channels.DatagramChannel;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.json.*;
+// import com.fasterxml.jackson.core.json.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 // import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.util.*;
+// import com.fasterxml.jackson.core.util.*;
 // import org.json.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,62 +32,65 @@ public class Vision extends SubsystemBase implements Sendable {
 
     DigitalOutput cameraLight;
 
-    boolean gamePieceDetected ;
-    double gamePieceDistanceFromCenter ;
-    double gamePieceHeight ;
-    double gamePieceWidth ;
+    boolean gamePieceDetected;
+    double gamePieceDistanceFromCenter;
+    double gamePieceHeight;
+    double gamePieceWidth;
+    String sourceIP = "Nothing Received" ;
 
-    private DatagramChannel visionChannel = null ;
+    private DatagramChannel visionChannel = null;
     ByteBuffer buffer = ByteBuffer.allocate(1024);
-
 
     public Vision() {
         cameraLight = new DigitalOutput(Constants.VisionConstants.CameraLightID);
         try {
-            visionChannel = DatagramChannel.open() ;
+            visionChannel = DatagramChannel.open();
             InetSocketAddress sAddr = new InetSocketAddress(5800);
             visionChannel.bind(sAddr);
-            visionChannel.configureBlocking(false) ;
+            visionChannel.configureBlocking(false);
         } catch (Exception ex) {
+            int wpk = 1;
         }
     }
 
     @Override
     public void periodic() {
-
         try {
-            boolean done = false ;
-            String message = "" ;
+            boolean done = false;
+            String message = "";
             while (!done) {
-                SocketAddress sender = visionChannel.receive(buffer);
+                InetSocketAddress sender = (InetSocketAddress) visionChannel.receive(buffer);
                 buffer.flip();
                 int limits = buffer.limit();
-                if ( limits > 0 ) {
+                if (limits > 0) {
                     byte bytes[] = new byte[limits];
                     buffer.get(bytes, 0, limits);
                     message = new String(bytes);
-                } else { 
-                    done = true ;
+                    sourceIP = sender.getAddress().toString();
+                } else {
+                    done = true;
                 }
-                buffer.clear() ;
+                buffer.clear();
             }
 
             if (message.length() > 0) {
-                Map<String,String> myMap = new HashMap<String, String>();
+                Map<String, String> myMap = new HashMap<String, String>();
 
                 ObjectMapper objectMapper = new ObjectMapper();
-                myMap = objectMapper.readValue(message, new TypeReference<HashMap<String,String>>() {});
-                this.gamePieceDetected = Boolean.parseBoolean(myMap.get("detected")) ;
-                this.gamePieceDistanceFromCenter = Double.parseDouble(myMap.get("distance_from_center")) ;
-                this.gamePieceHeight = Double.parseDouble(myMap.get("bb_height")) ;
-                this.gamePieceWidth = Double.parseDouble(myMap.get("bb_width")) ;
+                myMap = objectMapper.readValue(message, new TypeReference<HashMap<String, String>>() {
+                });
+                this.gamePieceDetected = Boolean.parseBoolean(myMap.get("detected"));
+                this.gamePieceDistanceFromCenter = Double.parseDouble(myMap.get("distance_from_center"));
+                this.gamePieceHeight = Double.parseDouble(myMap.get("bb_height"));
+                this.gamePieceWidth = Double.parseDouble(myMap.get("bb_width"));
             }
-    
+
             // var Vision_Info = new JSONObject(received);
 
-        // double aprilTagDistanceFromCenter = Vision_Info.get(april_tag_distance_from_center); 
+            // double aprilTagDistanceFromCenter =
+            // Vision_Info.get(april_tag_distance_from_center);
         } catch (Exception ex) {
-            System.out.println("Exception reading data") ;
+            System.out.println("Exception reading data");
         }
     }
 
@@ -112,9 +111,10 @@ public class Vision extends SubsystemBase implements Sendable {
 
     public boolean aprilTagIsVisible() {
         // The data for this will come from the Jetson Nano via network tables.
-        // return NetworkTableInstance.getDefault().getEntry("vision/april_tag_detected").getBoolean(false);
+        // return
+        // NetworkTableInstance.getDefault().getEntry("vision/april_tag_detected").getBoolean(false);
         // return Vision_Info.get("vision/april_tag_detected");
-        return false ;
+        return false;
     }
 
     public double aprilTagDistanceFromCenter() {
@@ -125,12 +125,12 @@ public class Vision extends SubsystemBase implements Sendable {
     }
 
     public boolean gamePieceIsVisible() {
-        return this.gamePieceDetected ;
+        return this.gamePieceDetected;
     }
 
     public double gamePieceDistanceFromCenter() {
         // tell how many pixels the gamePiece is from the center of the screen.
-        return this.gamePieceDistanceFromCenter ;
+        return this.gamePieceDistanceFromCenter;
     }
 
     public boolean poleIsVisible() {
@@ -145,11 +145,11 @@ public class Vision extends SubsystemBase implements Sendable {
     }
 
     public double bbGamePieceHeight() {
-        return this.gamePieceHeight ;
+        return this.gamePieceHeight;
     }
 
     public double bbGamePieceWidth() {
-        return this.gamePieceWidth ;
+        return this.gamePieceWidth;
     }
 
     public double bbPoleHeight() {
@@ -168,15 +168,17 @@ public class Vision extends SubsystemBase implements Sendable {
         return NetworkTableInstance.getDefault().getEntry("vision/target_bb_april_tag_width").getDouble(0.0);
     }
 
+    public String getSenderAddress() {
+        return this.sourceIP ;
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("BangBangController");
+        builder.setSmartDashboardType("Vision Subsystem");
         builder.addBooleanProperty("Game piece detected", this::gamePieceIsVisible, null);
         builder.addDoubleProperty("Game piece distance from center", this::gamePieceDistanceFromCenter, null);
         builder.addDoubleProperty("Game piece height", this::bbGamePieceHeight, null);
         builder.addDoubleProperty("Game piece width", this::bbGamePieceWidth, null);
+        builder.addStringProperty("Source Address", this::getSenderAddress, null);
     }
-  
-
 }

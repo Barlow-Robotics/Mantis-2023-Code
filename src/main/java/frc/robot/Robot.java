@@ -4,12 +4,16 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import java.util.HashMap;
+
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -18,41 +22,40 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CalibrateArmExtention;
 import frc.robot.commands.CalibrateArmRotations;
+import frc.robot.commands.CalibrateClaw;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Arm;
 
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
- * project.
- */
-public class Robot extends TimedRobot {
-//    public final Arm armSub = new Arm();
+/* The VM is configured to automatically run this class, and to call the functions
+corresponding to each mode, as described in the TimedRobot documentation. If you change
+the name of this class or the package after creating this project, you must also update
+the build.gradle file in the project. */
+public class Robot extends LoggedRobot {
+    // public final Arm armSub = new Arm();
 
     private Command autonomousCommand;
+
+    private Field2d field ;
+
 
     private RobotContainer robotContainer;
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings // O
 
-//    Joystick opp = new Joystick(0);
-
-//    int state = 0; // O
-
-    BufferedTrajectoryPointStream bufferedStream = new BufferedTrajectoryPointStream(); // O
-
-    public boolean currentProfileButton;
-
     private boolean calibrationPerformed = false;
+
+    static long startTime = System.currentTimeMillis() ;
+
+    static HashMap<Command, Long> startTimes = new HashMap() ;
+
+    Logger logger = Logger.getInstance();
+
+
 
     /*
      * This function is run when the robot is first started up and should be used
@@ -77,7 +80,8 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
         robotContainer.armSub.stopMoving(); // Sets percent output of everything (rotate, extend, claw) to zero
         robotContainer.clawSub.stopMoving();
-        this.calibrationPerformed = false;
+        robotContainer.driveSub.stopMoving();
+        // this.calibrationPerformed = false;
     }
 
     @Override
@@ -90,22 +94,30 @@ public class Robot extends TimedRobot {
      */
     // @Override
     public void autonomousInit() {
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
-                             // claw) to zero
+        robotContainer.driveSub.resetHeading();
+        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
+                                            // extend,
+        // claw) to zero
 
         SequentialCommandGroup cg = new SequentialCommandGroup();
 
-        if (!calibrationPerformed) {
+        if (!calibrationPerformed  && !Robot.isSimulation()) {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
-            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Resting));
+            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Home));
+            Command calibrateClaw = new CalibrateClaw(robotContainer.clawSub);
 
             cg.addCommands(
                     calibrateLength,
                     calibrateRotation,
+                    calibrateClaw,
                     setState,
                     new InstantCommand(() -> this.calibrationPerformed = true),
                     new PrintCommand("Calibration Complete"));
+        }
+
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
 
         autonomousCommand = robotContainer.getAutonomousCommand();
@@ -114,11 +126,14 @@ public class Robot extends TimedRobot {
             cg.addCommands(autonomousCommand);
         }
         cg.schedule();
+
+        
     }
 
     // /** This function is called periodically during autonomous. */
     // @Override
     public void autonomousPeriodic() {
+        int wpk = 1 ;
     }
 
     @Override
@@ -126,27 +141,34 @@ public class Robot extends TimedRobot {
         // This makes sure that the autonomous stops running when teleop starts running.
         // If you want the autonomous to continue until interrupted by another command,
         // remove this line or comment it out.
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
-                             // claw) to zero
+        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
+                                            // extend,
+        // claw) to zero
+
+        robotContainer.clawSub.close();
+
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
 
-        if (!calibrationPerformed && !this.isSimulation()) {
+        if (!calibrationPerformed && !Robot.isSimulation()) {
             Command calibrateRotation = new CalibrateArmRotations(robotContainer.armSub);
             Command calibrateLength = new CalibrateArmExtention(robotContainer.armSub);
             // wpk might want to change this to a move command.
             Command setArmLength = new InstantCommand(
-                    () -> robotContainer.armSub.setLength(0.0, Constants.ArmConstants.ExtendVel, Constants.ArmConstants.ExtendAccel));
-            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Resting));
+                    () -> robotContainer.armSub.setLength(0.0, Constants.ArmConstants.ExtendVel,
+                            Constants.ArmConstants.ExtendAccel));
+            Command setState = new InstantCommand(() -> robotContainer.armSub.setState(Arm.Position.Home));
+            Command calibrateClaw = new CalibrateClaw(robotContainer.clawSub);
 
             SequentialCommandGroup calbrationSequence = new SequentialCommandGroup(
                     calibrateLength,
                     calibrateRotation,
+                    calibrateClaw,
                     setArmLength,
                     setState,
                     new InstantCommand(() -> {
-                        robotContainer.armSub.setState(Arm.Position.Resting);
+                        robotContainer.armSub.setState(Arm.Position.Home);
                         this.calibrationPerformed = true;
                     }),
                     new PrintCommand("Calibration Complete"));
@@ -162,8 +184,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate, extend,
-                             // claw) to zero
+        robotContainer.armSub.stopMoving(); // Need to figure out how to set percent output of everything (rotate,
+                                            // extend,
+        // claw) to zero
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
     }
@@ -177,17 +200,32 @@ public class Robot extends TimedRobot {
     @Override
     public void simulationInit() {
         robotContainer.armSub.simulationInit();
+        robotContainer.driveSub.simulationInit();
+        robotContainer.clawSub.simulationInit();
     }
 
     /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {
-        // if (!simulationInitialized) {
-        // simulationInit();
-        // simulationInitialized = true;
-        // }
         PhysicsSim.getInstance().run();
     }
+
+    static public void reportCommandStart(Command c) {
+        double deltaTime = ((double)System.currentTimeMillis() - startTime) / 1000.0 ;
+        System.out.println(deltaTime + ": Started " + c.getName())    ;     
+        startTimes.putIfAbsent(c, System.currentTimeMillis() ) ;
+    }
+
+    static public void reportCommandFinish(Command c) {
+        if ( startTimes.containsKey(c)) {
+            long currentTime = System.currentTimeMillis() ;
+            double deltaTime = ((double)currentTime - startTime) / 1000.0 ;
+            double elapsedTime = (double)(currentTime - startTimes.get(c)) / 1000.0  ;
+            System.out.println(deltaTime + ": Finished (elapsed time " + elapsedTime + ")" + c.getName()) ;     
+            startTimes.remove(c) ;
+        }
+    }
+
 
     public void robotInit() {
 
@@ -195,6 +233,33 @@ public class Robot extends TimedRobot {
         // and put our
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
+
+        DriverStation.silenceJoystickConnectionWarning(true) ;
+
+        field = new Field2d();
+        SmartDashboard.putData("Field", field) ;
+        this.calibrationPerformed = false;
+
+        CommandScheduler.getInstance().onCommandInitialize( Robot::reportCommandStart ) ;
+        CommandScheduler.getInstance().onCommandFinish(Robot::reportCommandFinish);        
+        CommandScheduler.getInstance().onCommandInterrupt( this::handleInterrupted) ;
+
+        logger.recordMetadata("ProjectName", "WPI-2023-Mantis"); // Set a metadata value
+
+        if (isReal()) {
+            Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
+            Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+            new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+        } else {
+            // setUseTiming(false); // Run as fast as possible
+            // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+            logger.addDataReceiver(new WPILOGWriter(""));
+            logger.addDataReceiver(new NT4Publisher());
+        }
+        
+        // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+        Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    
 
     }
 
@@ -209,10 +274,16 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        NetworkTableInstance.getDefault().getEntry("claw/sensorDistance").setDouble(robotContainer.clawSub.getDistanceInches());
-        NetworkTableInstance.getDefault().getEntry("claw/rangeValid").setBoolean(robotContainer.clawSub.getRangeSensor().isRangeValid());
-        SmartDashboard.putData( CommandScheduler.getInstance()) ;
-        SmartDashboard.putData( robotContainer.visionSub) ;
+        SmartDashboard.putData(CommandScheduler.getInstance());
+        SmartDashboard.putData(robotContainer.driveSub);
+        SmartDashboard.putData(robotContainer.visionSub);
+        SmartDashboard.putData(robotContainer.armSub);
+        SmartDashboard.putData(robotContainer.clawSub);
+        field.setRobotPose(robotContainer.driveSub.getPose());
+            // Push the trajectory to Field2d.
+        if (robotContainer.getCurrentTrajectory() != null) {
+            field.getObject("traj").setTrajectory(robotContainer.getCurrentTrajectory());
+        }
 
         if (this.isDisabled()) {
             robotContainer.armSub.stopMoving();
@@ -222,55 +293,8 @@ public class Robot extends TimedRobot {
 
     }
 
-    /**
-     * Fill _bufferedStream with points from csv/generated-table.
-     *
-     * @param profile  generated array from excel
-     * @param totalCnt num points in profile
-     */
-    // private void initBuffer(double[][] profile, int totalCnt) {
+    private void handleInterrupted( Command c) {
+        System.out.println("Commmand " + c + " named " + c.getName() + " was interrupted") ;
+    }
 
-    // boolean forward = true; // set to false to drive in opposite direction of
-    // profile (not really needed
-    // // since you can use negative numbers in profile).
-
-    // TrajectoryPoint point = new TrajectoryPoint(); // temp for for loop, since
-    // unused params are initialized
-    // // automatically, you can alloc just one
-
-    // /* clear the buffer, in case it was used elsewhere */
-    // bufferedStream.Clear();
-
-    // /* Insert every point into buffer, no limit on size */
-    // for (int i = 0; i < totalCnt; ++i) {
-
-    // double direction = forward ? +1 : -1;
-    // double positionRot = profile[i][0];
-    // double velocityRPM = profile[i][1];
-    // int durationMilliseconds = (int) profile[i][2];
-
-    // /* for each point, fill our structure and pass it to API */
-    // point.timeDur = durationMilliseconds;
-    // point.position = direction * positionRot *
-    // Constants.DriveConstants.countsPerRevolution; // Convert
-    // // Revolutions to
-    // // Units
-    // point.velocity = direction * velocityRPM *
-    // Constants.DriveConstants.countsPerRevolution / 600.0; // Convert
-    // // RPM to
-    // // Units/100ms
-    // point.auxiliaryPos = 0;
-    // point.auxiliaryVel = 0;
-    // point.profileSlotSelect0 = Constants.kPrimaryPIDSlot; /* which set of gains
-    // would you like to use [0,3]? */
-    // point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
-    // point.zeroPos = (i == 0); /* set this to true on the first point */
-    // point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last
-    // point */
-    // point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0]
-    // output here */
-
-    // bufferedStream.Write(point);
-    // }
-    // }
 }

@@ -9,37 +9,31 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 
 public class CalibrateArmExtention extends CommandBase {
-  /** Creates a new CalabrateArmExtention. */
 
-  private Arm armSub;
+    private Arm armSub;
 
-  public CalibrateArmExtention(Arm a) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    armSub = a;
-    addRequirements(armSub);
-  }
+    public CalibrateArmExtention(Arm a) {
+        armSub = a;
+        addRequirements(armSub);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    armSub.startExtending(Constants.ArmConstants.ExtentionCalibrationVelocity);
-  }
+    @Override
+    public void initialize() {
+        armSub.startExtending(Constants.ArmConstants.ExtentionCalibrationVelocity);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    armSub.startExtending(Constants.ArmConstants.ExtentionCalibrationVelocity);
-  }
+    @Override
+    public void execute() {
+        armSub.startExtending(Constants.ArmConstants.ExtentionCalibrationVelocity);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    armSub.stopMoving();
-  }
+    @Override
+    public void end(boolean interrupted) {
+        armSub.stopMoving();
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return armSub.isAtMinLength();
-  }
+    @Override
+    public boolean isFinished() {
+        return armSub.isAtMinLength();
+    }
 }

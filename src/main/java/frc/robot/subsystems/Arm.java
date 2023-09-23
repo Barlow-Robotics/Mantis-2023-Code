@@ -5,8 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -14,53 +17,72 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.sim.PhysicsSim;
 
-public class Arm extends SubsystemBase {
+import org.littletonrobotics.junction.Logger;
+
+
+public class Arm extends SubsystemBase implements Sendable {
     /** Creates a new Arm. */
 
     TalonFXConfiguration config = new TalonFXConfiguration(); // factory default settings
     WPI_TalonFX extendMotor;
-    WPI_TalonFX rotateMotorLeader; // 40:1 gearbox
-    WPI_TalonFX rotateMotorFollower;
+    WPI_TalonFX leftRotateMotor;
+    WPI_TalonFX rightRotateMotor;
+    
+    WPI_CANCoder rotationEncoderL;
 
     double x = Constants.ArmConstants.RotateGearRatio;
 
     public enum Position {
-        Resting, Bottom, Middle, Top, Floor, PlayerStation, Transition
+        Home, Bottom, Middle, Top, Floor, PlayerStation, Transition
     };
 
-    public Position armState = Position.Resting;
+    public Position armState = Position.Home;
 
     // BufferedTrajectoryPointStream bufferedStream = new
     // BufferedTrajectoryPointStream();
 
     public Arm() {
         extendMotor = new WPI_TalonFX(Constants.ArmConstants.ArmExtendMotorID);
-        rotateMotorLeader = new WPI_TalonFX(Constants.ArmConstants.ArmLeaderMotorID);
-        rotateMotorFollower = new WPI_TalonFX(Constants.ArmConstants.ArmFollowMotorID);
+        leftRotateMotor = new WPI_TalonFX(Constants.ArmConstants.LeftArmMotorID);
+        rightRotateMotor = new WPI_TalonFX(Constants.ArmConstants.RightArmMotorID);
+        rotationEncoderL = new WPI_CANCoder(Constants.ArmConstants.CANCoderID) ;
 
         setExtendMotorConfig(extendMotor);
-        setRotateMotorConfig(rotateMotorLeader);
-        setRotateMotorConfig(rotateMotorFollower);
 
-        rotateMotorFollower.follow(rotateMotorLeader);
-        rotateMotorFollower.setInverted(InvertType.OpposeMaster);
+        setRotateMotorConfig(leftRotateMotor);
+        setRotateMotorConfig(rightRotateMotor);
 
-        rotateMotorLeader.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
+        rightRotateMotor.setInverted(TalonFXInvertType.Clockwise); // maybe change
 
-        rotateMotorLeader.setSelectedSensorPosition(0);
+        leftRotateMotor.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
+        rightRotateMotor.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
+
+        leftRotateMotor.setSelectedSensorPosition(0);
+        // rotationEncoderL.setPosition(0);
+        rightRotateMotor.setSelectedSensorPosition(0);
 
         extendMotor.setSelectedSensorPosition(0);
 
         extendMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
         extendMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
         extendMotor.configClearPositionOnLimitR(true, 0);
+
+        CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
+        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180 ;
+        canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition ;
+        // canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToZero ;
+        canCoderConfiguration.sensorDirection = true ;
+        canCoderConfiguration.magnetOffsetDegrees = -174.1 ;
+        rotationEncoderL.configAllSettings(canCoderConfiguration);
 
         // rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         // LimitSwitchNormal.NormallyOpen);
@@ -98,17 +120,21 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent").setDouble(rotateMotorLeader.getStatorCurrent()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent").setDouble(rotateMotorLeader.getSupplyCurrent()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent").setDouble(rotateMotorFollower.getStatorCurrent()) ;
-        NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent").setDouble(rotateMotorFollower.getSupplyCurrent()) ;
-        // System.out.println() ;
+        // NetworkTableInstance.getDefault().getEntry("arm/state").setString(this.getState().toString());
+        // NetworkTableInstance.getDefault().getEntry("arm/isAtExtendLimit").setBoolean(this.isAtMaxLength());
+        // NetworkTableInstance.getDefault().getEntry("arm/isAtRetractLimit").setBoolean(this.isAtMinLength());
+        // NetworkTableInstance.getDefault().getEntry("arm/isAtMinRotationLimit").setBoolean(this.isAtMinAngle());
+        // NetworkTableInstance.getDefault().getEntry("arm/angle").setDouble(this.getAngle());
+        // NetworkTableInstance.getDefault().getEntry("arm/length").setDouble(this.getLength());
+        // NetworkTableInstance.getDefault().getEntry("arm/leftMotorStatorCurrent")
+        // .setDouble(rotateMotorLeader.getStatorCurrent());
+        // NetworkTableInstance.getDefault().getEntry("arm/leftMotorSupplyCurrent")
+        // .setDouble(rotateMotorLeader.getSupplyCurrent());
+        // NetworkTableInstance.getDefault().getEntry("arm/rightMotorStatorCurrent")
+        // .setDouble(rotateMotorFollower.getStatorCurrent());
+        // NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent")
+        // .setDouble(rotateMotorFollower.getSupplyCurrent());
+        // // System.out.println() ;
     }
 
     private double rotationFeedForward() {
@@ -119,16 +145,11 @@ public class Arm extends SubsystemBase {
 
     /* Rotate Motor */
     public void setAngle(double desiredAngle, double velocity, double accelerationTime) {
-        // double currentPos = rotateMotorLeader.getSelectedSensorPosition();
-        // double degrees = (currentPos - Constants.ArmConstants.kMeasuredPosHorizontal)
-        // / Constants.ArmConstants.CountsPerArmDegree;
-        // double radians = java.lang.Math.toRadians(degrees);
-        // double cosineScalar = java.lang.Math.cos(radians);
+        leftRotateMotor.configMotionCruiseVelocity(velocity * ArmConstants.DegreesPerSecToCountsPer100MSec);
+        rightRotateMotor.configMotionCruiseVelocity(velocity * ArmConstants.DegreesPerSecToCountsPer100MSec);
+        leftRotateMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
+        rightRotateMotor.configMotionAcceleration( velocity * ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
-        rotateMotorLeader
-                .configMotionCruiseVelocity(velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
         double currentAngle = getAngle();
         double ff = Math.sin(Math.toRadians(currentAngle)) * rotationFeedForward();
 
@@ -138,61 +159,55 @@ public class Arm extends SubsystemBase {
             desiredAngle = ArmConstants.ArmMinAngle;
         } else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support (prependicular to ground) and
                                         // the line from arm motor and the edge of the chasis
-            setLength(0, Constants.ArmConstants.armRotateSpeed, Constants.ArmConstants.RotateAccel);
+            setLength(0, ArmConstants.ArmExtendSpeed, ArmConstants.ArmExtendAccelerationTime);
         }
-        // else if (desiredAngle < 40) { // 40 degrees is the angle between the arm support
-        // (prependicular to ground) and the line from arm motor and the edge of the chasis
-        // setLength(0, Constants.ArmConstants.armRotateSpeed,
-        // Constants.ArmConstants.AngleAcceleration);
-        // }
 
         double setAngle = desiredAngle * ArmConstants.CountsPerArmDegree;
-        rotateMotorLeader.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
+        NetworkTableInstance.getDefault().getEntry("arm/setAngle").setDouble(setAngle);
+        NetworkTableInstance.getDefault().getEntry("arm/desired_angle").setDouble(desiredAngle);
+
+        //  System.out.println("Setting arm angle to " + desiredAngle + "( " +  setAngle + " ) with feed forward "+ ff ) ;
+        leftRotateMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
+        rightRotateMotor.set(TalonFXControlMode.MotionMagic, setAngle, DemandType.ArbitraryFeedForward, ff);
     }
 
     public double getAngle() {
-        double result = rotateMotorLeader.getSelectedSensorPosition() / Constants.ArmConstants.CountsPerArmDegree;
+        double result = leftRotateMotor.getSelectedSensorPosition() / ArmConstants.CountsPerArmDegree ;
+        // double result = rotationEncoderL.getAbsolutePosition() / ArmConstants.CountsPerArmDegree;
         return result;
     }
 
     public boolean isAtMaxAngle() {
-        return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
+        return leftRotateMotor.isFwdLimitSwitchClosed() == 1;
     }
 
     public boolean isAtMinAngle() {
-        return rotateMotorLeader.isRevLimitSwitchClosed() == 1;
+        return leftRotateMotor.isRevLimitSwitchClosed() == 1;
     }
 
     public void startRotating(double velocity) { // Velocity in degrees per second
-        // rotateMotorLeader.set(TalonFXControlMode.Velocity,
-        //         velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec);
-        rotateMotorLeader.set(TalonFXControlMode.PercentOutput, -0.07 ) ;
+        leftRotateMotor.set(TalonFXControlMode.PercentOutput, -0.07);
+        rightRotateMotor.set(TalonFXControlMode.PercentOutput, -0.07);
     }
 
-    /* Extend Motor */
-    public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is
+    public void setLength(double desiredLength, double velocity, double accelerationTime) { // 0.0in is when arm is //
                                                                                             // fully retracted
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
+        extendMotor.configMotionCruiseVelocity(velocity * ArmConstants.InchesPerSecToCountsPer100MSec);
+       extendMotor.configMotionAcceleration(velocity * ArmConstants.InchesPerSecToCountsPer100MSec / accelerationTime);
 
         if (desiredLength > ArmConstants.ArmMaxLength) {
             desiredLength = ArmConstants.ArmMaxLength;
         } else if (desiredLength < ArmConstants.ArmMinLength) {
             desiredLength = ArmConstants.ArmMinLength;
         }
-        // else if (getAngle() < 40) { // 40 degrees is the angle between the arm
-        // support (prependicular to ground) and
-        // // the line from rotation motor to the edge of the chasis
-        // desiredLength = getLength(); }
-
-        extendMotor.configMotionCruiseVelocity(velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.configMotionAcceleration(
-                velocity * Constants.ArmConstants.DegreesPerSecToCountsPer100MSec / accelerationTime);
 
         double setLength = desiredLength * ArmConstants.CountsPerArmInch;
-        double ff = Constants.ArmConstants.extendFF * Math.cos( Math.toRadians(this.getAngle())) ;
+        double ff = ArmConstants.ExtendFF * Math.cos(Math.toRadians(this.getAngle()));
         extendMotor.set(TalonFXControlMode.MotionMagic, setLength, DemandType.ArbitraryFeedForward, ff);
+    
+        NetworkTableInstance.getDefault().getEntry("arm/setLength").setDouble(setLength);
+        NetworkTableInstance.getDefault().getEntry("arm/desiredLength").setDouble(desiredLength);
+
     }
 
     public double getLength() {
@@ -201,21 +216,23 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean isAtMaxLength() {
-        return rotateMotorLeader.isFwdLimitSwitchClosed() == 1;
+        return leftRotateMotor.isFwdLimitSwitchClosed() == 1;
     }
 
     public boolean isAtMinLength() {
-        return extendMotor.isRevLimitSwitchClosed() == 1 ;
+        return extendMotor.isRevLimitSwitchClosed() == 1;
     }
 
     public void startExtending(double velocity) {
-//        extendMotor.set(TalonFXControlMode.Velocity, velocity * Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
-        extendMotor.set(TalonFXControlMode.PercentOutput, -0.1);  // wpk fix magic number
+        // extendMotor.set(TalonFXControlMode.Velocity, velocity *
+        // Constants.ArmConstants.InchesPerSecToCountsPer100MSec);
+        extendMotor.set(TalonFXControlMode.PercentOutput, -0.2); // wpk fix magic number
     }
 
     /* Extend and Rotate */
     public void stopMoving() {
-        rotateMotorLeader.set(TalonFXControlMode.PercentOutput, 0.0);
+        leftRotateMotor.set(TalonFXControlMode.PercentOutput, 0.0);
+        rightRotateMotor.set(TalonFXControlMode.PercentOutput, 0.0);
         extendMotor.set(TalonFXControlMode.PercentOutput, 0.0);
     }
 
@@ -228,21 +245,90 @@ public class Arm extends SubsystemBase {
         return armState;
     }
 
+    public String getStateName() {
+        return armState.toString();
+    }
+
     public double lengthLim() {
         double lengthLim; // Inches
         if (getAngle() > 29) {
-            lengthLim = 0; 
+            lengthLim = 0;
         } else {
-            lengthLim = 37; } // Rough estimate, need to change
+            lengthLim = 37;
+        } // Rough estimate, need to change
         return lengthLim;
+    }
+
+
+    private double getLeftStatorCurrent() {
+        return leftRotateMotor.getStatorCurrent();
+    }
+
+    private double getLeftSupplyCurrent() {
+        return leftRotateMotor.getSupplyCurrent();
+    }
+
+    private double getRightStatorCurrent() {
+        return rightRotateMotor.getStatorCurrent();
+    }
+
+    private double getRightSupplyCurrent() {
+        return rightRotateMotor.getSupplyCurrent();
+    }
+
+    private double getLeftError() {
+        return this.leftRotateMotor.getClosedLoopError();
+        // return this.rotationEncoderL.geterror;  //??? -Ang
+    }
+
+    private double getRightError() {
+        return this.rightRotateMotor.getClosedLoopError() ;
+    }
+
+    private double getExtendError() {
+        return this.extendMotor.getClosedLoopError() ;
+    }
+
+    private double getLeftVelocity() {
+        return this.leftRotateMotor.getSelectedSensorVelocity() ;
+    }
+
+    private double getExtendVelocity() {
+        return this.extendMotor.getSelectedSensorVelocity() ;
+    }
+
+    // public void setMotorDefaults() {
+    //     rotationEncoderL.restoreFactoryDefaults();
+    //     rotationEncoderL.setIdleMode(IdleMode.kBrake);
+    // }
+
+    private double getAbsoluteEncoderAngle() {
+        return rotationEncoderL.getAbsolutePosition() ;
+    }
+
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Arm Subsystem");
+
+        builder.addStringProperty("State", this::getStateName, null);
+        builder.addDoubleProperty("Angle", this::getAngle, null);
+        builder.addDoubleProperty("Absolute Encoder Angle", this::getAbsoluteEncoderAngle, null);
+        builder.addDoubleProperty("Length", this::getLength, null);
+        builder.addBooleanProperty("isAtRetractLimit", this::isAtMinLength, null);
+        builder.addBooleanProperty("isAtExtendLimit", this::isAtMaxLength, null);
+        builder.addBooleanProperty("isAtMinAngle", this::isAtMinAngle, null);
+
+        builder.addDoubleProperty("Left Closed Loop Error", this::getLeftError, null);
+        builder.addDoubleProperty("Right Closed Loop Error", this::getRightError, null);
+        builder.addDoubleProperty("Extend Closed Loop Error", this::getExtendError, null);
+        builder.addDoubleProperty("Left Motor Velocity", this::getLeftVelocity, null);
+        builder.addDoubleProperty("Extend Motor Velocity", this::getExtendVelocity, null);
     }
 
     // Simulation Support
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 6800 );
-        PhysicsSim.getInstance().addTalonFX(rotateMotorLeader, 0.1, 6800 );
-        PhysicsSim.getInstance().addTalonFX(rotateMotorFollower, 0.1, 6800 );
+        PhysicsSim.getInstance().addTalonFX(extendMotor, 0.1, 21777);
+        PhysicsSim.getInstance().addTalonFX(leftRotateMotor, 0.1, 21777);
+        PhysicsSim.getInstance().addTalonFX(rightRotateMotor, 0.1, 21777);
     }
-
 }

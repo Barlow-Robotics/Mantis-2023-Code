@@ -45,10 +45,5 @@ public class Underglow extends SubsystemBase {
             }
             currentMode = desiredMode;
         }
-
     }
-
-    public void turnOnUnderglow() {}
-
-    public void turnOffUnderglow() {}
 }

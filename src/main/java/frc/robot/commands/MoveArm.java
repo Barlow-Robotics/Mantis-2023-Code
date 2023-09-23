@@ -22,7 +22,6 @@ public class MoveArm extends CommandBase {
     double extensionAcceleration;
     Position state;
 
-    /** Creates a new MoveArm. */
     public MoveArm(
             Arm a,
             double angle,
@@ -47,47 +46,55 @@ public class MoveArm extends CommandBase {
         this.extensionAcceleration = extensionAcceleration;
         this.state = state;
 
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(armSub);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        System.out.println("***** move command to " + state + " started");
 
         armSub.setState(Arm.Position.Transition);
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
         armSub.setLength(length, extensionVelocity, extensionAcceleration);
+        System.out.format("started move command: angle %5.2f, length %5.2f%n", angle, length) ;
+
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         armSub.setAngle(angle, angleVelocity, angleAccelerationTime);
         armSub.setLength(length, extensionVelocity, extensionAcceleration);
-        NetworkTableInstance.getDefault().getEntry("move_arm/angle").setDouble(angle) ;
-        NetworkTableInstance.getDefault().getEntry("move_arm/length").setDouble(length) ;
+
+        // NetworkTableInstance.getDefault().getEntry("move_arm/angle").setDouble(angle) ;
+        // NetworkTableInstance.getDefault().getEntry("move_arm/length").setDouble(length) ;
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/angleVelocity").setDouble(angleVelocity);
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/angleAccel").setDouble(angleAccelerationTime);
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/extensionVelocity").setDouble(extensionVelocity);
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/extensionAcceleration").setDouble(extensionAcceleration);
 
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
             armSub.stopMoving();
+            System.out.println("interrupted move command") ;
         }
+        System.out.format("finished move command: angle %5.2f, length %5.2f%n", angle, length) ;
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
+
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/armSub_getAngle").setDouble(armSub.getAngle());
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/angle").setDouble(angle);
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/armSub_getLength").setDouble(armSub.getLength());
+        // NetworkTableInstance.getDefault().getEntry("MoveArm/length").setDouble(length);
+
         if (
            ( angleVelocity == 0.0 || Math.abs(armSub.getAngle() - angle) <= Constants.ArmConstants.ArmAngleTolerance )
            && ( extensionVelocity == 0.0 ||  Math.abs(armSub.getLength() - length) <= Constants.ArmConstants.ArmLengthTolerance)
          ) {
             armSub.setState(state);
-            System.out.println("***** move command to " + state + " is finished");
             return true;
         } else {
             return false;

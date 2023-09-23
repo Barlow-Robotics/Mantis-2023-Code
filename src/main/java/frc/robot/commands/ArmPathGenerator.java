@@ -12,27 +12,23 @@ import frc.robot.subsystems.Arm.Position;
 import frc.robot.Constants;
 
 public class ArmPathGenerator extends CommandBase {
-    /** Creates a new CommandGenerator. */
-
     Arm armSub;
     Arm.Position to;
 
     public ArmPathGenerator(Arm.Position to, Arm armSub) {
-        // Use addRequirements() here to declare subsystem dependencies.
         this.to = to;
         this.armSub = armSub;
-        addRequirements(armSub);
+        // addRequirements(armSub);
     }
 
-    /* * * * * * FROM RESTING * * * * * */
+    /* * * * * * FROM HOME * * * * * */
 
-    public SequentialCommandGroup getPathFromResting() {
+    public SequentialCommandGroup getPathFromHome() {
 
-        System.out.println("***** getPathFromResting") ;
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
-            case Resting:
+            case Home:
                 break; // do nothing in this case since we're already at resting
 
             case Bottom:
@@ -42,7 +38,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Constants.ArmConstants.BottomArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
                                 Position.Transition),
@@ -64,7 +60,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Constants.ArmConstants.MiddleArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
                                 Position.Transition),
@@ -83,10 +79,10 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.MiddleArmAngle,
+                                Constants.ArmConstants.TopArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
                                 Position.Transition),
@@ -108,7 +104,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Constants.ArmConstants.FloorArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
                                 Position.Transition),
@@ -140,34 +136,34 @@ public class ArmPathGenerator extends CommandBase {
                 break; // Not applicable
         }
 
+        g.setName("Path from Home to " + to.toString()) ;
         return g;
     }
 
     /* * * * * * FROM FLOOR * * * * * */
 
-    private SequentialCommandGroup getPathFromFloor() {
-        System.out.println("***** getPathFromFloor") ;
+    public SequentialCommandGroup getPathFromFloor() {
 
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
-            case Resting:
+            case Home:
                 g.addCommands(
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.FloorArmAngle,
                                 0.0,
                                 0.0,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.HomeArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
                                 to));
@@ -177,12 +173,21 @@ public class ArmPathGenerator extends CommandBase {
                 g.addCommands(
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.FloorArmAngle,
+                                Constants.ArmConstants.BottomArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.FloorArmLength,
                                 0.0,
                                 0.0,
+                                Position.Transition),
+                        new MoveArm(
+                                armSub,
+                                Constants.ArmConstants.BottomArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                Constants.ArmConstants.BottomArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
                                 to));
                 break;
 
@@ -196,7 +201,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Constants.ArmConstants.FloorArmLength,
                                 0.0,
                                 0.0,
-                                Position.Transition) ,
+                                Position.Transition),
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.MiddleArmAngle,
@@ -205,8 +210,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Constants.ArmConstants.MiddleArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
-                                to )
-                    );
+                                to));
                 break;
 
             case Top:
@@ -232,7 +236,7 @@ public class ArmPathGenerator extends CommandBase {
                 break;
 
             case Floor:
-                break;  // Not applicable
+                break; // Not applicable
 
             case PlayerStation:
                 g.addCommands(
@@ -260,34 +264,34 @@ public class ArmPathGenerator extends CommandBase {
                 break;// Not applicable
         }
 
+        g.setName("Path from Floor to " + to.toString()) ;
         return g;
     }
 
     /* * * * * * FROM BOTTOM * * * * * */
 
     public SequentialCommandGroup getPathFromBottom() {
-        System.out.println("***** getPathFromBottom") ;
 
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
-            case Resting:
+            case Home:
                 g.addCommands(
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.BottomArmAngle,
                                 0.0,
                                 0.0,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.HomeArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
                                 to));
@@ -309,7 +313,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.BottomArmAngle,
+                                Constants.ArmConstants.MiddleArmAngle,
                                 0.0,
                                 0.0,
                                 Constants.ArmConstants.MiddleArmLength,
@@ -359,7 +363,7 @@ public class ArmPathGenerator extends CommandBase {
                                 Constants.ArmConstants.FloorArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
-                                to) );
+                                to));
                 break;
 
             case PlayerStation:
@@ -393,29 +397,28 @@ public class ArmPathGenerator extends CommandBase {
 
     /* * * * * * FROM MIDDLE * * * * * */
 
-    private SequentialCommandGroup getPathFromMiddle() {
-        System.out.println("***** getPathFromMiddle") ;
+    public SequentialCommandGroup getPathFromMiddle() {
 
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
-            case Resting:
+            case Home:
                 g.addCommands(
                         new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.MiddleArmAngle,
                                 0.0,
                                 0.0,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
                                 Position.Transition),
                         new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.HomeArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
                                 to));
@@ -522,32 +525,31 @@ public class ArmPathGenerator extends CommandBase {
     /* * * * * * FROM TOP * * * * * */
 
     public SequentialCommandGroup getPathFromTop() {
-        System.out.println("***** getPathFromTop") ;
 
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
-            case Resting:
+            case Home:
                 g.addCommands(
-                    new MoveArm(
-                            armSub,
-                            Constants.ArmConstants.TopArmAngle,
-                            0.0,
-                            0.0,
-                            Constants.ArmConstants.RestingArmLength,
-                            Constants.ArmConstants.ExtendVel,
-                            Constants.ArmConstants.ExtendAccel,
-                            Position.Transition),
-                    new MoveArm(
-                            armSub,
-                            Constants.ArmConstants.RestingArmAngle,
-                            Constants.ArmConstants.RotateVel,
-                            Constants.ArmConstants.RotateAccel,
-                            Constants.ArmConstants.RestingArmLength,
-                            0.0,
-                            0.0,
-                            to));
-                break; 
+                        new MoveArm(
+                                armSub,
+                                Constants.ArmConstants.TopArmAngle,
+                                0.0,
+                                0.0,
+                                Constants.ArmConstants.HomeArmLength,
+                                Constants.ArmConstants.ExtendVel,
+                                Constants.ArmConstants.ExtendAccel,
+                                Position.Transition),
+                        new MoveArm(
+                                armSub,
+                                Constants.ArmConstants.HomeArmAngle,
+                                Constants.ArmConstants.RotateVel,
+                                Constants.ArmConstants.RotateAccel,
+                                Constants.ArmConstants.HomeArmLength,
+                                0.0,
+                                0.0,
+                                to));
+                break;
 
             case Bottom:
                 g.addCommands(
@@ -644,38 +646,37 @@ public class ArmPathGenerator extends CommandBase {
                 break;// todo
         }
 
+        g.setName("Path from Top to " + to.toString()) ;
         return g;
     }
 
     /* * * * * * FROM PLAYER STATION * * * * * */
 
     private SequentialCommandGroup getPathFromPlayerStation() {
-        System.out.println("***** getPathFromPlayerStation") ;
 
         SequentialCommandGroup g = new SequentialCommandGroup();
 
         switch (to) {
-            case Resting:
+            case Home:
                 g.addCommands(
-                    new MoveArm(
+                        new MoveArm(
                                 armSub,
                                 Constants.ArmConstants.PlayerStationArmAngle,
                                 0.0,
                                 0.0,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 Constants.ArmConstants.ExtendVel,
                                 Constants.ArmConstants.ExtendAccel,
-                                Position.Transition), 
-                    new MoveArm(
+                                Position.Transition),
+                        new MoveArm(
                                 armSub,
-                                Constants.ArmConstants.RestingArmAngle,
+                                Constants.ArmConstants.HomeArmAngle,
                                 Constants.ArmConstants.RotateVel,
                                 Constants.ArmConstants.RotateAccel,
-                                Constants.ArmConstants.RestingArmLength,
+                                Constants.ArmConstants.HomeArmLength,
                                 0.0,
                                 0.0,
-                                to)
-                                );
+                                to));
                 break;
 
             case Bottom:
@@ -777,44 +778,43 @@ public class ArmPathGenerator extends CommandBase {
     }
 
     private SequentialCommandGroup getPathFromTransition() {
-        System.out.println("***** getPathFromTransition") ;
 
         SequentialCommandGroup g = new SequentialCommandGroup();
 
-        // Moving from transition is a tricky case so we're using a simple, but suboptimal approach
-        // First, no matter where we are, we'll retract the arm all the way. After that, we'll move
-        // to the desured angle and then move to the desired length. This is a three step approach
+        // Moving from transition is a tricky case so we're using a simple, but
+        // suboptimal approach
+        // First, no matter where we are, we'll retract the arm all the way. After that,
+        // we'll move
+        // to the desured angle and then move to the desired length. This is a three
+        // step approach
         // because if we're in transition, we don't realy know where we are.
         // In the future, maybe replace this with something smarter.
 
         Command first = new MoveArm(
-            armSub,
-            Constants.ArmConstants.MiddleArmAngle,
-            0.0,
-            0.0,
-            Constants.ArmConstants.RestingArmAngle,
-            Constants.ArmConstants.ExtendVel,
-            Constants.ArmConstants.ExtendAccel,
-            Position.Transition).withTimeout(4.0);
+                armSub,
+                Constants.ArmConstants.MiddleArmAngle,
+                0.0,
+                0.0,
+                armSub.getLength(),
+                Constants.ArmConstants.ExtendVel,
+                Constants.ArmConstants.ExtendAccel,
+                Position.Transition).withTimeout(4.0);
 
-        g.addCommands( 
-            first
-        );
-
-        g.addCommands( getPathFromResting() );
+//        g.addCommands(first);
+        g.addCommands(getPathFromHome());
+        g.setName("Path from transition to " + to ) ;
 
         return g;
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
 
         SequentialCommandGroup g = null;
 
         switch (armSub.getState()) {
-            case Resting:
-                g = getPathFromResting();
+            case Home:
+                g = getPathFromHome();
                 break;
             case Bottom:
                 g = getPathFromBottom();
@@ -841,17 +841,14 @@ public class ArmPathGenerator extends CommandBase {
         }
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return true;
