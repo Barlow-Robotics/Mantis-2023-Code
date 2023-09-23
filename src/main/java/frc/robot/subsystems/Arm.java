@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -23,6 +24,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.sim.PhysicsSim;
+
+import org.littletonrobotics.junction.Logger;
+
 
 public class Arm extends SubsystemBase implements Sendable {
     /** Creates a new Arm. */
@@ -55,13 +59,13 @@ public class Arm extends SubsystemBase implements Sendable {
         setRotateMotorConfig(leftRotateMotor);
         setRotateMotorConfig(rightRotateMotor);
 
-        // rightRotateMotor.setInverted(TalonFXInvertType.Clockwise); // maybe change
+        rightRotateMotor.setInverted(TalonFXInvertType.Clockwise); // maybe change
 
         leftRotateMotor.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
         rightRotateMotor.configMotionSCurveStrength(Constants.ArmConstants.AccelerationSmoothing);
 
-        // leftRotateMotor.setSelectedSensorPosition(0);
-        rotationEncoderL.setPosition(0);
+        leftRotateMotor.setSelectedSensorPosition(0);
+        // rotationEncoderL.setPosition(0);
         rightRotateMotor.setSelectedSensorPosition(0);
 
         extendMotor.setSelectedSensorPosition(0);
@@ -71,6 +75,7 @@ public class Arm extends SubsystemBase implements Sendable {
         extendMotor.configClearPositionOnLimitR(true, 0);
 
         CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
+        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360 ;
         rotationEncoderL.configAllSettings(canCoderConfiguration);
 
         // rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
@@ -124,6 +129,7 @@ public class Arm extends SubsystemBase implements Sendable {
         // NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent")
         // .setDouble(rotateMotorFollower.getSupplyCurrent());
         // // System.out.println() ;
+        Logger.getInstance().recordOutput("Arm Absolute Encoder", rotationEncoderL.getAbsolutePosition());
     }
 
     private double rotationFeedForward() {
@@ -161,7 +167,8 @@ public class Arm extends SubsystemBase implements Sendable {
     }
 
     public double getAngle() {
-        double result = rotationEncoderL.getAbsolutePosition() / ArmConstants.CountsPerArmDegree;
+        double result = leftRotateMotor.getSelectedSensorPosition() / ArmConstants.CountsPerArmDegree ;
+        // double result = rotationEncoderL.getAbsolutePosition() / ArmConstants.CountsPerArmDegree;
         return result;
     }
 
