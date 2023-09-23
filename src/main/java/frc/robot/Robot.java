@@ -55,21 +55,7 @@ public class Robot extends LoggedRobot {
 
     Logger logger = Logger.getInstance();
 
-    // logger.recordMetadata("ProjectName", "WPI-2023-Mantis"); // Set a metadata value
 
-    if (isReal()) {
-        Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
-        Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-        new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-    } else {
-        // setUseTiming(false); // Run as fast as possible
-        // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-        logger.addDataReceiver(new WPILOGWriter(""));
-        logger.addDataReceiver(new NT4Publisher());
-    }
-    
-    // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-    Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
     /*
      * This function is run when the robot is first started up and should be used
@@ -257,6 +243,23 @@ public class Robot extends LoggedRobot {
         CommandScheduler.getInstance().onCommandInitialize( Robot::reportCommandStart ) ;
         CommandScheduler.getInstance().onCommandFinish(Robot::reportCommandFinish);        
         CommandScheduler.getInstance().onCommandInterrupt( this::handleInterrupted) ;
+
+        logger.recordMetadata("ProjectName", "WPI-2023-Mantis"); // Set a metadata value
+
+        if (isReal()) {
+            Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
+            Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+            new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+        } else {
+            // setUseTiming(false); // Run as fast as possible
+            // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+            logger.addDataReceiver(new WPILOGWriter(""));
+            logger.addDataReceiver(new NT4Publisher());
+        }
+        
+        // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+        Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    
 
     }
 
