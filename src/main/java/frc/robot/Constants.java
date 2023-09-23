@@ -131,6 +131,7 @@ public final class Constants {
         public static final int ArmExtendMotorID = 12;
         public static final int LeftArmMotorID = 11;
         public static final int RightArmMotorID = 10;
+        public static final int CANCoderID = 22;
 
         public static final int AccelerationSmoothing = 2;
 
@@ -145,7 +146,7 @@ public final class Constants {
         public static final double HomeArmLength = 0.25;
 
         public static final double FloorArmAngle =  45.0; //40.0 //35.0
-        public static final double FloorArmLength = 11.0; // inches
+        public static final double FloorArmLength = 14.0; // inches
 
         public static final double PlayerStationArmAngle = 105.0;
         public static final double PlayerStationArmLength = 0.0;
@@ -168,14 +169,16 @@ public final class Constants {
         public static final double ArmMaxLength = 26.0; // need to confirm (inches)
 
         public static final double RotateVel = 75;
-        public static final double RotateAccel = 0.15;
+        // public static final double RotateAccel = 0.15;
+        public static final double RotateAccel = 0.3;
         public static final double AngleMultiplier = 1.0;
         public static final double AngleVel = 0.5;
         public static final double AngleAcceleration = RotateVel * 4.0;
         // public static final double AngleMultiplier = 0.5;
 
         public static final double ExtendVel = 30.0;
-        public static final double ExtendAccel = 0.1;
+        // public static final double ExtendAccel = 0.1;
+        public static final double ExtendAccel = 0.25;
         public static final double LengthMultiplier = 0.5;
 
         // wpk will probably need to add constants for minimum angle before retracting
@@ -216,7 +219,8 @@ public final class Constants {
         public static final int OpenSolenoidID = 3;
         public static final int CloseSolenoidID = 2;
 
-        public static final double RotateGearRatio = 32.861;
+//        public static final double RotateGearRatio = 32.861;
+        public static final double RotateGearRatio = 26.29;
         //public static final double RotateGearRatio = 31.00;
 
         public static final double RevolutionsPerDegree = 1.0 / 360.0;

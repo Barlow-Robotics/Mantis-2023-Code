@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -53,6 +54,7 @@ public class Arm extends SubsystemBase implements Sendable {
         extendMotor = new WPI_TalonFX(Constants.ArmConstants.ArmExtendMotorID);
         leftRotateMotor = new WPI_TalonFX(Constants.ArmConstants.LeftArmMotorID);
         rightRotateMotor = new WPI_TalonFX(Constants.ArmConstants.RightArmMotorID);
+        rotationEncoderL = new WPI_CANCoder(Constants.ArmConstants.CANCoderID) ;
 
         setExtendMotorConfig(extendMotor);
 
@@ -75,7 +77,11 @@ public class Arm extends SubsystemBase implements Sendable {
         extendMotor.configClearPositionOnLimitR(true, 0);
 
         CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
-        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360 ;
+        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180 ;
+        canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition ;
+        // canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToZero ;
+        canCoderConfiguration.sensorDirection = true ;
+        canCoderConfiguration.magnetOffsetDegrees = -174.1 ;
         rotationEncoderL.configAllSettings(canCoderConfiguration);
 
         // rotateMotorLeader.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
@@ -129,7 +135,6 @@ public class Arm extends SubsystemBase implements Sendable {
         // NetworkTableInstance.getDefault().getEntry("arm/rightMotorSupplyCurrent")
         // .setDouble(rotateMotorFollower.getSupplyCurrent());
         // // System.out.println() ;
-        Logger.getInstance().recordOutput("Arm Absolute Encoder", rotationEncoderL.getAbsolutePosition());
     }
 
     private double rotationFeedForward() {
@@ -297,11 +302,16 @@ public class Arm extends SubsystemBase implements Sendable {
     //     rotationEncoderL.setIdleMode(IdleMode.kBrake);
     // }
 
+    private double getAbsoluteEncoderAngle() {
+        return rotationEncoderL.getAbsolutePosition() ;
+    }
+
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Arm Subsystem");
 
         builder.addStringProperty("State", this::getStateName, null);
         builder.addDoubleProperty("Angle", this::getAngle, null);
+        builder.addDoubleProperty("Absolute Encoder Angle", this::getAbsoluteEncoderAngle, null);
         builder.addDoubleProperty("Length", this::getLength, null);
         builder.addBooleanProperty("isAtRetractLimit", this::isAtMinLength, null);
         builder.addBooleanProperty("isAtExtendLimit", this::isAtMaxLength, null);
