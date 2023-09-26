@@ -22,6 +22,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.sim.PhysicsSim;
+import frc.robot.subsystems.Arm.Position;
 
 public class Claw extends SubsystemBase {
 
@@ -98,7 +99,8 @@ public class Claw extends SubsystemBase {
         if ( armAngle > (ArmConstants.MiddleArmAngle - 5)) {
             double percentOfDelta = ( armAngle - (ArmConstants.MiddleArmAngle - 5) ) / ( ArmConstants.TopArmAngle - (ArmConstants.MiddleArmAngle - 5) ) ;
             delta = percentOfDelta * maxDelta ;
-        } else if (armAngle < ArmConstants.FloorArmAngle) {
+        // } else if (armAngle < ArmConstants.FloorArmAngle) {
+        } else if (armAngle < 3 || armSub.getState() == Position.Floor) {
             // if arm is nearing home position, lower claw slightly so motor doesn't stall against claw stops
             delta = 0.0 ;
         } else {
