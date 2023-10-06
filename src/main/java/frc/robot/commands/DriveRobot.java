@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -78,14 +79,21 @@ public class DriveRobot extends CommandBase {
 
         SmartDashboard.putBoolean("Auto Align Enabled", autoAlignEnabled);
         SmartDashboard.putString("Auto Align Target", selectedTarget);
+
+        // X Axis Stuff
+        SlewRateLimiter xAxisInputRamp = new SlewRateLimiter(0.5); // Need to test this value
         
-        double x = driverController.getRawAxis(controllerThrottleID);
+        double x = xAxisInputRamp.calculate(driverController.getRawAxis(controllerThrottleID));
         if (Math.abs(x) < 0.01) {
             x = 0.0;
         }
         NetworkTableInstance.getDefault().getEntry("driverController/xRawAxis")
                 .setDouble(driverController.getRawAxis(controllerThrottleID));
 
+        NetworkTableInstance.getDefault().getEntry("driverController/xRampedAxis")
+                .setDouble(xAxisInputRamp.calculate(driverController.getRawAxis(controllerThrottleID)));
+        
+        // Yaw Stuff
         double yaw = -driverController.getRawAxis(controllerTurnID); 
         if (Math.abs(yaw) < 0.01) {
             yaw = 0.0;
@@ -153,9 +161,12 @@ public class DriveRobot extends CommandBase {
                 yaw = pid.calculate(visionSub.gamePieceDistanceFromCenter());
                 lastAutoSteer = true;
             }
+
+
         }
 
         NetworkTableInstance.getDefault().getEntry("drive/speed").setDouble(-speed);
+        NetworkTableInstance.getDefault().getEntry("drive/averageVelocity").setDouble((leftVelocity+rightVelocity)/2);
         NetworkTableInstance.getDefault().getEntry("drive/yaw").setDouble(yaw);
 
         driveSub.drive(-speed, yaw * 0.8, true);

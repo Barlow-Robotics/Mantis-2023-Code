@@ -73,8 +73,9 @@ public final class Constants {
         // public static final double CountsPerMeterPerSecond = 1 / metersPerCount;
         public static final double CorrectionRotationSpeed = 2.0; // Arbitrarily assigned, need to change w/ testing
 
-        public static final double ClosedVoltageRampingConstant = 0.25;
-        public static final double ManualVoltageRampingConstant = 0.25;
+        // public static final double ClosedVoltageRampingConstant = 0.25;
+        // public static final double ManualVoltageRampingConstant = 0.25;
+        
         // public static final double kF = 20.0; //0.048 original
         // public static final double kP = 0.7; //0.005 original
         // public static final double kI = 0.001; //0.0001 original

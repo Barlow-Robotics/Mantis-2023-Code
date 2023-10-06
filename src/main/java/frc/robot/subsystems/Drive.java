@@ -124,6 +124,9 @@ public class Drive extends SubsystemBase {
         NetworkTableInstance.getDefault().getEntry("drive/closedLoopErrorRight")
                 .setDouble(driveMotorRightLeader.getClosedLoopError());
 
+        NetworkTableInstance.getDefault().getEntry("drive/pitch").setDouble(getPitch());
+
+
     }
 
     public void setDefaultNeutralMode() {
@@ -273,11 +276,13 @@ public class Drive extends SubsystemBase {
 
         NetworkTableInstance.getDefault().getEntry("drive/leftVolts").setDouble(0.0);
         NetworkTableInstance.getDefault().getEntry("drive/rightVolts").setDouble(0.0);
+
+        NetworkTableInstance.getDefault().getEntry("drive/pitch").setDouble(0.0);
     }
 
     private void setMotorConfig(WPI_TalonFX motor) {
-        motor.configClosedloopRamp(Constants.DriveConstants.ClosedVoltageRampingConstant);
-        motor.configOpenloopRamp(Constants.DriveConstants.ManualVoltageRampingConstant);
+        // motor.configClosedloopRamp(Constants.DriveConstants.ClosedVoltageRampingConstant);
+        // motor.configOpenloopRamp(Constants.DriveConstants.ManualVoltageRampingConstant);
         motor.config_kF(Constants.DriveConstants.PID_id, Constants.DriveConstants.kF);
         motor.config_kP(Constants.DriveConstants.PID_id, Constants.DriveConstants.kP);
         motor.config_kI(Constants.DriveConstants.PID_id, Constants.DriveConstants.kI);
