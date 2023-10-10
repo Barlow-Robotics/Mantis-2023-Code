@@ -175,18 +175,18 @@ public class RobotContainer {
                 moveToBottomButton.onTrue(new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
                 moveToMiddleButton = new JoystickButton(operatorButtonController,
-                                XboxControllerConstants.LeftBumper);
+                                XboxControllerConstants.LeftTrigger);
                 moveToMiddleButton.onTrue(new ArmPathGenerator(Arm.Position.Middle, armSub));
 
                 moveToTopButton = new JoystickButton(operatorButtonController,
-                                XboxControllerConstants.ButtonX);
+                                XboxControllerConstants.LeftBumper);
                 moveToTopButton.onTrue(new ArmPathGenerator(Arm.Position.Top, armSub));
 
-                moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.RightBumper);
+                moveToFloorButton = new JoystickButton(operatorButtonController, XboxControllerConstants.ButtonX);
                 moveToFloorButton.onTrue(new ArmPathGenerator(Arm.Position.Floor, armSub));
 
                 moveToPlayerStationButton = new JoystickButton(operatorButtonController,
-                                XboxControllerConstants.RightStick);
+                                XboxControllerConstants.RightBumper);
                 moveToPlayerStationButton.onTrue(new ArmPathGenerator(Arm.Position.PlayerStation, armSub));
 
                 /* * * * * * VISION BUTTONS * * * * * */
