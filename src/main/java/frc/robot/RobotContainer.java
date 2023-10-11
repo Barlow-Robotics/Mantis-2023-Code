@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -27,7 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,7 +40,6 @@ import frc.robot.commands.FastMoveToHomeFromTop;
 import frc.robot.commands.FastMoveToMiddleFromHome;
 import frc.robot.commands.FastMoveToTopFromHome;
 import frc.robot.commands.InstrumentedSequentialCommandGroup;
-import frc.robot.commands.MoveArm;
 import frc.robot.commands.OpenClaw;
 import frc.robot.commands.PathFromCurrentLocation;
 import frc.robot.commands.Pivot;
@@ -138,7 +135,6 @@ public class RobotContainer {
 
                 driverController = new Joystick(1);
                 operatorButtonController = new Joystick(2);
-                operatorAxisController = new Joystick(3);
 
                 String controllerType = driverController.getName();
                 System.out.println("The controller name is " + controllerType);
@@ -171,7 +167,7 @@ public class RobotContainer {
                 moveToRestingPositionButton.onTrue(new ArmPathGenerator(Arm.Position.Home, armSub));
 
                 moveToBottomButton = new JoystickButton(operatorButtonController,
-                                XboxControllerConstants.LeftStick);
+                                XboxControllerConstants.WindowButton);
                 moveToBottomButton.onTrue(new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
                 moveToMiddleButton = new JoystickButton(operatorButtonController,
