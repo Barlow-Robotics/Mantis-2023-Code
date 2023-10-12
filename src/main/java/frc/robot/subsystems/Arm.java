@@ -297,14 +297,15 @@ public class Arm extends SubsystemBase implements Sendable {
         return this.extendMotor.getSelectedSensorVelocity() ;
     }
 
+    private double getAbsoluteEncoderAngle() {
+        return rotationEncoderL.getAbsolutePosition() ;
+    }
+
     // public void setMotorDefaults() {
     //     rotationEncoderL.restoreFactoryDefaults();
     //     rotationEncoderL.setIdleMode(IdleMode.kBrake);
     // }
 
-    private double getAbsoluteEncoderAngle() {
-        return rotationEncoderL.getAbsolutePosition() ;
-    }
 
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Arm Subsystem");

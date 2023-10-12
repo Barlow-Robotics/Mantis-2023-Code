@@ -42,6 +42,9 @@ public class DriveRobot extends CommandBase {
 
     public String selectedTarget = "None";
 
+    SlewRateLimiter xAxisInputRamp = new SlewRateLimiter(5); // Need to test this value
+
+
     public DriveRobot(
             Drive d, Claw c, Vision v, Arm a, Trigger autoAlignButton, Trigger toggleTargetButton,
             Joystick driverController,
@@ -81,7 +84,6 @@ public class DriveRobot extends CommandBase {
         SmartDashboard.putString("Auto Align Target", selectedTarget);
 
         // X Axis Stuff
-        SlewRateLimiter xAxisInputRamp = new SlewRateLimiter(0.5); // Need to test this value
         
         double x = xAxisInputRamp.calculate(driverController.getRawAxis(controllerThrottleID));
         if (Math.abs(x) < 0.01) {
