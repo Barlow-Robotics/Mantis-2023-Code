@@ -192,7 +192,8 @@ public class RobotContainer {
         }
 
         private void buildAutoOptions() {
-                stringChooser.setDefaultOption("Place on Top, Leave Community", "placeTopAndReverse");
+                stringChooser.setDefaultOption("Engage Only", "engageOnly");
+                stringChooser.addOption("Place on Top, Leave Community", "placeTopAndReverse");
                 stringChooser.addOption("Place on Top, Engage Station", "placeTopAndEngage");
                 stringChooser.addOption("Place on Top, Leave Short Community, Pick Up Game Piece",
                                 "placeTopAndGrabPieceShortSide");
@@ -209,7 +210,36 @@ public class RobotContainer {
                 return PathPlannerTrajectory.transformTrajectoryForAlliance(temp, DriverStation.getAlliance());
         }
 
-        /* * * * * * REVERSE * * * * * */
+        /* * * * * * ENGAGE ONLY * * * * * */
+
+        InstrumentedSequentialCommandGroup createEngageCommand() {
+                /* Place Game Piece on Bottom Row, Reverse Out of Community */
+                InstrumentedSequentialCommandGroup theCommand = new InstrumentedSequentialCommandGroup();
+
+                engagePath = loadPath(
+                                "ChargingStation", 1.0, DriveConstants.DefaultAutoAccel, true);
+
+                theCommand.addCommands(new InstantCommand(() -> clawSub.close()));
+                theCommand.addCommands(new InstantCommand(() -> this.currentTrajectory = engagePath));
+                theCommand.addCommands(new InstantCommand(() -> driveSub.resetOdometry(engagePath.getInitialPose()),
+                                driveSub));
+                theCommand.addCommands(new PPRamseteCommand(
+                                engagePath,
+                                driveSub::getPose,
+                                new RamseteController(),
+                                new DifferentialDriveKinematics(Constants.DriveConstants.TrackWidth),
+                                driveSub::setSpeeds,
+                                false,
+                                driveSub));
+                theCommand.addCommands(new AutoBalance(driveSub));
+
+                theCommand.onCommandInitialize(Robot::reportCommandStart);
+                theCommand.onCommandFinish(Robot::reportCommandFinish);
+
+                return theCommand;
+        }
+
+        /* * * * * * PLACE TOP & REVERSE * * * * * */
 
         InstrumentedSequentialCommandGroup createPlaceTopAndReverseCommand() {
                 /* Place Game Piece on Bottom Row, Reverse Out of Community */
@@ -681,7 +711,9 @@ public class RobotContainer {
                 this.currentTrajectory = new PathPlannerTrajectory();
 
                 String choice = stringChooser.getSelected();
-                if (choice == "placeTopAndReverse") {
+                if (choice == "engageOnly") {
+                        return createEngageCommand();
+                } else if (choice == "placeTopAndReverse") {
                         return createPlaceTopAndReverseCommand();
                 } else if (choice == "placeTopAndEngage") {
                         return createPlaceTopAndEngageCommand();
