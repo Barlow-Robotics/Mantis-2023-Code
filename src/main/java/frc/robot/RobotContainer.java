@@ -144,8 +144,6 @@ public class RobotContainer {
                 // turnJoystickID = Constants.LogitechDualActionConstants.RightJoystickX;
                 throttleJoystickID = Constants.RadioMasterConstants.LeftGimbalY;
                 turnJoystickID = Constants.RadioMasterConstants.RightGimbalX;
-                angleJoystickID = Constants.LogitechDualActionConstants.LeftJoystickY;
-                extensionJoystickID = Constants.LogitechDualActionConstants.RightJoystickX;
 
                 /* * * * * * CLAW BUTTONS * * * * * */
 
@@ -167,7 +165,7 @@ public class RobotContainer {
                 moveToRestingPositionButton.onTrue(new ArmPathGenerator(Arm.Position.Home, armSub));
 
                 moveToBottomButton = new JoystickButton(operatorButtonController,
-                                XboxControllerConstants.WindowButton);
+                                XboxControllerConstants.LeftStick);
                 moveToBottomButton.onTrue(new ArmPathGenerator(Arm.Position.Bottom, armSub));
 
                 moveToMiddleButton = new JoystickButton(operatorButtonController,

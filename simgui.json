@@ -123,7 +123,7 @@
     "Plot <2>": {
       "plots": [
         {
-          "height": -46,
+          "height": 0,
           "series": [
             {
               "color": [
@@ -154,12 +154,15 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <3>": {
       "plots": [
         {
-          "height": 643,
+          "height": 0,
           "series": [
             {
               "color": [
@@ -187,6 +190,36 @@
                 1.0
               ],
               "id": "NT:drive/left_speed"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <4>": {
+      "plots": [
+        {
+          "height": 741,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:driverController/xRawAxis"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:driverController/xRampedAxis"
             }
           ]
         }

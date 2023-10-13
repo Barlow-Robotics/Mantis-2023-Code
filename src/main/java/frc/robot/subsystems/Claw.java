@@ -103,7 +103,7 @@ public class Claw extends SubsystemBase {
         // } else if (armAngle < ArmConstants.FloorArmAngle) {
         } else if (armAngle < 3 || armSub.getState() == Position.Floor) {
             // if arm is nearing home position, lower claw slightly so motor doesn't stall against claw stops
-            delta = 1 ;
+            delta = -1.0 ;
         } else {
             // otherwise, keep claw level with the floor
             delta = 2.0 ;
