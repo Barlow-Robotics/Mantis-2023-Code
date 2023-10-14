@@ -42,7 +42,7 @@ public class DriveRobot extends CommandBase {
 
     public String selectedTarget = "None";
 
-    SlewRateLimiter xAxisInputRamp = new SlewRateLimiter(5); // Need to test this value
+    SlewRateLimiter xAxisInputRamp = new SlewRateLimiter(7); // Need to test this value
 
 
     public DriveRobot(

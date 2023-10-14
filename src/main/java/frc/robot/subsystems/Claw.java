@@ -96,8 +96,11 @@ public class Claw extends SubsystemBase {
         double delta = 0.0 ;
         double armAngle = armSub.getAngle() ;
 
-        // if the arm is up high, gradually raise claw angle
-        if ( armAngle > (ArmConstants.MiddleArmAngle - 5)) {
+        
+        if (armSub.getState() == Position.PlayerStation) {
+            delta = -1.5 ;
+        } else if ( armAngle > (ArmConstants.MiddleArmAngle - 5)) {    
+            // if the arm is up high, gradually raise claw angle
             double percentOfDelta = ( armAngle - (ArmConstants.MiddleArmAngle - 5) ) / ( ArmConstants.TopArmAngle - (ArmConstants.MiddleArmAngle - 5) ) ;
             delta = percentOfDelta * maxDelta ;
         // } else if (armAngle < ArmConstants.FloorArmAngle) {
